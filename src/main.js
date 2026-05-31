@@ -173,16 +173,30 @@ function logCombat(msg, type = 'normal') {
 const shopPool = [
   { factory: () => makeBeast('Tanky', 5, 8, null, null, 'Common', '🐢'), rarity: 'Common' },
   { factory: () => makeBeast('Brawler', 10, 20, null, null, 'Common', '🥊'), rarity: 'Common' },
+  { factory: () => makeBeast('Rat', 2, 6, null, null, 'Common', '🐀'), rarity: 'Common' },
+  { factory: () => makeBeast('Slime', 4, 8, null, null, 'Common', '💧'), rarity: 'Common' },
+  { factory: () => makeBeast('Wolf', 8, 14, null, null, 'Common', '🐺'), rarity: 'Common' },
   { factory: () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon', '🦟'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon', '🧙'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon', '🐍'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Spider', 4, 8, 'POISON', null, 'Uncommon', '🕷️'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Bear', 12, 18, null, null, 'Uncommon', '🐻'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Bat', 5, 12, 'VULNERABLE', null, 'Uncommon', '🦇'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare', '🔥'), rarity: 'Rare' },
   { factory: () => makeBeast('Ice Element', 10, 15, 'ICE', null, 'Rare', '❄️'), rarity: 'Rare' },
   { factory: () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare', '⚡'), rarity: 'Rare' },
+  { factory: () => makeBeast('Earth Golem', 15, 25, null, null, 'Rare', '🪨'), rarity: 'Rare' },
+  { factory: () => makeBeast('Frost Wyrm', 10, 20, 'ICE', null, 'Rare', '🐉'), rarity: 'Rare' },
+  { factory: () => makeBeast('Assassin', 5, 25, null, 'DOUBLE_IF_VULNERABLE', 'Rare', '🥷'), rarity: 'Rare' },
   { factory: () => makeBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE', 'Epic', '🚂'), rarity: 'Epic' },
   { factory: () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic', '🦅'), rarity: 'Epic' },
+  { factory: () => makeBeast('Dragon', 20, 35, 'FIRE', 'DOUBLE_IF_FIRE', 'Epic', '🐲'), rarity: 'Epic' },
+  { factory: () => makeBeast('Paladin', 10, 15, null, 'BUFF_NEXT_40', 'Epic', '🛡️'), rarity: 'Epic' },
   { factory: () => makeBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON', 'Legendary', '🗿'), rarity: 'Legendary' },
-  { factory: () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary', '💀'), rarity: 'Legendary' }
+  { factory: () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary', '💀'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Chimera', 15, 25, 'POISON', 'TRIPLE_IF_SHOCK', 'Legendary', '🦁'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Leviathan', 25, 40, 'VULNERABLE', 'DOUBLE_IF_VULNERABLE', 'Legendary', '🐋'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Kraken', 30, 45, null, 'CONSUME_FIRE', 'Legendary', '🦑'), rarity: 'Legendary' }
 ];
 
 function rollShop() {
@@ -631,6 +645,19 @@ function fight() {
     if (beast.synergy === 'BUFF_NEXT_20') {
       nextBeastBuff = 20;
       logCombat(`${beast.name} buffs next beast!`);
+    }
+    if (beast.synergy === 'DOUBLE_IF_VULNERABLE' && currentStatuses.has('VULNERABLE')) {
+      dmg *= 2;
+      logCombat(`${beast.name} exploits VULNERABLE!`, 'crit');
+    }
+    if (beast.synergy === 'CONSUME_FIRE' && currentStatuses.has('FIRE')) {
+      dmg += 60;
+      currentStatuses.delete('FIRE');
+      logCombat(`${beast.name} consumed FIRE for +60 Dmg!`, 'crit');
+    }
+    if (beast.synergy === 'BUFF_NEXT_40') {
+      nextBeastBuff = 40;
+      logCombat(`${beast.name} mega-buffs next beast!`);
     }
 
     if (currentStatuses.has('VULNERABLE')) {
