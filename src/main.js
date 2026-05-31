@@ -2,10 +2,11 @@ import { createBeast, calculateDamage } from './combat.js';
 import { orderCrossover, mutateSwap } from './ga.js';
 import { buyBeast, buyEpochs } from './economy.js';
 
-function makeBeast(name, min, max, stat, syn, rarity, icon) {
+function makeBeast(name, min, max, stat, syn, rarity, icon, color) {
   const b = createBeast(name, min, max, stat, syn);
   b.rarity = rarity;
   b.icon = icon;
+  b.color = color || '#a1a1aa';
   b.id = Math.random().toString(36).substr(2, 9);
   return b;
 }
@@ -51,6 +52,7 @@ const elCombatLog = document.getElementById('combat-log');
 const elMatrixView = document.getElementById('matrix-view');
 const elBestSequenceDisplay = document.getElementById('best-sequence-display');
 const elShopItems = document.getElementById('shop-items');
+const elShopActions = document.getElementById('shop-actions');
 const btnRunEpochs = document.getElementById('btn-run-epochs');
 const btnFight = document.getElementById('btn-fight');
 const canvas = document.getElementById('bump-chart');
@@ -171,32 +173,32 @@ function logCombat(msg, type = 'normal') {
 
 // --- Shop Logic ---
 const shopPool = [
-  { factory: () => makeBeast('Tanky', 5, 8, null, null, 'Common', '🐢'), rarity: 'Common' },
-  { factory: () => makeBeast('Brawler', 10, 20, null, null, 'Common', '🥊'), rarity: 'Common' },
-  { factory: () => makeBeast('Rat', 2, 6, null, null, 'Common', '🐀'), rarity: 'Common' },
-  { factory: () => makeBeast('Slime', 4, 8, null, null, 'Common', '💧'), rarity: 'Common' },
-  { factory: () => makeBeast('Wolf', 8, 14, null, null, 'Common', '🐺'), rarity: 'Common' },
-  { factory: () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon', '🦟'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon', '🧙'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon', '🐍'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Spider', 4, 8, 'POISON', null, 'Uncommon', '🕷️'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Bear', 12, 18, null, null, 'Uncommon', '🐻'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Bat', 5, 12, 'VULNERABLE', null, 'Uncommon', '🦇'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare', '🔥'), rarity: 'Rare' },
-  { factory: () => makeBeast('Ice Element', 10, 15, 'ICE', null, 'Rare', '❄️'), rarity: 'Rare' },
-  { factory: () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare', '⚡'), rarity: 'Rare' },
-  { factory: () => makeBeast('Earth Golem', 15, 25, null, null, 'Rare', '🪨'), rarity: 'Rare' },
-  { factory: () => makeBeast('Frost Wyrm', 10, 20, 'ICE', null, 'Rare', '🐉'), rarity: 'Rare' },
-  { factory: () => makeBeast('Assassin', 5, 25, null, 'DOUBLE_IF_VULNERABLE', 'Rare', '🥷'), rarity: 'Rare' },
-  { factory: () => makeBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE', 'Epic', '🚂'), rarity: 'Epic' },
-  { factory: () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic', '🦅'), rarity: 'Epic' },
-  { factory: () => makeBeast('Dragon', 20, 35, 'FIRE', 'DOUBLE_IF_FIRE', 'Epic', '🐲'), rarity: 'Epic' },
-  { factory: () => makeBeast('Paladin', 10, 15, null, 'BUFF_NEXT_40', 'Epic', '🛡️'), rarity: 'Epic' },
-  { factory: () => makeBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON', 'Legendary', '🗿'), rarity: 'Legendary' },
-  { factory: () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary', '💀'), rarity: 'Legendary' },
-  { factory: () => makeBeast('Chimera', 15, 25, 'POISON', 'TRIPLE_IF_SHOCK', 'Legendary', '🦁'), rarity: 'Legendary' },
-  { factory: () => makeBeast('Leviathan', 25, 40, 'VULNERABLE', 'DOUBLE_IF_VULNERABLE', 'Legendary', '🐋'), rarity: 'Legendary' },
-  { factory: () => makeBeast('Kraken', 30, 45, null, 'CONSUME_FIRE', 'Legendary', '🦑'), rarity: 'Legendary' }
+  { factory: () => makeBeast('Tanky', 5, 8, null, null, 'Common', '🐢', '#86efac'), rarity: 'Common' },
+  { factory: () => makeBeast('Brawler', 10, 20, null, null, 'Common', '🥊', '#fca5a5'), rarity: 'Common' },
+  { factory: () => makeBeast('Rat', 2, 6, null, null, 'Common', '🐀', '#d6d3d1'), rarity: 'Common' },
+  { factory: () => makeBeast('Slime', 4, 8, null, null, 'Common', '💧', '#93c5fd'), rarity: 'Common' },
+  { factory: () => makeBeast('Wolf', 8, 14, null, null, 'Common', '🐺', '#a8a29e'), rarity: 'Common' },
+  { factory: () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon', '🦟', '#c084fc'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon', '🧙', '#fde047'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon', '🐍', '#4ade80'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Spider', 4, 8, 'POISON', null, 'Uncommon', '🕷️', '#22c55e'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Bear', 12, 18, null, null, 'Uncommon', '🐻', '#78716c'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Bat', 5, 12, 'VULNERABLE', null, 'Uncommon', '🦇', '#a855f7'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare', '🔥', '#ef4444'), rarity: 'Rare' },
+  { factory: () => makeBeast('Ice Element', 10, 15, 'ICE', null, 'Rare', '❄️', '#38bdf8'), rarity: 'Rare' },
+  { factory: () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare', '⚡', '#fbbf24'), rarity: 'Rare' },
+  { factory: () => makeBeast('Earth Golem', 15, 25, null, null, 'Rare', '🪨', '#a8a29e'), rarity: 'Rare' },
+  { factory: () => makeBeast('Frost Wyrm', 10, 20, 'ICE', null, 'Rare', '🐉', '#7dd3fc'), rarity: 'Rare' },
+  { factory: () => makeBeast('Assassin', 5, 25, null, 'DOUBLE_IF_VULNERABLE', 'Rare', '🥷', '#52525b'), rarity: 'Rare' },
+  { factory: () => makeBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE', 'Epic', '🚂', '#a1a1aa'), rarity: 'Epic' },
+  { factory: () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic', '🦅', '#fcd34d'), rarity: 'Epic' },
+  { factory: () => makeBeast('Dragon', 20, 35, 'FIRE', 'DOUBLE_IF_FIRE', 'Epic', '🐲', '#dc2626'), rarity: 'Epic' },
+  { factory: () => makeBeast('Paladin', 10, 15, null, 'BUFF_NEXT_40', 'Epic', '🛡️', '#fef08a'), rarity: 'Epic' },
+  { factory: () => makeBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON', 'Legendary', '🗿', '#57534e'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary', '💀', '#000000'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Chimera', 15, 25, 'POISON', 'TRIPLE_IF_SHOCK', 'Legendary', '🦁', '#eab308'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Leviathan', 25, 40, 'VULNERABLE', 'DOUBLE_IF_VULNERABLE', 'Legendary', '🐋', '#0284c7'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Kraken', 30, 45, null, 'CONSUME_FIRE', 'Legendary', '🦑', '#db2777'), rarity: 'Legendary' }
 ];
 
 function rollShop() {
@@ -232,16 +234,16 @@ function rollShop() {
 
 function renderShop() {
   elShopItems.innerHTML = '';
+  elShopActions.innerHTML = '';
   
   // Refresh item
-  const refreshCard = document.createElement('div');
-  refreshCard.className = 'shop-card';
+  const refreshCard = document.createElement('button');
+  refreshCard.className = 'shop-action-btn';
   refreshCard.innerHTML = `
-    <h3>Refresh Shop</h3>
-    <p>Roll new beasts.</p>
-    <button class="btn full-width">Buy (5 Gold)</button>
+    <span>Refresh</span>
+    <span class="gold">5G</span>
   `;
-  refreshCard.querySelector('button').onclick = () => {
+  refreshCard.onclick = () => {
     if (state.gold >= 5) {
       state.gold -= 5;
       rollShop();
@@ -251,17 +253,16 @@ function renderShop() {
       showToast("Not enough gold!");
     }
   };
-  elShopItems.appendChild(refreshCard);
+  elShopActions.appendChild(refreshCard);
 
   // Epoch item
-  const epochCard = document.createElement('div');
-  epochCard.className = 'shop-card';
+  const epochCard = document.createElement('button');
+  epochCard.className = 'shop-action-btn';
   epochCard.innerHTML = `
-    <h3>10 Epochs</h3>
-    <p>Give the GA more compute time.</p>
-    <button class="btn full-width">Buy (5 Gold)</button>
+    <span>+10 Epochs</span>
+    <span class="gold">5G</span>
   `;
-  epochCard.querySelector('button').onclick = () => {
+  epochCard.onclick = () => {
     if (state.gold >= 5) {
       state.gold -= 5;
       state.epochs += 10;
@@ -270,18 +271,17 @@ function renderShop() {
       showToast("Not enough gold!");
     }
   };
-  elShopItems.appendChild(epochCard);
+  elShopActions.appendChild(epochCard);
 
   // Upgrade Shop item
   if (state.shopLevel < 5) {
-    const upgCard = document.createElement('div');
-    upgCard.className = 'shop-card';
+    const upgCard = document.createElement('button');
+    upgCard.className = 'shop-action-btn';
     upgCard.innerHTML = `
-      <h3>Upgrade Shop</h3>
-      <p>Unlock better beasts.</p>
-      <button class="btn full-width">Buy (${state.upgradeCost} Gold)</button>
+      <span>Upgrade Shop</span>
+      <span class="gold">${state.upgradeCost}G</span>
     `;
-    upgCard.querySelector('button').onclick = () => {
+    upgCard.onclick = () => {
       if (state.gold >= state.upgradeCost) {
         state.gold -= state.upgradeCost;
         state.shopLevel++;
@@ -292,7 +292,7 @@ function renderShop() {
         showToast("Not enough gold!");
       }
     };
-    elShopItems.appendChild(upgCard);
+    elShopActions.appendChild(upgCard);
   }
 
   // Render Offerings
@@ -513,14 +513,15 @@ function drawBumpChart() {
   bestSequenceHistory.forEach(h => h.seq.forEach(b => allIds.add(b.id)));
   
   // Assign colors and find names
-  const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#c084fc', '#f472b6', '#a78bfa', '#38bdf8'];
   const idColorMap = {};
   const idNameMap = {};
-  Array.from(allIds).forEach((id, i) => {
-    idColorMap[id] = colors[i % colors.length];
+  Array.from(allIds).forEach((id) => {
     bestSequenceHistory.forEach(h => {
       const b = h.seq.find(b => b.id === id);
-      if (b) idNameMap[id] = b.icon;
+      if (b) {
+        idNameMap[id] = b.icon;
+        idColorMap[id] = b.color || '#fff';
+      }
     });
   });
   
