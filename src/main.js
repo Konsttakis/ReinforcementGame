@@ -16,14 +16,14 @@ let state = {
   shopLevel: 1,
   upgradeCost: 20,
   beasts: [
+    makeBeast('Tanky', 5, 8, null, null, 'Common'),
     makeBeast('Brawler', 10, 20, null, null, 'Common'),
-    makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon'),
-    makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary')
+    makeBeast('Brawler', 10, 20, null, null, 'Common')
   ]
 };
 
-let bossMaxHp = 100;
-let bossHp = 100;
+let bossMaxHp = 40;
+let bossHp = 40;
 
 let bestSequence = [];
 let bestExpectedDmg = 0;
@@ -55,6 +55,7 @@ let chartData = [];
 
 // --- Init ---
 function init() {
+  shuffle(state.beasts);
   updateUI();
   generateShop();
   renderBeasts();
@@ -133,14 +134,14 @@ function generateShop() {
   const epochCard = document.createElement('div');
   epochCard.className = 'shop-card';
   epochCard.innerHTML = `
-    <h3>10 Epochs</h3>
+    <h3>2 Epochs</h3>
     <p>Give the GA more compute time.</p>
     <button class="btn full-width">Buy (5 Gold)</button>
   `;
   epochCard.querySelector('button').onclick = () => {
     if (state.gold >= 5) {
       state.gold -= 5;
-      state.epochs += 10;
+      state.epochs += 2;
       updateUI();
     } else {
       alert("Not enough gold!");
@@ -454,7 +455,7 @@ function finishCombat() {
     setTimeout(() => {
       state.level++;
       state.gold += 50 + (state.level * 10);
-      bossMaxHp = Math.floor(100 * Math.pow(1.5, state.level - 1));
+      bossMaxHp = Math.floor(40 * Math.pow(1.5, state.level - 1));
       bossHp = bossMaxHp;
       chartData = [];
       bestExpectedDmg = 0;
