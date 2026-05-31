@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beast Battler</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="top-bar">
+        <h1>Beast Battler</h1>
+        <div class="stats">
+          <div class="stat">Level: <span id="level-display">1</span></div>
+          <div class="stat gold">Gold: <span id="gold-display">100</span></div>
+        </div>
+      </header>
+
+      <main class="game-area">
+        <div class="panel lineup-panel">
+          <h2>Your Beasts</h2>
+          <div id="beast-slots" class="slots">
+            <!-- Beast items injected here -->
+          </div>
+        </div>
+
+        <div class="panel compute-panel">
+          <h2>Genetic Algorithm Optimizer</h2>
+          <div class="ga-controls">
+            <button id="btn-run-epochs" class="btn primary">Run 100 Epochs (Cost: 10G)</button>
+            <div class="compute-stats">
+              <div>Epochs Available: <span id="epochs-display">0</span></div>
+              <div>Best Expected Dmg: <span id="best-dmg-display">0</span></div>
+            </div>
+          </div>
+          <div class="ga-visuals">
+            <div id="matrix-view" class="matrix-view">
+              <!-- Animated sequence visualizer -->
+            </div>
+            <canvas id="ga-chart" width="400" height="150"></canvas>
+          </div>
+          <button id="btn-fight" class="btn danger full-width">LOCK IN & FIGHT</button>
+        </div>
+
+        <div class="panel boss-panel">
+          <h2>Level Boss</h2>
+          <div class="boss-stats">
+            <div class="boss-hp">HP: <span id="boss-hp-display">100</span> / <span id="boss-hp-max">100</span></div>
+            <div class="boss-hp-bar-container">
+              <div id="boss-hp-bar" class="boss-hp-bar"></div>
+            </div>
+          </div>
+          <div id="combat-log" class="combat-log">
+            <!-- Combat text injected here -->
+          </div>
+        </div>
+      </main>
+
+      <footer class="shop-area panel">
+        <h2>The Shop</h2>
+        <div id="shop-items" class="shop-items">
+          <!-- Shop items injected here -->
+        </div>
+      </footer>
+    </div>
+    
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
