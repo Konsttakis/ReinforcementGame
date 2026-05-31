@@ -27,12 +27,21 @@
 
         <div class="panel fight-panel">
           <h2>Combat Arena</h2>
+          <div class="boss-stats">
+            <div class="boss-hp">Boss HP: <span id="boss-hp-display">100</span> / <span id="boss-hp-max">100</span></div>
+            <div class="boss-hp-bar-container">
+              <div id="boss-hp-bar" class="boss-hp-bar"></div>
+            </div>
+          </div>
           <div id="fight-arena" class="fight-arena">
             <div id="arena-left" class="arena-side"></div>
             <div id="arena-vs" class="arena-vs">VS</div>
             <div id="arena-right" class="arena-side">
               <div id="arena-boss" class="boss-icon" title="Boss">👹</div>
             </div>
+          </div>
+          <div id="combat-log" class="combat-log">
+            <!-- Combat text injected here -->
           </div>
         </div>
 
@@ -63,19 +72,6 @@
             </div>
           </div>
           <button id="btn-fight" class="btn danger full-width">LOCK IN & FIGHT</button>
-        </div>
-
-        <div class="panel boss-panel">
-          <h2>Level Boss</h2>
-          <div class="boss-stats">
-            <div class="boss-hp">HP: <span id="boss-hp-display">100</span> / <span id="boss-hp-max">100</span></div>
-            <div class="boss-hp-bar-container">
-              <div id="boss-hp-bar" class="boss-hp-bar"></div>
-            </div>
-          </div>
-          <div id="combat-log" class="combat-log">
-            <!-- Combat text injected here -->
-          </div>
         </div>
       </main>
 

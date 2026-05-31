@@ -419,8 +419,8 @@ function drawBumpChart() {
   ctx.clearRect(0, 0, displayW, displayH);
   if (bestSequenceHistory.length < 1) return;
   
-  const MARGIN_LEFT = 10;
-  const MARGIN_RIGHT = 70;
+  const MARGIN_LEFT = 0;
+  const MARGIN_RIGHT = 65;
   const MARGIN_TOP = 5;
   const MARGIN_BOTTOM = 5;
   const graphW = displayW - MARGIN_LEFT - MARGIN_RIGHT;
