@@ -13,14 +13,14 @@ A Balatro-style roguelike auto-battler where the core mechanic is managing an ec
 
 ## 3. Combat & Synergies
 Beasts attack one at a time. The order matters entirely because of synergies.
-- **Base Stats:** Each beast has a Base Damage.
+- **Base Stats & Variance:** Each beast deals damage within a specific range (e.g., 10-15 damage) rather than a fixed number, and has a base Critical Hit / Dodge chance. This creates suspense: a sequence that "averages" just below the boss's HP still has a chance to win if they get lucky crits, and a sequence that usually wins might still fail on low rolls.
 - **Status Effects/Synergies:** Beasts can apply buffs to themselves, debuffs to the boss, or multipliers to the *next* beast in the lineup.
 - *Example:* "Venomous Beast" applies Poison. "Reaper Beast" deals 3x damage if the target is Poisoned. If Reaper attacks before Venomous, the synergy is lost.
 
 ## 4. The Genetic Algorithm
 Instead of manual placement, a GA optimizes the ordering of the player's active beasts.
 - **Genotype:** A permutation array of the current beast lineup.
-- **Fitness Function:** The total damage output of the permutation against the Boss (simulated instantly in the background).
+- **Fitness Function:** The *average* damage output of the permutation against the Boss (simulated multiple times in the background to account for RNG/variance).
 - **Selection:** Elitism (keeping the top scoring permutations) and Tournament selection (keeping some lower-scoring ones to avoid local minimums).
 - **Crossover:** "Order Crossover" (OX1). Half the sequence is taken from Parent A, and the remaining beasts are filled in the order they appear in Parent B, ensuring no duplicate beasts in the child sequence.
 - **Mutation:** Random swap mutation. Two beasts in the child sequence swap positions.
