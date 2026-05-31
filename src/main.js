@@ -208,14 +208,14 @@ function renderShop() {
   const epochCard = document.createElement('div');
   epochCard.className = 'shop-card';
   epochCard.innerHTML = `
-    <h3>2 Epochs</h3>
+    <h3>10 Epochs</h3>
     <p>Give the GA more compute time.</p>
     <button class="btn full-width">Buy (5 Gold)</button>
   `;
   epochCard.querySelector('button').onclick = () => {
     if (state.gold >= 5) {
       state.gold -= 5;
-      state.epochs += 2;
+      state.epochs += 10;
       updateUI();
     } else {
       alert("Not enough gold!");
@@ -375,7 +375,7 @@ function runEpochs() {
       score: scored[0].score,
       seq: scored[0].seq.slice(0, 5)
     });
-    if (bestSequenceHistory.length > 50) bestSequenceHistory.shift();
+    if (bestSequenceHistory.length > 15) bestSequenceHistory.shift();
     drawBumpChart();
 
     // Selection & Crossover (Elitism + Top Half)
