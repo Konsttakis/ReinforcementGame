@@ -2,15 +2,23 @@ import { createBeast, calculateDamage } from './combat.js';
 import { orderCrossover, mutateSwap } from './ga.js';
 import { buyBeast, buyEpochs } from './economy.js';
 
+function makeBeast(name, min, max, stat, syn, rarity) {
+  const b = createBeast(name, min, max, stat, syn);
+  b.rarity = rarity;
+  return b;
+}
+
 // --- Game State ---
 let state = {
   level: 1,
   gold: 20, // Start with some gold to buy initial epochs
   epochs: 0,
+  shopLevel: 1,
+  upgradeCost: 20,
   beasts: [
-    createBeast('Brawler', 10, 20, null, null),
-    createBeast('Venomous', 5, 10, 'POISON', null),
-    createBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED')
+    makeBeast('Brawler', 10, 20, null, null, 'Common'),
+    makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon'),
+    makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary')
   ]
 };
 
@@ -25,6 +33,7 @@ const POP_SIZE = 20;
 
 // --- DOM Elements ---
 const elLevel = document.getElementById('level-display');
+const elShopLevel = document.getElementById('shop-level-display');
 const elGold = document.getElementById('gold-display');
 const elEpochs = document.getElementById('epochs-display');
 const elBestDmg = document.getElementById('best-dmg-display');
@@ -55,6 +64,7 @@ function init() {
 // --- UI Updates ---
 function updateUI() {
   elLevel.textContent = state.level;
+  elShopLevel.textContent = state.shopLevel;
   elGold.textContent = state.gold;
   elEpochs.textContent = state.epochs;
   elBestDmg.textContent = bestExpectedDmg.toFixed(1);
@@ -70,10 +80,24 @@ function renderBeasts() {
     div.className = 'beast-item';
     const status = idx < 5 ? 'Active' : 'Bench';
     div.innerHTML = `
-      <div class="beast-name">[${status}] ${idx + 1}. ${b.name}</div>
-      <div class="beast-stats">Dmg: ${b.minDamage}-${b.maxDamage} ${b.appliesStatus ? `| Applies ${b.appliesStatus}` : ''} ${b.synergy ? `| ${b.synergy}` : ''}</div>
+      <div class="beast-header">
+        <div class="beast-info">
+          <div class="beast-name rarity-${b.rarity}">[${status}] ${idx + 1}. ${b.name}</div>
+          <div class="beast-stats">Dmg: ${b.minDamage}-${b.maxDamage} ${b.appliesStatus ? `| Applies ${b.appliesStatus}` : ''} ${b.synergy ? `| ${b.synergy}` : ''}</div>
+        </div>
+        <button class="btn-sell">Sell (5G)</button>
+      </div>
     `;
     if (idx >= 5) div.style.opacity = '0.6';
+    
+    div.querySelector('.btn-sell').onclick = () => {
+      if (btnFight.disabled && bossHp > 0) return; // Prevent selling during computing/fighting
+      state.beasts.splice(idx, 1);
+      state.gold += 5;
+      updateUI();
+      renderBeasts();
+    };
+
     elBeastSlots.appendChild(div);
   });
 }
@@ -88,16 +112,18 @@ function logCombat(msg, type = 'normal') {
 
 // --- Shop Logic ---
 const shopPool = [
-  () => createBeast('Tanky', 5, 8, null, null),
-  () => createBeast('Assassin', 20, 40, null, null),
-  () => createBeast('Fire Element', 10, 15, 'FIRE', null),
-  () => createBeast('Ice Element', 10, 15, 'ICE', null),
-  () => createBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE'),
-  () => createBeast('Leech', 5, 10, 'VULNERABLE', null),
-  () => createBeast('Electric Eel', 10, 15, 'SHOCK', null),
-  () => createBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK'),
-  () => createBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON'),
-  () => createBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20')
+  () => makeBeast('Tanky', 5, 8, null, null, 'Common'),
+  () => makeBeast('Brawler', 10, 20, null, null, 'Common'),
+  () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon'),
+  () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon'),
+  () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon'),
+  () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare'),
+  () => makeBeast('Ice Element', 10, 15, 'ICE', null, 'Rare'),
+  () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare'),
+  () => makeBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE', 'Epic'),
+  () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic'),
+  () => makeBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON', 'Legendary'),
+  () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary')
 ];
 
 function generateShop() {
@@ -112,25 +138,61 @@ function generateShop() {
     <button class="btn full-width">Buy (5 Gold)</button>
   `;
   epochCard.querySelector('button').onclick = () => {
-    state = buyEpochs(state, 5);
-    // Because the economy tool expects exactly the amount to buy but our logic means 10 epochs for 5 gold.
-    // The economy code does: gold - amount, epochs + amount. So it gives 5 epochs for 5 gold. Let's fix that.
-    // We will just do it manually here for the "10 epochs for 5 gold" deal.
-    if (state.gold >= 0) { // Actually economy.js already subtracted 5 and gave 5. We need to give +5 more to make it 10.
-      state.epochs += 5; 
+    if (state.gold >= 5) {
+      state.gold -= 5;
+      state.epochs += 10;
       updateUI();
+    } else {
+      alert("Not enough gold!");
     }
   };
   elShopItems.appendChild(epochCard);
 
+  // Upgrade Shop item
+  if (state.shopLevel < 5) {
+    const upgCard = document.createElement('div');
+    upgCard.className = 'shop-card';
+    upgCard.innerHTML = `
+      <h3>Upgrade Shop</h3>
+      <p>Unlock better beasts.</p>
+      <button class="btn full-width">Buy (${state.upgradeCost} Gold)</button>
+    `;
+    upgCard.querySelector('button').onclick = () => {
+      if (state.gold >= state.upgradeCost) {
+        state.gold -= state.upgradeCost;
+        state.shopLevel++;
+        state.upgradeCost += 20;
+        updateUI();
+        generateShop();
+      } else {
+        alert("Not enough gold!");
+      }
+    };
+    elShopItems.appendChild(upgCard);
+  }
+
+  const levelLimits = {
+    1: ['Common', 'Uncommon'],
+    2: ['Common', 'Uncommon', 'Rare'],
+    3: ['Common', 'Uncommon', 'Rare', 'Epic'],
+    4: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'],
+    5: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
+  };
+  const allowed = levelLimits[Math.min(state.shopLevel, 5)];
+
   // Random Beasts
   for (let i=0; i<3; i++) {
-    const randBeast = shopPool[Math.floor(Math.random() * shopPool.length)]();
+    let randBeast;
+    while(true) {
+      randBeast = shopPool[Math.floor(Math.random() * shopPool.length)]();
+      if (allowed.includes(randBeast.rarity)) break;
+    }
+    
     randBeast.cost = 15;
     const card = document.createElement('div');
     card.className = 'shop-card';
     card.innerHTML = `
-      <h3>${randBeast.name}</h3>
+      <h3 class="rarity-${randBeast.rarity}">${randBeast.name}</h3>
       <p>Dmg: ${randBeast.minDamage}-${randBeast.maxDamage}</p>
       <p>${randBeast.appliesStatus ? `Applies ${randBeast.appliesStatus}` : ''}</p>
       <p>${randBeast.synergy ? `Synergy: ${randBeast.synergy}` : ''}</p>
@@ -268,7 +330,7 @@ function runEpochs() {
     currentGeneration++;
     updateUI();
     
-    setTimeout(tick, 200); // Slower animation (200ms per epoch)
+    setTimeout(tick, 1000); // Slower animation (1 epoch per second)
   }
   
   tick();
