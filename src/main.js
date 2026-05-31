@@ -6,6 +6,7 @@ function makeBeast(name, min, max, stat, syn, rarity, icon) {
   const b = createBeast(name, min, max, stat, syn);
   b.rarity = rarity;
   b.icon = icon;
+  b.id = Math.random().toString(36).substr(2, 9);
   return b;
 }
 
@@ -14,6 +15,7 @@ let state = {
   level: 1,
   gold: 20, // Start with some gold to buy initial epochs
   epochs: 0,
+  totalEpochsRun: 0,
   shopLevel: 1,
   upgradeCost: 20,
   shopOfferings: [],
@@ -51,11 +53,12 @@ const elBestSequenceDisplay = document.getElementById('best-sequence-display');
 const elShopItems = document.getElementById('shop-items');
 const btnRunEpochs = document.getElementById('btn-run-epochs');
 const btnFight = document.getElementById('btn-fight');
-const canvas = document.getElementById('ga-chart');
+const canvas = document.getElementById('bump-chart');
 const ctx = canvas.getContext('2d');
 
 // --- Chart State ---
-let chartData = [];
+let bestSequenceHistory = [];
+let beastElements = {};
 
 // --- Init ---
 function init() {
@@ -327,25 +330,49 @@ function runEpochs() {
     scored.sort((a, b) => b.score - a.score); // Descending
     
     // Track best
-    let newBestFound = false;
     if (scored[0].score > bestExpectedDmg) {
       bestExpectedDmg = scored[0].score;
+      const oldSeq = bestSequence;
       bestSequence = [...scored[0].seq];
-      newBestFound = true;
-    }
-    
-    // Update Best Sequence UI
-    if (newBestFound || currentGeneration === 0) {
-      elBestSequenceDisplay.innerHTML = '';
-      bestSequence.slice(0, 5).forEach(b => {
-        const div = document.createElement('div');
-        div.className = 'best-sequence-item highlight';
-        div.textContent = `${b.icon} ${b.name}`;
-        elBestSequenceDisplay.appendChild(div);
+      
+      // Update Best Sequence UI
+      const activeSeq = bestSequence.slice(0, 5);
+      activeSeq.forEach((b) => {
+        if (!beastElements[b.id]) {
+          const div = document.createElement('div');
+          div.className = 'best-sequence-item';
+          div.textContent = `${b.icon} ${b.name}`;
+          div.style.opacity = '0';
+          elBestSequenceDisplay.appendChild(div);
+          beastElements[b.id] = div;
+        }
       });
-      setTimeout(() => {
-        Array.from(elBestSequenceDisplay.children).forEach(c => c.classList.remove('highlight'));
-      }, 500);
+
+      activeSeq.forEach((b, idx) => {
+        const el = beastElements[b.id];
+        const oldIdx = oldSeq.findIndex(ob => ob.id === b.id);
+        const targetX = idx * 110; 
+        
+        el.style.opacity = '1';
+        
+        if (oldIdx !== -1 && oldIdx > idx) {
+          el.style.transform = `translate(${targetX}px, -30px)`;
+          el.style.zIndex = '10';
+          setTimeout(() => {
+            el.style.transform = `translate(${targetX}px, 0px)`;
+            el.style.zIndex = '1';
+          }, 200);
+        } else {
+          el.style.transform = `translate(${targetX}px, 0px)`;
+          el.style.zIndex = '1';
+        }
+      });
+
+      Object.keys(beastElements).forEach(id => {
+        if (!activeSeq.find(b => b.id === id)) {
+          beastElements[id].style.opacity = '0';
+        }
+      });
       
       renderFightArena();
     }
@@ -361,10 +388,14 @@ function runEpochs() {
     }
 
     // Chart Data
-    const avg = scored.reduce((sum, item) => sum + item.score, 0) / POP_SIZE;
-    chartData.push({ best: bestExpectedDmg, avg });
-    if (chartData.length > 50) chartData.shift();
-    drawChart();
+    state.totalEpochsRun++;
+    bestSequenceHistory.push({
+      epoch: state.totalEpochsRun,
+      score: scored[0].score,
+      seq: scored[0].seq.slice(0, 5)
+    });
+    if (bestSequenceHistory.length > 50) bestSequenceHistory.shift();
+    drawBumpChart();
 
     // Selection & Crossover (Elitism + Top Half)
     const newPop = [];
@@ -396,35 +427,71 @@ function runEpochs() {
   tick();
 }
 
-function drawChart() {
+function drawBumpChart() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (chartData.length < 2) return;
+  if (bestSequenceHistory.length < 2) return;
   
-  const minVal = 0;
-  const maxVal = Math.max(...chartData.map(d => d.best)) * 1.2;
+  const PADDING_X = 40;
+  const PADDING_Y = 20;
+  const graphWidth = canvas.width - PADDING_X * 2 - 80;
+  const graphHeight = canvas.height - PADDING_Y * 2;
   
-  const dx = canvas.width / (chartData.length - 1);
-  const scaleY = val => canvas.height - (val / maxVal) * canvas.height;
+  const minEpoch = bestSequenceHistory[0].epoch;
+  const maxEpoch = bestSequenceHistory[bestSequenceHistory.length - 1].epoch;
+  const maxScore = Math.max(...bestSequenceHistory.map(h => h.score));
+  
+  const dx = maxEpoch > minEpoch ? graphWidth / (maxEpoch - minEpoch) : 0;
+  
+  const activeIds = new Set();
+  bestSequenceHistory.forEach(h => h.seq.forEach(b => activeIds.add(b.id)));
+  
+  const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#c084fc', '#f472b6', '#a78bfa', '#38bdf8'];
+  const idColorMap = {};
+  Array.from(activeIds).forEach((id, i) => idColorMap[id] = colors[i % colors.length]);
 
-  // Draw Avg (Blue)
+  Array.from(activeIds).forEach(id => {
+    ctx.beginPath();
+    ctx.strokeStyle = idColorMap[id];
+    ctx.lineWidth = 2;
+    let started = false;
+    
+    bestSequenceHistory.forEach(h => {
+      const idx = h.seq.findIndex(b => b.id === id);
+      const x = PADDING_X + (h.epoch - minEpoch) * dx;
+      if (idx !== -1) {
+        const y = PADDING_Y + (idx / 4) * graphHeight;
+        if (!started) {
+          ctx.moveTo(x, y);
+          started = true;
+        } else {
+          ctx.lineTo(x, y);
+        }
+      } else {
+        started = false;
+      }
+    });
+    ctx.stroke();
+  });
+  
   ctx.beginPath();
-  ctx.strokeStyle = '#3b82f6';
-  ctx.lineWidth = 2;
-  chartData.forEach((d, i) => {
-    if (i===0) ctx.moveTo(i * dx, scaleY(d.avg));
-    else ctx.lineTo(i * dx, scaleY(d.avg));
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.lineWidth = 4;
+  bestSequenceHistory.forEach((h, i) => {
+    const x = PADDING_X + (h.epoch - minEpoch) * dx;
+    const y = canvas.height - PADDING_Y - (h.score / (maxScore || 1)) * graphHeight;
+    if (i===0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
   });
   ctx.stroke();
 
-  // Draw Best (Green)
-  ctx.beginPath();
-  ctx.strokeStyle = '#22c55e';
-  ctx.lineWidth = 2;
-  chartData.forEach((d, i) => {
-    if (i===0) ctx.moveTo(i * dx, scaleY(d.best));
-    else ctx.lineTo(i * dx, scaleY(d.best));
-  });
-  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.font = '10px monospace';
+  ctx.fillText(`Epochs ->`, canvas.width / 2, canvas.height - 5);
+  ctx.fillText(`Score: ${maxScore.toFixed(0)}`, canvas.width - 70, PADDING_Y + 10);
+  
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillText(`Pos 1`, 5, PADDING_Y + 5);
+  ctx.fillText(`Pos 5`, 5, canvas.height - PADDING_Y);
 }
 
 // --- Combat ---
@@ -523,7 +590,7 @@ function finishCombat() {
       state.gold += 50 + (state.level * 10);
       bossMaxHp = Math.floor(40 * Math.pow(1.5, state.level - 1));
       bossHp = bossMaxHp;
-      chartData = [];
+      bestSequenceHistory = [];
       bestExpectedDmg = 0;
       rollShop();
       renderShop();
