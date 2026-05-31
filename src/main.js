@@ -430,10 +430,11 @@ function drawBumpChart() {
   const rowH = numEpochs > 1 ? graphH / (numEpochs - 1) : graphH;
   
   // Column centers aligned to the 5 grid slots above
+  // Right-to-left orientation: index 0 is rightmost
   const colW = graphW / 5;
   const colCenters = [];
   for (let i = 0; i < 5; i++) {
-    colCenters.push(MARGIN_LEFT + colW * i + colW / 2);
+    colCenters.push(MARGIN_LEFT + colW * (4 - i) + colW / 2);
   }
   
   // Draw faint vertical grid lines for position columns

@@ -229,9 +229,11 @@ h1, h2, h3 {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 4px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-family: monospace;
   margin-bottom: 0;
+  margin-right: 65px; /* Aligns with graph MARGIN_RIGHT */
+  direction: rtl; /* First on right, last on left */
 }
 
 .sequence-slot {
