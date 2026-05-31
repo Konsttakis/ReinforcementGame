@@ -58,6 +58,41 @@ const ctx = canvas.getContext('2d');
 
 // --- Chart State ---
 let bestSequenceHistory = [];
+const elOverlay = document.getElementById('screen-overlay');
+const elOverlayContent = document.getElementById('overlay-content');
+const elOverlayTitle = document.getElementById('overlay-title');
+const elOverlayText = document.getElementById('overlay-text');
+const btnRestart = document.getElementById('btn-restart');
+const elToastContainer = document.getElementById('toast-container');
+
+// --- Custom UI Overlays ---
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  elToastContainer.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    setTimeout(() => t.remove(), 300);
+  }, 2000);
+}
+
+function showOverlay(title, text, type, showRestart) {
+  elOverlayContent.className = `overlay-content ${type}`;
+  elOverlayTitle.textContent = title;
+  elOverlayText.textContent = text;
+  if (showRestart) {
+    btnRestart.classList.remove('hidden');
+    btnRestart.onclick = () => location.reload();
+  } else {
+    btnRestart.classList.add('hidden');
+  }
+  elOverlay.classList.remove('hidden');
+}
+
+function hideOverlay() {
+  elOverlay.classList.add('hidden');
+}
 
 // --- Init ---
 function init() {
@@ -199,7 +234,7 @@ function renderShop() {
       renderShop();
       updateUI();
     } else {
-      alert("Not enough gold!");
+      showToast("Not enough gold!");
     }
   };
   elShopItems.appendChild(refreshCard);
@@ -218,7 +253,7 @@ function renderShop() {
       state.epochs += 10;
       updateUI();
     } else {
-      alert("Not enough gold!");
+      showToast("Not enough gold!");
     }
   };
   elShopItems.appendChild(epochCard);
@@ -240,7 +275,7 @@ function renderShop() {
         updateUI();
         renderShop();
       } else {
-        alert("Not enough gold!");
+        showToast("Not enough gold!");
       }
     };
     elShopItems.appendChild(upgCard);
@@ -259,7 +294,7 @@ function renderShop() {
     `;
     card.querySelector('button').onclick = () => {
       if (state.beasts.length >= 8) {
-        alert("Your inventory is full (8 beasts max)!");
+        showToast("Your inventory is full (8 max)!");
         return;
       }
       const oldGold = state.gold;
@@ -269,6 +304,8 @@ function renderShop() {
         renderBeasts();
         updateUI();
         renderShop();
+      } else {
+        showToast("Not enough gold!");
       }
     };
     elShopItems.appendChild(card);
@@ -300,7 +337,7 @@ function evaluateFitness(seq, sims = 10) {
 
 function runEpochs() {
   if (state.epochs <= 0) {
-    alert("Not enough epochs! Buy more compute in the shop.");
+    showToast("Not enough epochs! Buy more compute in the shop.");
     return;
   }
   
@@ -627,22 +664,25 @@ function finishCombat() {
   if (bossHp <= 0) {
     logCombat("BOSS DEFEATED!", "kill");
     setTimeout(() => {
-      state.level++;
-      state.gold += 50 + (state.level * 10);
-      bossMaxHp = Math.floor(40 * Math.pow(1.5, state.level - 1));
-      bossHp = bossMaxHp;
-      bestSequenceHistory = [];
-      bestExpectedDmg = 0;
-      rollShop();
-      renderShop();
-      updateUI();
-      btnFight.disabled = false;
-      alert(`Level ${state.level-1} Cleared! You earned gold.`);
-    }, 1500);
+      showOverlay("Level Cleared!", "Congrats!", "win", false);
+      setTimeout(() => {
+        hideOverlay();
+        state.level++;
+        state.gold += 50 + (state.level * 10);
+        bossMaxHp = Math.floor(40 * Math.pow(1.5, state.level - 1));
+        bossHp = bossMaxHp;
+        bestSequenceHistory = [];
+        bestExpectedDmg = 0;
+        rollShop();
+        renderShop();
+        updateUI();
+        btnFight.disabled = false;
+      }, 500); // Wait 500ms before removing the overlay
+    }, 1000);
   } else {
     logCombat("YOU FAILED TO KILL THE BOSS.", "danger");
     setTimeout(() => {
-      alert("GAME OVER. The Boss survived. Refresh to restart.");
+      showOverlay("Game Over", "The Boss survived. Your beasts perished.", "loss", true);
     }, 1000);
   }
 }
