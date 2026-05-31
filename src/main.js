@@ -2,9 +2,10 @@ import { createBeast, calculateDamage } from './combat.js';
 import { orderCrossover, mutateSwap } from './ga.js';
 import { buyBeast, buyEpochs } from './economy.js';
 
-function makeBeast(name, min, max, stat, syn, rarity) {
+function makeBeast(name, min, max, stat, syn, rarity, icon) {
   const b = createBeast(name, min, max, stat, syn);
   b.rarity = rarity;
+  b.icon = icon;
   return b;
 }
 
@@ -15,10 +16,11 @@ let state = {
   epochs: 0,
   shopLevel: 1,
   upgradeCost: 20,
+  shopOfferings: [],
   beasts: [
-    makeBeast('Tanky', 5, 8, null, null, 'Common'),
-    makeBeast('Brawler', 10, 20, null, null, 'Common'),
-    makeBeast('Brawler', 10, 20, null, null, 'Common')
+    makeBeast('Tanky', 5, 8, null, null, 'Common', '🐢'),
+    makeBeast('Brawler', 10, 20, null, null, 'Common', '🥊'),
+    makeBeast('Brawler', 10, 20, null, null, 'Common', '🥊')
   ]
 };
 
@@ -41,6 +43,8 @@ const elBossHp = document.getElementById('boss-hp-display');
 const elBossHpMax = document.getElementById('boss-hp-max');
 const elBossHpBar = document.getElementById('boss-hp-bar');
 const elBeastSlots = document.getElementById('beast-slots');
+const elArenaLeft = document.getElementById('arena-left');
+const elArenaBoss = document.getElementById('arena-boss');
 const elCombatLog = document.getElementById('combat-log');
 const elMatrixView = document.getElementById('matrix-view');
 const elBestSequenceDisplay = document.getElementById('best-sequence-display');
@@ -56,10 +60,12 @@ let chartData = [];
 // --- Init ---
 function init() {
   shuffle(state.beasts);
+  rollShop();
   updateUI();
-  generateShop();
+  renderShop();
   renderBeasts();
   bestSequence = [...state.beasts];
+  renderFightArena();
 }
 
 // --- UI Updates ---
@@ -79,17 +85,15 @@ function renderBeasts() {
   state.beasts.forEach((b, idx) => {
     const div = document.createElement('div');
     div.className = 'beast-item';
-    const status = idx < 5 ? 'Active' : 'Bench';
     div.innerHTML = `
       <div class="beast-header">
         <div class="beast-info">
-          <div class="beast-name rarity-${b.rarity}">[${status}] ${idx + 1}. ${b.name}</div>
+          <div class="beast-name rarity-${b.rarity}">${b.icon} ${b.name}</div>
           <div class="beast-stats">Dmg: ${b.minDamage}-${b.maxDamage} ${b.appliesStatus ? `| Applies ${b.appliesStatus}` : ''} ${b.synergy ? `| ${b.synergy}` : ''}</div>
         </div>
         <button class="btn-sell">Sell (5G)</button>
       </div>
     `;
-    if (idx >= 5) div.style.opacity = '0.6';
     
     div.querySelector('.btn-sell').onclick = () => {
       if (btnFight.disabled && bossHp > 0) return; // Prevent selling during computing/fighting
@@ -97,9 +101,26 @@ function renderBeasts() {
       state.gold += 5;
       updateUI();
       renderBeasts();
+      if (!btnRunEpochs.disabled) {
+        bestSequence = [...state.beasts];
+        renderFightArena();
+      }
     };
 
     elBeastSlots.appendChild(div);
+  });
+}
+
+function renderFightArena(activeIndex = -1) {
+  elArenaLeft.innerHTML = '';
+  const activeSeq = bestSequence.slice(0, 5);
+  activeSeq.forEach((b, idx) => {
+    const div = document.createElement('div');
+    div.className = 'beast-icon';
+    if (idx === activeIndex) div.classList.add('active');
+    div.textContent = b.icon;
+    div.title = b.name;
+    elArenaLeft.appendChild(div);
   });
 }
 
@@ -113,23 +134,74 @@ function logCombat(msg, type = 'normal') {
 
 // --- Shop Logic ---
 const shopPool = [
-  () => makeBeast('Tanky', 5, 8, null, null, 'Common'),
-  () => makeBeast('Brawler', 10, 20, null, null, 'Common'),
-  () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon'),
-  () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon'),
-  () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon'),
-  () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare'),
-  () => makeBeast('Ice Element', 10, 15, 'ICE', null, 'Rare'),
-  () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare'),
-  () => makeBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE', 'Epic'),
-  () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic'),
-  () => makeBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON', 'Legendary'),
-  () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary')
+  { factory: () => makeBeast('Tanky', 5, 8, null, null, 'Common', '🐢'), rarity: 'Common' },
+  { factory: () => makeBeast('Brawler', 10, 20, null, null, 'Common', '🥊'), rarity: 'Common' },
+  { factory: () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon', '🦟'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon', '🧙'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon', '🐍'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare', '🔥'), rarity: 'Rare' },
+  { factory: () => makeBeast('Ice Element', 10, 15, 'ICE', null, 'Rare', '❄️'), rarity: 'Rare' },
+  { factory: () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare', '⚡'), rarity: 'Rare' },
+  { factory: () => makeBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE', 'Epic', '🚂'), rarity: 'Epic' },
+  { factory: () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic', '🦅'), rarity: 'Epic' },
+  { factory: () => makeBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON', 'Legendary', '🗿'), rarity: 'Legendary' },
+  { factory: () => makeBeast('Reaper', 5, 15, null, 'DOUBLE_IF_POISONED', 'Legendary', '💀'), rarity: 'Legendary' }
 ];
 
-function generateShop() {
+function rollShop() {
+  state.shopOfferings = [];
+  const levelWeights = {
+    1: { 'Common': 80, 'Uncommon': 20 },
+    2: { 'Common': 60, 'Uncommon': 30, 'Rare': 10 },
+    3: { 'Common': 50, 'Uncommon': 30, 'Rare': 15, 'Epic': 5 },
+    4: { 'Common': 40, 'Uncommon': 30, 'Rare': 15, 'Epic': 10, 'Legendary': 5 },
+    5: { 'Common': 30, 'Uncommon': 30, 'Rare': 20, 'Epic': 12, 'Legendary': 8 }
+  };
+  const weights = levelWeights[Math.min(state.shopLevel, 5)];
+  
+  for(let i=0; i<3; i++) {
+    let rand = Math.random() * 100;
+    let chosenRarity = 'Common';
+    let cumulative = 0;
+    for (const [rarity, weight] of Object.entries(weights)) {
+      cumulative += weight;
+      if (rand <= cumulative) {
+        chosenRarity = rarity;
+        break;
+      }
+    }
+    
+    const validBeasts = shopPool.filter(p => p.rarity === chosenRarity);
+    const randBlueprint = validBeasts[Math.floor(Math.random() * validBeasts.length)];
+    const randBeast = randBlueprint.factory();
+    randBeast.cost = 15;
+    state.shopOfferings.push(randBeast);
+  }
+}
+
+function renderShop() {
   elShopItems.innerHTML = '';
   
+  // Refresh item
+  const refreshCard = document.createElement('div');
+  refreshCard.className = 'shop-card';
+  refreshCard.innerHTML = `
+    <h3>Refresh Shop</h3>
+    <p>Roll new beasts.</p>
+    <button class="btn full-width">Buy (5 Gold)</button>
+  `;
+  refreshCard.querySelector('button').onclick = () => {
+    if (state.gold >= 5) {
+      state.gold -= 5;
+      rollShop();
+      renderShop();
+      updateUI();
+    } else {
+      alert("Not enough gold!");
+    }
+  };
+  elShopItems.appendChild(refreshCard);
+
   // Epoch item
   const epochCard = document.createElement('div');
   epochCard.className = 'shop-card';
@@ -164,7 +236,7 @@ function generateShop() {
         state.shopLevel++;
         state.upgradeCost += 20;
         updateUI();
-        generateShop();
+        renderShop();
       } else {
         alert("Not enough gold!");
       }
@@ -172,28 +244,12 @@ function generateShop() {
     elShopItems.appendChild(upgCard);
   }
 
-  const levelLimits = {
-    1: ['Common', 'Uncommon'],
-    2: ['Common', 'Uncommon', 'Rare'],
-    3: ['Common', 'Uncommon', 'Rare', 'Epic'],
-    4: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'],
-    5: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary']
-  };
-  const allowed = levelLimits[Math.min(state.shopLevel, 5)];
-
-  // Random Beasts
-  for (let i=0; i<3; i++) {
-    let randBeast;
-    while(true) {
-      randBeast = shopPool[Math.floor(Math.random() * shopPool.length)]();
-      if (allowed.includes(randBeast.rarity)) break;
-    }
-    
-    randBeast.cost = 15;
+  // Render Offerings
+  state.shopOfferings.forEach((randBeast, idx) => {
     const card = document.createElement('div');
     card.className = 'shop-card';
     card.innerHTML = `
-      <h3 class="rarity-${randBeast.rarity}">${randBeast.name}</h3>
+      <h3 class="rarity-${randBeast.rarity}">${randBeast.icon} ${randBeast.name} <span style="font-size:0.7em">[${randBeast.rarity}]</span></h3>
       <p>Dmg: ${randBeast.minDamage}-${randBeast.maxDamage}</p>
       <p>${randBeast.appliesStatus ? `Applies ${randBeast.appliesStatus}` : ''}</p>
       <p>${randBeast.synergy ? `Synergy: ${randBeast.synergy}` : ''}</p>
@@ -207,13 +263,14 @@ function generateShop() {
       const oldGold = state.gold;
       state = buyBeast(state, randBeast);
       if (state.gold < oldGold) { // Success
+        state.shopOfferings.splice(idx, 1);
         renderBeasts();
         updateUI();
-        card.remove();
+        renderShop();
       }
     };
     elShopItems.appendChild(card);
-  }
+  });
 }
 
 // --- GA Implementation ---
@@ -283,12 +340,14 @@ function runEpochs() {
       bestSequence.slice(0, 5).forEach(b => {
         const div = document.createElement('div');
         div.className = 'best-sequence-item highlight';
-        div.textContent = b.name;
+        div.textContent = `${b.icon} ${b.name}`;
         elBestSequenceDisplay.appendChild(div);
       });
       setTimeout(() => {
         Array.from(elBestSequenceDisplay.children).forEach(c => c.classList.remove('highlight'));
       }, 500);
+      
+      renderFightArena();
     }
     
     // Render Matrix
@@ -442,6 +501,12 @@ function fight() {
     }
 
     updateUI();
+    renderFightArena(index); // visually bump the active beast
+    
+    // Boss flash effect
+    elArenaBoss.style.background = 'rgba(239, 68, 68, 0.5)';
+    setTimeout(() => { elArenaBoss.style.background = '#333'; }, 200);
+
     index++;
     setTimeout(attackStep, 500);
   }
@@ -450,6 +515,7 @@ function fight() {
 }
 
 function finishCombat() {
+  renderFightArena(-1);
   if (bossHp <= 0) {
     logCombat("BOSS DEFEATED!", "kill");
     setTimeout(() => {
@@ -459,7 +525,8 @@ function finishCombat() {
       bossHp = bossMaxHp;
       chartData = [];
       bestExpectedDmg = 0;
-      generateShop();
+      rollShop();
+      renderShop();
       updateUI();
       btnFight.disabled = false;
       alert(`Level ${state.level-1} Cleared! You earned gold.`);
