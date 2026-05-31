@@ -134,7 +134,7 @@ function renderBeasts() {
         <button class="btn-sell">Sell (5G)</button>
       </div>
     `;
-    
+
     div.querySelector('.btn-sell').onclick = () => {
       if (btnFight.disabled && bossHp > 0) return; // Prevent selling during computing/fighting
       state.beasts.splice(idx, 1);
@@ -213,8 +213,8 @@ function rollShop() {
     5: { 'Common': 30, 'Uncommon': 30, 'Rare': 20, 'Epic': 12, 'Legendary': 8 }
   };
   const weights = levelWeights[Math.min(state.shopLevel, 5)];
-  
-  for(let i=0; i<3; i++) {
+
+  for (let i = 0; i < 3; i++) {
     let rand = Math.random() * 100;
     let chosenRarity = 'Common';
     let cumulative = 0;
@@ -225,7 +225,7 @@ function rollShop() {
         break;
       }
     }
-    
+
     const validBeasts = shopPool.filter(p => p.rarity === chosenRarity);
     const randBlueprint = validBeasts[Math.floor(Math.random() * validBeasts.length)];
     const randBeast = randBlueprint.factory();
@@ -237,7 +237,7 @@ function rollShop() {
 function renderShop() {
   elShopItems.innerHTML = '';
   elShopActions.innerHTML = '';
-  
+
   // Refresh item
   const refreshCard = document.createElement('button');
   refreshCard.className = 'shop-action-btn';
@@ -333,7 +333,7 @@ function renderShop() {
 
 // Shuffle array
 function shuffle(array) {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length, randomIndex;
   while (currentIndex > 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
@@ -346,7 +346,7 @@ function shuffle(array) {
 function evaluateFitness(seq, sims = 10) {
   let total = 0;
   const activeSeq = seq.slice(0, 5);
-  for (let i=0; i<sims; i++) {
+  for (let i = 0; i < sims; i++) {
     total += calculateDamage(activeSeq, bossHp).totalDamage;
   }
   return total / sims;
@@ -357,12 +357,12 @@ function runEpochs() {
     showToast("Not enough epochs! Buy more compute in the shop.");
     return;
   }
-  
+
   btnRunEpochs.disabled = true;
   let currentGeneration = 0;
   const maxGenerations = Math.min(state.epochs, 50); // Run max 50 per click for visualization
   state.epochs -= maxGenerations;
-  
+
   // Init population if first run or invalidated
   if (population.length === 0 || population[0].length !== state.beasts.length) {
     population = [];
@@ -383,7 +383,7 @@ function runEpochs() {
     // Evaluate
     const scored = population.map(seq => ({ seq, score: evaluateFitness(seq) }));
     scored.sort((a, b) => b.score - a.score); // Descending
-    
+
     // Track best
     const prevSeq = bestSequence.slice(0, 5);
     if (scored[0].score > bestExpectedDmg) {
@@ -411,16 +411,16 @@ function runEpochs() {
       slots[i].textContent = `${i + 1}`;
       slots[i].className = 'sequence-slot empty';
     }
-    
+
     renderFightArena();
-    
+
     // Render Matrix
     elMatrixView.innerHTML = '';
-    for (let i=0; i<Math.min(5, POP_SIZE); i++) {
+    for (let i = 0; i < Math.min(5, POP_SIZE); i++) {
       const isCulled = i >= POP_SIZE / 2;
       const div = document.createElement('div');
       div.className = `matrix-row ${isCulled ? 'culled' : ''}`;
-      div.textContent = `[${scored[i].seq.map(b => b.name.substring(0,3)).join('|')}] - Fit: ${scored[i].score.toFixed(1)}`;
+      div.textContent = `[${scored[i].seq.map(b => b.name.substring(0, 3)).join('|')}] - Fit: ${scored[i].score.toFixed(1)}`;
       elMatrixView.appendChild(div);
     }
 
@@ -439,16 +439,16 @@ function runEpochs() {
     // Keep top 2 (Elitism)
     newPop.push([...scored[0].seq]);
     newPop.push([...scored[1].seq]);
-    
-    while(newPop.length < POP_SIZE) {
+
+    while (newPop.length < POP_SIZE) {
       // Select from top half
-      const p1 = scored[Math.floor(Math.random() * (POP_SIZE/2))].seq;
-      const p2 = scored[Math.floor(Math.random() * (POP_SIZE/2))].seq;
-      
+      const p1 = scored[Math.floor(Math.random() * (POP_SIZE / 2))].seq;
+      const p2 = scored[Math.floor(Math.random() * (POP_SIZE / 2))].seq;
+
       const start = Math.floor(Math.random() * p1.length);
       const end = Math.floor(Math.random() * (p1.length - start)) + start + 1;
       let child = orderCrossover(p1, p2, start, end);
-      
+
       if (Math.random() < 0.5) { // 50% mutation rate
         child = mutateSwap(child);
       }
@@ -457,10 +457,10 @@ function runEpochs() {
     population = newPop;
     currentGeneration++;
     updateUI();
-    
-    setTimeout(tick, 1000); // Slower animation (1 epoch per second)
+
+    setTimeout(tick, 150); // Faster brutalist animation
   }
-  
+
   tick();
 }
 
@@ -468,26 +468,26 @@ function drawBumpChart() {
   const container = canvas.parentElement;
   const displayW = container.clientWidth;
   if (bestSequenceHistory.length < 1) return;
-  
+
   const numEpochs = bestSequenceHistory.length;
   const ROW_HEIGHT = 20; // 20px per epoch
   const MARGIN_TOP = 15;
   const MARGIN_BOTTOM = 15;
   const MARGIN_LEFT = 0;
   const MARGIN_RIGHT = 65;
-  
+
   const requiredH = Math.max(container.clientHeight, (numEpochs - 1) * ROW_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM);
   canvas.style.height = `${requiredH}px`;
-  
+
   const dpr = window.devicePixelRatio || 1;
   canvas.width = displayW * dpr;
   canvas.height = requiredH * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  
+
   ctx.clearRect(0, 0, displayW, requiredH);
-  
+
   const graphW = displayW - MARGIN_LEFT - MARGIN_RIGHT;
-  
+
   // Column centers aligned to the 5 grid slots above
   // Right-to-left orientation: index 0 is rightmost
   const colW = graphW / 5;
@@ -495,19 +495,19 @@ function drawBumpChart() {
   for (let i = 0; i < 5; i++) {
     colCenters.push(MARGIN_LEFT + colW * (4 - i) + colW / 2);
   }
-  
-  // Draw faint vertical grid lines for position columns
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
+
+  // Draw stark vertical grid lines for position columns
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 2;
   colCenters.forEach(cx => {
     ctx.beginPath();
     ctx.moveTo(cx, MARGIN_TOP);
     ctx.lineTo(cx, requiredH - MARGIN_BOTTOM);
     ctx.stroke();
   });
-  
-  // Draw faint horizontal grid lines for epochs
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+
+  // Draw stark horizontal grid lines for epochs
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
   for (let i = 0; i < numEpochs; i++) {
     const y = MARGIN_TOP + (numEpochs - 1 - i) * ROW_HEIGHT;
     ctx.beginPath();
@@ -515,11 +515,11 @@ function drawBumpChart() {
     ctx.lineTo(MARGIN_LEFT + graphW, y);
     ctx.stroke();
   }
-  
+
   // Collect all unique beast IDs
   const allIds = new Set();
   bestSequenceHistory.forEach(h => h.seq.forEach(b => allIds.add(b.id)));
-  
+
   // Assign colors and find names
   const idColorMap = {};
   const idNameMap = {};
@@ -532,20 +532,20 @@ function drawBumpChart() {
       }
     });
   });
-  
+
   // Draw lines for each beast
   Array.from(allIds).forEach(id => {
     ctx.beginPath();
     ctx.strokeStyle = idColorMap[id];
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 4; // Bold brutalist lines
     ctx.lineJoin = 'round';
     let started = false;
-    
+
     bestSequenceHistory.forEach((h, epochIdx) => {
       const posIdx = h.seq.findIndex(b => b.id === id);
       // Y: newest epoch (last in array) at top, oldest at bottom
       const y = MARGIN_TOP + (numEpochs - 1 - epochIdx) * ROW_HEIGHT;
-      
+
       if (posIdx !== -1) {
         const x = colCenters[posIdx];
         if (!started) {
@@ -559,7 +559,7 @@ function drawBumpChart() {
       }
     });
     ctx.stroke();
-    
+
     // Draw a dot at the most recent position
     const latest = bestSequenceHistory[bestSequenceHistory.length - 1];
     const latestPos = latest.seq.findIndex(b => b.id === id);
@@ -572,7 +572,7 @@ function drawBumpChart() {
       ctx.fill();
     }
   });
-  
+
   // Draw epoch numbers & scores on the right margin
   ctx.font = '10px monospace';
   ctx.textAlign = 'left';
@@ -580,10 +580,10 @@ function drawBumpChart() {
     const h = bestSequenceHistory[i];
     const y = MARGIN_TOP + (numEpochs - 1 - i) * ROW_HEIGHT;
     const isLatest = (i === numEpochs - 1);
-    
-    ctx.fillStyle = isLatest ? '#fff' : 'rgba(255,255,255,0.35)';
+
+    ctx.fillStyle = isLatest ? '#fff' : 'rgba(255,255,255,0.5)';
     ctx.fillText(`E${h.epoch}`, MARGIN_LEFT + graphW + 5, y + 3);
-    ctx.fillStyle = isLatest ? 'var(--success)' : 'rgba(255,255,255,0.2)';
+    ctx.fillStyle = isLatest ? 'var(--success)' : 'rgba(255,255,255,0.4)';
     ctx.fillText(`${h.score.toFixed(0)}`, MARGIN_LEFT + graphW + 35, y + 3);
   }
 }
@@ -594,24 +594,24 @@ function fight() {
   elCombatLog.innerHTML = '';
   logCombat("--- COMBAT STARTED ---");
   logCombat(`Boss HP: ${bossHp}`);
-  
+
   // Temporarily set beasts to bestSequence for visual
   state.beasts = [...bestSequence];
   renderBeasts();
-  
+
   const activeSeq = bestSequence.slice(0, 5);
-  
+
   // Fight! (Single simulation with actual variance)
   let currentStatuses = new Set();
   let index = 0;
   let nextBeastBuff = 0;
-  
+
   function attackStep() {
     if (index >= activeSeq.length || bossHp <= 0) {
       finishCombat();
       return;
     }
-    
+
     const beast = activeSeq[index];
     let minDmg = beast.minDamage + nextBeastBuff;
     let maxDmg = beast.maxDamage + nextBeastBuff;
@@ -667,8 +667,8 @@ function fight() {
     }
 
     bossHp -= dmg;
-    logCombat(`${beast.name} attacks for ${dmg} damage! ${isCrit?'(CRIT!)':''}`);
-    
+    logCombat(`${beast.name} attacks for ${dmg} damage! ${isCrit ? '(CRIT!)' : ''}`);
+
     if (beast.appliesStatus) {
       currentStatuses.add(beast.appliesStatus);
       logCombat(`${beast.name} applied ${beast.appliesStatus}!`);
@@ -676,15 +676,15 @@ function fight() {
 
     updateUI();
     renderFightArena(index); // visually bump the active beast
-    
+
     // Boss flash effect
-    elArenaBoss.style.background = 'rgba(239, 68, 68, 0.5)';
-    setTimeout(() => { elArenaBoss.style.background = '#333'; }, 200);
+    elArenaBoss.style.background = 'var(--danger)';
+    setTimeout(() => { elArenaBoss.style.background = '#fff'; }, 150);
 
     index++;
-    setTimeout(attackStep, 500);
+    setTimeout(attackStep, 250);
   }
-  
+
   attackStep();
 }
 

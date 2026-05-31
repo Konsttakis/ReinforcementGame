@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "maestro": {
+      "source": "xenitV1/claude-code-maestro",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "ca4bc14b96f26b422b8d4994bcc8a0eeb41b16982d76d7e812d47ed9fbcb3f5a"
+    }
+  }
+}
