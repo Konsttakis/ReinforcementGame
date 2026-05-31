@@ -431,7 +431,7 @@ function runEpochs() {
       score: scored[0].score,
       seq: scored[0].seq.slice(0, 5)
     });
-    if (bestSequenceHistory.length > 15) bestSequenceHistory.shift();
+    if (bestSequenceHistory.length > 500) bestSequenceHistory.shift();
     drawBumpChart();
 
     // Selection & Crossover (Elitism + Top Half)
@@ -465,25 +465,28 @@ function runEpochs() {
 }
 
 function drawBumpChart() {
-  const dpr = window.devicePixelRatio || 1;
-  const displayW = canvas.clientWidth;
-  const displayH = canvas.clientHeight;
-  canvas.width = displayW * dpr;
-  canvas.height = displayH * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  
-  ctx.clearRect(0, 0, displayW, displayH);
+  const container = canvas.parentElement;
+  const displayW = container.clientWidth;
   if (bestSequenceHistory.length < 1) return;
   
+  const numEpochs = bestSequenceHistory.length;
+  const ROW_HEIGHT = 20; // 20px per epoch
+  const MARGIN_TOP = 15;
+  const MARGIN_BOTTOM = 15;
   const MARGIN_LEFT = 0;
   const MARGIN_RIGHT = 65;
-  const MARGIN_TOP = 5;
-  const MARGIN_BOTTOM = 5;
-  const graphW = displayW - MARGIN_LEFT - MARGIN_RIGHT;
-  const graphH = displayH - MARGIN_TOP - MARGIN_BOTTOM;
   
-  const numEpochs = bestSequenceHistory.length;
-  const rowH = numEpochs > 1 ? graphH / (numEpochs - 1) : graphH;
+  const requiredH = Math.max(container.clientHeight, (numEpochs - 1) * ROW_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM);
+  canvas.style.height = `${requiredH}px`;
+  
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = displayW * dpr;
+  canvas.height = requiredH * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  
+  ctx.clearRect(0, 0, displayW, requiredH);
+  
+  const graphW = displayW - MARGIN_LEFT - MARGIN_RIGHT;
   
   // Column centers aligned to the 5 grid slots above
   // Right-to-left orientation: index 0 is rightmost
@@ -499,14 +502,14 @@ function drawBumpChart() {
   colCenters.forEach(cx => {
     ctx.beginPath();
     ctx.moveTo(cx, MARGIN_TOP);
-    ctx.lineTo(cx, MARGIN_TOP + graphH);
+    ctx.lineTo(cx, requiredH - MARGIN_BOTTOM);
     ctx.stroke();
   });
   
   // Draw faint horizontal grid lines for epochs
   ctx.strokeStyle = 'rgba(255,255,255,0.04)';
   for (let i = 0; i < numEpochs; i++) {
-    const y = MARGIN_TOP + (numEpochs > 1 ? ((numEpochs - 1 - i) / (numEpochs - 1)) * graphH : 0);
+    const y = MARGIN_TOP + (numEpochs - 1 - i) * ROW_HEIGHT;
     ctx.beginPath();
     ctx.moveTo(MARGIN_LEFT, y);
     ctx.lineTo(MARGIN_LEFT + graphW, y);
@@ -541,7 +544,7 @@ function drawBumpChart() {
     bestSequenceHistory.forEach((h, epochIdx) => {
       const posIdx = h.seq.findIndex(b => b.id === id);
       // Y: newest epoch (last in array) at top, oldest at bottom
-      const y = MARGIN_TOP + (numEpochs > 1 ? ((numEpochs - 1 - epochIdx) / (numEpochs - 1)) * graphH : 0);
+      const y = MARGIN_TOP + (numEpochs - 1 - epochIdx) * ROW_HEIGHT;
       
       if (posIdx !== -1) {
         const x = colCenters[posIdx];
@@ -573,23 +576,16 @@ function drawBumpChart() {
   // Draw epoch numbers & scores on the right margin
   ctx.font = '10px monospace';
   ctx.textAlign = 'left';
-  const maxLabels = Math.min(numEpochs, 20);
-  const step = Math.max(1, Math.floor(numEpochs / maxLabels));
-  for (let i = 0; i < numEpochs; i += step) {
+  for (let i = 0; i < numEpochs; i++) {
     const h = bestSequenceHistory[i];
-    const y = MARGIN_TOP + (numEpochs > 1 ? ((numEpochs - 1 - i) / (numEpochs - 1)) * graphH : 0);
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    const y = MARGIN_TOP + (numEpochs - 1 - i) * ROW_HEIGHT;
+    const isLatest = (i === numEpochs - 1);
+    
+    ctx.fillStyle = isLatest ? '#fff' : 'rgba(255,255,255,0.35)';
     ctx.fillText(`E${h.epoch}`, MARGIN_LEFT + graphW + 5, y + 3);
-    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.fillStyle = isLatest ? 'var(--success)' : 'rgba(255,255,255,0.2)';
     ctx.fillText(`${h.score.toFixed(0)}`, MARGIN_LEFT + graphW + 35, y + 3);
   }
-  // Always label the latest epoch
-  const latestH = bestSequenceHistory[numEpochs - 1];
-  const latestY = MARGIN_TOP;
-  ctx.fillStyle = '#fff';
-  ctx.fillText(`E${latestH.epoch}`, MARGIN_LEFT + graphW + 5, latestY + 3);
-  ctx.fillStyle = 'var(--success)';
-  ctx.fillText(`${latestH.score.toFixed(0)}`, MARGIN_LEFT + graphW + 35, latestY + 3);
 }
 
 // --- Combat ---
