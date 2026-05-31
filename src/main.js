@@ -58,7 +58,8 @@ const btnFight = document.getElementById('btn-fight');
 const canvas = document.getElementById('bump-chart');
 const ctx = canvas.getContext('2d');
 
-// --- Chart State ---
+// --- GA State ---
+let population = [];
 let bestSequenceHistory = [];
 const elOverlay = document.getElementById('screen-overlay');
 const elOverlayContent = document.getElementById('overlay-content');
@@ -138,6 +139,7 @@ function renderBeasts() {
       if (btnFight.disabled && bossHp > 0) return; // Prevent selling during computing/fighting
       state.beasts.splice(idx, 1);
       state.gold += 5;
+      population = []; // Invalidate GA population
       updateUI();
       renderBeasts();
       if (!btnRunEpochs.disabled) {
@@ -315,6 +317,7 @@ function renderShop() {
       state = buyBeast(state, randBeast);
       if (state.gold < oldGold) { // Success
         state.shopOfferings.splice(idx, 1);
+        population = []; // Invalidate GA population
         renderBeasts();
         updateUI();
         renderShop();
@@ -360,11 +363,13 @@ function runEpochs() {
   const maxGenerations = Math.min(state.epochs, 50); // Run max 50 per click for visualization
   state.epochs -= maxGenerations;
   
-  // Init population if first run
-  let population = [];
-  for (let i = 0; i < POP_SIZE; i++) {
-    population.push([...state.beasts]);
-    shuffle(population[i]);
+  // Init population if first run or invalidated
+  if (population.length === 0 || population[0].length !== state.beasts.length) {
+    population = [];
+    for (let i = 0; i < POP_SIZE; i++) {
+      population.push([...state.beasts]);
+      shuffle(population[i]);
+    }
   }
 
   // Animation Loop
@@ -444,7 +449,7 @@ function runEpochs() {
       const end = Math.floor(Math.random() * (p1.length - start)) + start + 1;
       let child = orderCrossover(p1, p2, start, end);
       
-      if (Math.random() < 0.2) { // 20% mutation rate
+      if (Math.random() < 0.5) { // 50% mutation rate
         child = mutateSwap(child);
       }
       newPop.push(child);
@@ -700,6 +705,7 @@ function finishCombat() {
         bossMaxHp = Math.floor(40 * Math.pow(1.5, state.level - 1));
         bossHp = bossMaxHp;
         bestSequenceHistory = [];
+        population = []; // Invalidate GA population for new level
         bestExpectedDmg = 0;
         rollShop();
         renderShop();

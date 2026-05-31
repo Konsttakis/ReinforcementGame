@@ -21,13 +21,26 @@ export function orderCrossover(p1, p2, startIdx, endIdx) {
 
 export function mutateSwap(seq) {
   if (seq.length < 2) return seq;
-  const idx1 = Math.floor(Math.random() * seq.length);
-  let idx2 = Math.floor(Math.random() * seq.length);
-  while (idx1 === idx2) {
-    idx2 = Math.floor(Math.random() * seq.length);
+  const child = [...seq];
+  
+  // 50% chance to specifically swap an active beast with an inventory beast (if inventory exists)
+  if (child.length > 5 && Math.random() < 0.5) {
+    const activeIdx = Math.floor(Math.random() * 5);
+    const invIdx = 5 + Math.floor(Math.random() * (child.length - 5));
+    const temp = child[activeIdx];
+    child[activeIdx] = child[invIdx];
+    child[invIdx] = temp;
+    return child;
   }
-  const temp = seq[idx1];
-  seq[idx1] = seq[idx2];
-  seq[idx2] = temp;
-  return seq;
+  
+  // Otherwise, normal random swap anywhere
+  const idx1 = Math.floor(Math.random() * child.length);
+  let idx2 = Math.floor(Math.random() * child.length);
+  while (idx1 === idx2) {
+    idx2 = Math.floor(Math.random() * child.length);
+  }
+  const temp = child[idx1];
+  child[idx1] = child[idx2];
+  child[idx2] = temp;
+  return child;
 }
