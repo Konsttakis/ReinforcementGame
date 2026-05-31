@@ -58,7 +58,6 @@ const ctx = canvas.getContext('2d');
 
 // --- Chart State ---
 let bestSequenceHistory = [];
-let beastElements = {};
 
 // --- Init ---
 function init() {
@@ -330,52 +329,34 @@ function runEpochs() {
     scored.sort((a, b) => b.score - a.score); // Descending
     
     // Track best
+    const prevSeq = bestSequence.slice(0, 5);
     if (scored[0].score > bestExpectedDmg) {
       bestExpectedDmg = scored[0].score;
-      const oldSeq = bestSequence;
       bestSequence = [...scored[0].seq];
-      
-      // Update Best Sequence UI
-      const activeSeq = bestSequence.slice(0, 5);
-      activeSeq.forEach((b) => {
-        if (!beastElements[b.id]) {
-          const div = document.createElement('div');
-          div.className = 'best-sequence-item';
-          div.textContent = `${b.icon} ${b.name}`;
-          div.style.opacity = '0';
-          elBestSequenceDisplay.appendChild(div);
-          beastElements[b.id] = div;
-        }
-      });
-
-      activeSeq.forEach((b, idx) => {
-        const el = beastElements[b.id];
-        const oldIdx = oldSeq.findIndex(ob => ob.id === b.id);
-        const targetX = idx * 110; 
-        
-        el.style.opacity = '1';
-        
-        if (oldIdx !== -1 && oldIdx > idx) {
-          el.style.transform = `translate(${targetX}px, -30px)`;
-          el.style.zIndex = '10';
-          setTimeout(() => {
-            el.style.transform = `translate(${targetX}px, 0px)`;
-            el.style.zIndex = '1';
-          }, 200);
-        } else {
-          el.style.transform = `translate(${targetX}px, 0px)`;
-          el.style.zIndex = '1';
-        }
-      });
-
-      Object.keys(beastElements).forEach(id => {
-        if (!activeSeq.find(b => b.id === id)) {
-          beastElements[id].style.opacity = '0';
-        }
-      });
-      
-      renderFightArena();
     }
+
+    // Always update Best Sequence slots
+    const activeSeq = bestSequence.slice(0, 5);
+    const slots = elBestSequenceDisplay.querySelectorAll('.sequence-slot');
+    activeSeq.forEach((b, idx) => {
+      const slot = slots[idx];
+      const prevId = prevSeq[idx]?.id;
+      const jumped = prevId && prevId !== b.id;
+
+      slot.textContent = `${b.icon} ${b.name}`;
+      slot.className = 'sequence-slot filled';
+      if (jumped) {
+        slot.classList.add('jumped');
+        setTimeout(() => slot.classList.remove('jumped'), 500);
+      }
+    });
+    // Clear unused slots
+    for (let i = activeSeq.length; i < 5; i++) {
+      slots[i].textContent = `${i + 1}`;
+      slots[i].className = 'sequence-slot empty';
+    }
+    
+    renderFightArena();
     
     // Render Matrix
     elMatrixView.innerHTML = '';
@@ -428,38 +409,84 @@ function runEpochs() {
 }
 
 function drawBumpChart() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (bestSequenceHistory.length < 2) return;
+  const dpr = window.devicePixelRatio || 1;
+  const displayW = canvas.clientWidth;
+  const displayH = canvas.clientHeight;
+  canvas.width = displayW * dpr;
+  canvas.height = displayH * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   
-  const PADDING_X = 40;
-  const PADDING_Y = 20;
-  const graphWidth = canvas.width - PADDING_X * 2 - 80;
-  const graphHeight = canvas.height - PADDING_Y * 2;
+  ctx.clearRect(0, 0, displayW, displayH);
+  if (bestSequenceHistory.length < 1) return;
   
-  const minEpoch = bestSequenceHistory[0].epoch;
-  const maxEpoch = bestSequenceHistory[bestSequenceHistory.length - 1].epoch;
-  const maxScore = Math.max(...bestSequenceHistory.map(h => h.score));
+  const MARGIN_LEFT = 10;
+  const MARGIN_RIGHT = 70;
+  const MARGIN_TOP = 5;
+  const MARGIN_BOTTOM = 5;
+  const graphW = displayW - MARGIN_LEFT - MARGIN_RIGHT;
+  const graphH = displayH - MARGIN_TOP - MARGIN_BOTTOM;
   
-  const dx = maxEpoch > minEpoch ? graphWidth / (maxEpoch - minEpoch) : 0;
+  const numEpochs = bestSequenceHistory.length;
+  const rowH = numEpochs > 1 ? graphH / (numEpochs - 1) : graphH;
   
-  const activeIds = new Set();
-  bestSequenceHistory.forEach(h => h.seq.forEach(b => activeIds.add(b.id)));
+  // Column centers aligned to the 5 grid slots above
+  const colW = graphW / 5;
+  const colCenters = [];
+  for (let i = 0; i < 5; i++) {
+    colCenters.push(MARGIN_LEFT + colW * i + colW / 2);
+  }
   
+  // Draw faint vertical grid lines for position columns
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  colCenters.forEach(cx => {
+    ctx.beginPath();
+    ctx.moveTo(cx, MARGIN_TOP);
+    ctx.lineTo(cx, MARGIN_TOP + graphH);
+    ctx.stroke();
+  });
+  
+  // Draw faint horizontal grid lines for epochs
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  for (let i = 0; i < numEpochs; i++) {
+    const y = MARGIN_TOP + (numEpochs > 1 ? ((numEpochs - 1 - i) / (numEpochs - 1)) * graphH : 0);
+    ctx.beginPath();
+    ctx.moveTo(MARGIN_LEFT, y);
+    ctx.lineTo(MARGIN_LEFT + graphW, y);
+    ctx.stroke();
+  }
+  
+  // Collect all unique beast IDs
+  const allIds = new Set();
+  bestSequenceHistory.forEach(h => h.seq.forEach(b => allIds.add(b.id)));
+  
+  // Assign colors and find names
   const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#c084fc', '#f472b6', '#a78bfa', '#38bdf8'];
   const idColorMap = {};
-  Array.from(activeIds).forEach((id, i) => idColorMap[id] = colors[i % colors.length]);
-
-  Array.from(activeIds).forEach(id => {
+  const idNameMap = {};
+  Array.from(allIds).forEach((id, i) => {
+    idColorMap[id] = colors[i % colors.length];
+    bestSequenceHistory.forEach(h => {
+      const b = h.seq.find(b => b.id === id);
+      if (b) idNameMap[id] = b.icon;
+    });
+  });
+  
+  // Draw lines for each beast
+  Array.from(allIds).forEach(id => {
     ctx.beginPath();
     ctx.strokeStyle = idColorMap[id];
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
     let started = false;
     
-    bestSequenceHistory.forEach(h => {
-      const idx = h.seq.findIndex(b => b.id === id);
-      const x = PADDING_X + (h.epoch - minEpoch) * dx;
-      if (idx !== -1) {
-        const y = PADDING_Y + (idx / 4) * graphHeight;
+    bestSequenceHistory.forEach((h, epochIdx) => {
+      const posIdx = h.seq.findIndex(b => b.id === id);
+      // Y: newest epoch (last in array) at top, oldest at bottom
+      const y = MARGIN_TOP + (numEpochs > 1 ? ((numEpochs - 1 - epochIdx) / (numEpochs - 1)) * graphH : 0);
+      
+      if (posIdx !== -1) {
+        const x = colCenters[posIdx];
         if (!started) {
           ctx.moveTo(x, y);
           started = true;
@@ -471,27 +498,40 @@ function drawBumpChart() {
       }
     });
     ctx.stroke();
+    
+    // Draw a dot at the most recent position
+    const latest = bestSequenceHistory[bestSequenceHistory.length - 1];
+    const latestPos = latest.seq.findIndex(b => b.id === id);
+    if (latestPos !== -1) {
+      const dotX = colCenters[latestPos];
+      const dotY = MARGIN_TOP + 0; // newest is at top
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = idColorMap[id];
+      ctx.fill();
+    }
   });
   
-  ctx.beginPath();
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-  ctx.lineWidth = 4;
-  bestSequenceHistory.forEach((h, i) => {
-    const x = PADDING_X + (h.epoch - minEpoch) * dx;
-    const y = canvas.height - PADDING_Y - (h.score / (maxScore || 1)) * graphHeight;
-    if (i===0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  });
-  ctx.stroke();
-
-  ctx.fillStyle = '#fff';
+  // Draw epoch numbers & scores on the right margin
   ctx.font = '10px monospace';
-  ctx.fillText(`Epochs ->`, canvas.width / 2, canvas.height - 5);
-  ctx.fillText(`Score: ${maxScore.toFixed(0)}`, canvas.width - 70, PADDING_Y + 10);
-  
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
-  ctx.fillText(`Pos 1`, 5, PADDING_Y + 5);
-  ctx.fillText(`Pos 5`, 5, canvas.height - PADDING_Y);
+  ctx.textAlign = 'left';
+  const maxLabels = Math.min(numEpochs, 20);
+  const step = Math.max(1, Math.floor(numEpochs / maxLabels));
+  for (let i = 0; i < numEpochs; i += step) {
+    const h = bestSequenceHistory[i];
+    const y = MARGIN_TOP + (numEpochs > 1 ? ((numEpochs - 1 - i) / (numEpochs - 1)) * graphH : 0);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillText(`E${h.epoch}`, MARGIN_LEFT + graphW + 5, y + 3);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.fillText(`${h.score.toFixed(0)}`, MARGIN_LEFT + graphW + 35, y + 3);
+  }
+  // Always label the latest epoch
+  const latestH = bestSequenceHistory[numEpochs - 1];
+  const latestY = MARGIN_TOP;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`E${latestH.epoch}`, MARGIN_LEFT + graphW + 5, latestY + 3);
+  ctx.fillStyle = 'var(--success)';
+  ctx.fillText(`${latestH.score.toFixed(0)}`, MARGIN_LEFT + graphW + 35, latestY + 3);
 }
 
 // --- Combat ---

@@ -48,14 +48,19 @@
           <div class="ga-visuals">
             <div id="best-sequence-container" class="best-sequence-container">
               <h3>Best Sequence Found</h3>
-              <div id="best-sequence-display" class="best-sequence-display">
-                <!-- Best sequence injected here -->
+              <div class="sequence-and-graph">
+                <div id="best-sequence-display" class="best-sequence-display">
+                  <div class="sequence-slot empty">1</div>
+                  <div class="sequence-slot empty">2</div>
+                  <div class="sequence-slot empty">3</div>
+                  <div class="sequence-slot empty">4</div>
+                  <div class="sequence-slot empty">5</div>
+                </div>
+                <canvas id="bump-chart" width="550" height="400"></canvas>
               </div>
-            </div>
             <div id="matrix-view" class="matrix-view">
               <!-- Animated sequence visualizer -->
             </div>
-            <canvas id="bump-chart" width="600" height="250"></canvas>
           </div>
           <button id="btn-fight" class="btn danger full-width">LOCK IN & FIGHT</button>
         </div>
