@@ -34,6 +34,7 @@ const elBossHpBar = document.getElementById('boss-hp-bar');
 const elBeastSlots = document.getElementById('beast-slots');
 const elCombatLog = document.getElementById('combat-log');
 const elMatrixView = document.getElementById('matrix-view');
+const elBestSequenceDisplay = document.getElementById('best-sequence-display');
 const elShopItems = document.getElementById('shop-items');
 const btnRunEpochs = document.getElementById('btn-run-epochs');
 const btnFight = document.getElementById('btn-fight');
@@ -67,10 +68,12 @@ function renderBeasts() {
   state.beasts.forEach((b, idx) => {
     const div = document.createElement('div');
     div.className = 'beast-item';
+    const status = idx < 5 ? 'Active' : 'Bench';
     div.innerHTML = `
-      <div class="beast-name">${idx + 1}. ${b.name}</div>
+      <div class="beast-name">[${status}] ${idx + 1}. ${b.name}</div>
       <div class="beast-stats">Dmg: ${b.minDamage}-${b.maxDamage} ${b.appliesStatus ? `| Applies ${b.appliesStatus}` : ''} ${b.synergy ? `| ${b.synergy}` : ''}</div>
     `;
+    if (idx >= 5) div.style.opacity = '0.6';
     elBeastSlots.appendChild(div);
   });
 }
@@ -90,6 +93,11 @@ const shopPool = [
   () => createBeast('Fire Element', 10, 15, 'FIRE', null),
   () => createBeast('Ice Element', 10, 15, 'ICE', null),
   () => createBeast('Steam Roller', 15, 20, null, 'DOUBLE_IF_FIRE'),
+  () => createBeast('Leech', 5, 10, 'VULNERABLE', null),
+  () => createBeast('Electric Eel', 10, 15, 'SHOCK', null),
+  () => createBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK'),
+  () => createBeast('Gargoyle', 20, 30, null, 'CONSUME_POISON'),
+  () => createBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20')
 ];
 
 function generateShop() {
@@ -129,6 +137,10 @@ function generateShop() {
       <button class="btn full-width">Buy (15 Gold)</button>
     `;
     card.querySelector('button').onclick = () => {
+      if (state.beasts.length >= 8) {
+        alert("Your inventory is full (8 beasts max)!");
+        return;
+      }
       const oldGold = state.gold;
       state = buyBeast(state, randBeast);
       if (state.gold < oldGold) { // Success
@@ -157,8 +169,9 @@ function shuffle(array) {
 // Evaluate fitness with variance (average of N simulations)
 function evaluateFitness(seq, sims = 10) {
   let total = 0;
+  const activeSeq = seq.slice(0, 5);
   for (let i=0; i<sims; i++) {
-    total += calculateDamage(seq, bossHp).totalDamage;
+    total += calculateDamage(activeSeq, bossHp).totalDamage;
   }
   return total / sims;
 }
@@ -194,9 +207,25 @@ function runEpochs() {
     scored.sort((a, b) => b.score - a.score); // Descending
     
     // Track best
+    let newBestFound = false;
     if (scored[0].score > bestExpectedDmg) {
       bestExpectedDmg = scored[0].score;
       bestSequence = [...scored[0].seq];
+      newBestFound = true;
+    }
+    
+    // Update Best Sequence UI
+    if (newBestFound || currentGeneration === 0) {
+      elBestSequenceDisplay.innerHTML = '';
+      bestSequence.slice(0, 5).forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'best-sequence-item highlight';
+        div.textContent = b.name;
+        elBestSequenceDisplay.appendChild(div);
+      });
+      setTimeout(() => {
+        Array.from(elBestSequenceDisplay.children).forEach(c => c.classList.remove('highlight'));
+      }, 500);
     }
     
     // Render Matrix
@@ -239,7 +268,7 @@ function runEpochs() {
     currentGeneration++;
     updateUI();
     
-    requestAnimationFrame(tick);
+    setTimeout(tick, 200); // Slower animation (200ms per epoch)
   }
   
   tick();
@@ -287,18 +316,25 @@ function fight() {
   state.beasts = [...bestSequence];
   renderBeasts();
   
+  const activeSeq = bestSequence.slice(0, 5);
+  
   // Fight! (Single simulation with actual variance)
   let currentStatuses = new Set();
   let index = 0;
+  let nextBeastBuff = 0;
   
   function attackStep() {
-    if (index >= bestSequence.length || bossHp <= 0) {
+    if (index >= activeSeq.length || bossHp <= 0) {
       finishCombat();
       return;
     }
     
-    const beast = bestSequence[index];
-    let dmg = Math.floor(Math.random() * (beast.maxDamage - beast.minDamage + 1)) + beast.minDamage;
+    const beast = activeSeq[index];
+    let minDmg = beast.minDamage + nextBeastBuff;
+    let maxDmg = beast.maxDamage + nextBeastBuff;
+    nextBeastBuff = 0;
+
+    let dmg = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
     let isCrit = false;
 
     // Fixed 10% base crit chance for variance demo
@@ -315,6 +351,23 @@ function fight() {
     if (beast.synergy === 'DOUBLE_IF_FIRE' && currentStatuses.has('FIRE')) {
       dmg *= 2;
       logCombat(`${beast.name} exploits FIRE!`, 'crit');
+    }
+    if (beast.synergy === 'TRIPLE_IF_SHOCK' && currentStatuses.has('SHOCK')) {
+      dmg *= 3;
+      logCombat(`${beast.name} exploits SHOCK!`, 'crit');
+    }
+    if (beast.synergy === 'CONSUME_POISON' && currentStatuses.has('POISON')) {
+      dmg += 50;
+      currentStatuses.delete('POISON');
+      logCombat(`${beast.name} consumed POISON for +50 Dmg!`, 'crit');
+    }
+    if (beast.synergy === 'BUFF_NEXT_20') {
+      nextBeastBuff = 20;
+      logCombat(`${beast.name} buffs next beast!`);
+    }
+
+    if (currentStatuses.has('VULNERABLE')) {
+      dmg = Math.floor(dmg * 1.5);
     }
 
     bossHp -= dmg;
