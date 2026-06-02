@@ -17,17 +17,76 @@
         <button id="btn-restart" class="btn primary hidden">Restart Run</button>
       </div>
     </div>
+    
+    <!-- Laboratory Modal -->
+    <div id="lab-overlay" class="screen-overlay hidden">
+      <div class="overlay-content lab-content" style="max-width: 600px; text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h1 style="margin: 0; color: var(--accent);">🧬 The Laboratory</h1>
+          <button id="btn-close-lab" class="btn danger">Close</button>
+        </div>
+        <p style="color: var(--text-muted); margin-top: -10px;">Spend your persistent DNA to unlock permanent upgrades across all runs.</p>
+        <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Available DNA: <span id="lab-dna-display" style="color: var(--accent);">0</span></div>
+        
+        <div class="skill-tree">
+          <div class="skill-node">
+            <div class="skill-info">
+              <h3>Sequence Capacity</h3>
+              <p>Increases the maximum active slots for the Genetic Algorithm. Starts at 4.</p>
+              <span class="skill-rank">Rank: <span id="rank-slots">0</span>/4</span>
+            </div>
+            <button id="btn-upgrade-slots" class="btn primary">Upgrade (Cost: <span id="cost-slots">50</span>)</button>
+          </div>
+          <div class="skill-node">
+            <div class="skill-info">
+              <h3>Rich Ancestry</h3>
+              <p>Start each run with +20 additional Gold.</p>
+              <span class="skill-rank">Rank: <span id="rank-gold">0</span>/5</span>
+            </div>
+            <button id="btn-upgrade-gold" class="btn primary">Upgrade (Cost: <span id="cost-gold">20</span>)</button>
+          </div>
+          <div class="skill-node">
+            <div class="skill-info">
+              <h3>Overclocked AI</h3>
+              <p>Increases Genetic Algorithm Population Size by 2. Makes it smarter.</p>
+              <span class="skill-rank">Rank: <span id="rank-pop">0</span>/6</span>
+            </div>
+            <button id="btn-upgrade-pop" class="btn primary">Upgrade (Cost: <span id="cost-pop">30</span>)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Relic Choice Modal -->
+    <div id="relic-choice-overlay" class="screen-overlay hidden" style="z-index: 200;">
+      <div class="overlay-content relic-content" style="max-width: 800px; text-align: center;">
+        <h1 style="color: var(--accent); margin-bottom: 10px;">🏺 Milestone Reached!</h1>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Choose a Relic to purchase for this run.</p>
+        <div id="relic-options" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+          <!-- Relic choice cards injected here -->
+        </div>
+        <button id="btn-skip-relic" class="btn secondary">Skip Relic</button>
+      </div>
+    </div>
     <div id="toast-container" class="toast-container"></div>
+    <div id="global-tooltip" class="global-tooltip hidden"></div>
     
     <div class="app-container">
       <header class="top-bar">
-        <h1>Beast Battler</h1>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <h1>Beast Battler</h1>
+          <button id="btn-open-lab" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">🧬 Laboratory</button>
+        </div>
         <div class="stats">
+          <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display">0</span></div>
           <div class="stat">Level: <span id="level-display">1</span></div>
-          <div class="stat">Shop Lvl: <span id="shop-level-display">1</span></div>
           <div class="stat gold">Gold: <span id="gold-display">100</span></div>
         </div>
       </header>
+      <div id="relic-bar" class="relic-bar" style="display: flex; gap: 10px; padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--border); min-height: 40px; align-items: center;">
+        <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: bold;">RUN RELICS:</span>
+        <div id="relic-slots" style="display: flex; gap: 10px;"></div>
+      </div>
 
       <main class="game-area">
         <div class="panel lineup-panel">
@@ -38,13 +97,17 @@
         </div>
 
         <div class="panel fight-panel">
-          <h2>Combat Arena</h2>
-          <div class="boss-stats">
-            <div class="boss-hp">Boss HP: <span id="boss-hp-display">100</span> / <span id="boss-hp-max">100</span></div>
-            <div class="boss-hp-bar-container">
-              <div id="boss-hp-bar" class="boss-hp-bar"></div>
+          <div class="fight-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
+            <h2 style="margin: 0;">Combat Arena</h2>
+            <div class="boss-hp-header" style="text-align: right;">
+              <h2 style="margin: 0; font-size: 1.2rem;">BOSS HP</h2>
+              <div class="boss-hp-text" style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700;"><span id="boss-hp-display">40</span> / <span id="boss-hp-max">40</span></div>
             </div>
           </div>
+          <div class="boss-hp-bar-container" style="margin-top: 0; margin-bottom: 5px;">
+            <div id="boss-hp-bar" class="boss-hp-bar"></div>
+          </div>
+          <div id="boss-stance-display" style="text-align: center; font-weight: bold; margin-bottom: 15px; color: var(--danger); text-transform: uppercase; font-size: 0.9rem;">STANCE: NONE</div>
           <div id="fight-arena" class="fight-arena">
             <div id="arena-left" class="arena-side"></div>
             <div id="arena-vs" class="arena-vs">VS</div>
@@ -57,46 +120,56 @@
           </div>
         </div>
 
-        <div class="panel compute-panel">
-          <h2>Genetic Algorithm Optimizer</h2>
-          <div class="ga-controls">
-            <button id="btn-run-epochs" class="btn primary">Start training</button>
-            <div class="compute-stats">
-              <div>Epochs Available: <span id="epochs-display">0</span></div>
-              <div>Best Expected Dmg: <span id="best-dmg-display">0</span></div>
-            </div>
-          </div>
-          <div class="ga-visuals">
-            <div id="best-sequence-container" class="best-sequence-container">
-              <h3>Best Sequence Found</h3>
-              <div class="sequence-and-graph">
-                <div id="best-sequence-display" class="best-sequence-display">
-                  <div class="sequence-slot empty">1</div>
-                  <div class="sequence-slot empty">2</div>
-                  <div class="sequence-slot empty">3</div>
-                  <div class="sequence-slot empty">4</div>
-                  <div class="sequence-slot empty">5</div>
-                </div>
-                <div class="graph-scroll-container">
-                  <canvas id="bump-chart" width="550" height="400"></canvas>
-                </div>
+        <div class="shop-area panel">
+          <h2>The Shop</h2>
+          <div class="shop-container">
+            <div class="shop-scroll-area" style="overflow-y: auto; flex-grow: 1; min-height: 0; padding-right: 5px;">
+              <div id="shop-items" class="shop-items" style="overflow: visible;">
+                <!-- Shop items injected here -->
               </div>
-            <div id="matrix-view" class="matrix-view">
-              <!-- Animated sequence visualizer -->
+            </div>
+            <div id="shop-actions" class="shop-actions">
+              <!-- Action buttons injected here -->
             </div>
           </div>
-          <button id="btn-fight" class="btn danger full-width">LOCK IN & FIGHT</button>
         </div>
       </main>
 
-      <footer class="shop-area panel">
-        <h2>The Shop</h2>
-        <div class="shop-container">
-          <div id="shop-items" class="shop-items">
-            <!-- Shop items injected here -->
+      <footer class="panel compute-panel">
+        <div class="compute-header">
+          <h2>Genetic Algorithm Optimizer</h2>
+          <div class="compute-stats">
+            <div>Compute Pool: <span id="epochs-display">0</span> Epochs / Round</div>
+            <div>Best Expected Dmg: <span id="best-dmg-display">0</span></div>
           </div>
-          <div id="shop-actions" class="shop-actions">
-            <!-- Action buttons injected here -->
+        </div>
+        
+        <div class="compute-body">
+          <div class="compute-sidebar">
+            <div id="best-sequence-container" class="best-sequence-container">
+              <h3>Best Sequence Found</h3>
+              <div id="best-sequence-display" class="best-sequence-display">
+                <div class="sequence-slot empty">1</div>
+                <div class="sequence-slot empty">2</div>
+                <div class="sequence-slot empty">3</div>
+                <div class="sequence-slot empty">4</div>
+                <div class="sequence-slot empty">5</div>
+                <div class="sequence-slot empty">6</div>
+                <div class="sequence-slot empty">7</div>
+                <div class="sequence-slot empty">8</div>
+              </div>
+              <div id="previous-sequences-list" class="previous-sequences-list"></div>
+            </div>
+            <button id="btn-fight" class="btn danger full-width" style="margin-top: auto; padding: 16px;">COMPUTE & EXECUTE ROUND 1/3</button>
+          </div>
+          
+          <div class="ga-visuals">
+            <div class="graph-scroll-container" style="display: none;">
+              <canvas id="bump-chart" width="550" height="400"></canvas>
+            </div>
+            <div class="convergence-container" style="background: #111; flex-grow: 1; display: flex; flex-direction: column;">
+              <canvas id="convergence-chart" width="550" height="250" style="width: 100%; height: 100%; display: block; flex-grow: 1;"></canvas>
+            </div>
           </div>
         </div>
       </footer>

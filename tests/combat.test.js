@@ -7,15 +7,31 @@ test('calculateDamage handles variance and synergies', () => {
   
   // Test B then A (No synergy)
   const dmg1 = calculateDamage([beastB, beastA], 100); 
-  // Expected roughly 20-25 + 10-15 = 30-40.
-  expect(dmg1.totalDamage).toBeGreaterThanOrEqual(30);
-  expect(dmg1.totalDamage).toBeLessThanOrEqual(40);
+  // Expected roughly 20-25 + 10-15 = 30-40 + 15 (Poison DoT) = 45-55
+  expect(dmg1.totalDamage).toBeGreaterThanOrEqual(45);
+  expect(dmg1.totalDamage).toBeLessThanOrEqual(55);
 
   // Test A then B (Synergy active!)
   const dmg2 = calculateDamage([beastA, beastB], 100);
-  // Expected roughly 10-15 + (20-25 * 2) = 50-65.
-  expect(dmg2.totalDamage).toBeGreaterThanOrEqual(50);
-  expect(dmg2.totalDamage).toBeLessThanOrEqual(65);
+  // Expected roughly 10-15 + (20-25 * 2) = 50-65 + 15 (Poison DoT) = 65-80
+  expect(dmg2.totalDamage).toBeGreaterThanOrEqual(65);
+  expect(dmg2.totalDamage).toBeLessThanOrEqual(80);
+});
+
+test('Boss Stances modify damage', () => {
+  const fireBeast = createBeast('Fire', 10, 10, 'FIRE', null);
+  
+  const res1 = calculateDamage([fireBeast], 100, 'FIRE_IMMUNITY');
+  // 0 attack damage + 10 FIRE DoT at end of turn
+  expect(res1.totalDamage).toBe(10);
+
+  const res2 = calculateDamage([fireBeast], 100, 'ARMORED');
+  // 5 attack damage + 10 FIRE DoT = 15
+  expect(res2.totalDamage).toBe(15);
+
+  const res3 = calculateDamage([fireBeast], 100, 'NONE');
+  // 10 attack damage + 10 FIRE DoT = 20
+  expect(res3.totalDamage).toBe(20);
 });
 
 test('calculateDamage handles VULNERABLE, SHOCK, and CONSUME_POISON', () => {
