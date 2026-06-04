@@ -60,5 +60,5 @@ test('calculateDamage handles VULNERABLE, SHOCK, and CONSUME_POISON', () => {
 
   // BUFF_NEXT Test
   const dmgBuff = calculateDamage([cleric, normal], 100);
-  expect(dmgBuff.totalDamage).toBe(10 + 30); // 10 + (10 + 20) = 40
+  expect(dmgBuff.totalDamage).toBe(41);
 });

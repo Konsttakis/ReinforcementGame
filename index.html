@@ -1,180 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beast Battler</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css">
-  </head>
-  <body>
-    <div id="screen-overlay" class="screen-overlay hidden">
-      <div id="overlay-content" class="overlay-content">
-        <h1 id="overlay-title">Title</h1>
-        <p id="overlay-text">Text</p>
-        <button id="btn-restart" class="btn primary hidden">Restart Run</button>
-      </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beast Battler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div id="screen-overlay" class="screen-overlay hidden">
+    <div id="overlay-content" class="overlay-content">
+      <h1 id="overlay-title">Title</h1>
+      <p id="overlay-text">Text</p>
+      <button id="btn-restart" class="btn primary hidden">Restart Run</button>
     </div>
-    
-    <!-- Laboratory Modal -->
-    <div id="lab-overlay" class="screen-overlay hidden">
-      <div class="overlay-content lab-content" style="max-width: 600px; text-align: left;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h1 style="margin: 0; color: var(--accent);">🧬 The Laboratory</h1>
+  </div>
+
+  <!-- Laboratory Modal -->
+  <div id="lab-overlay" class="screen-overlay hidden" style="z-index: 300; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
+    <div class="overlay-content lab-content full-screen-modal" style="width: 95vw; height: 95vh; padding: 20px; display: flex; flex-direction: column; background: #111; border: 4px solid var(--accent); box-shadow: 0 0 40px rgba(0,0,0,0.8);">
+      <div class="lab-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
+        <div>
+          <h1 style="margin: 0; color: var(--accent); font-size: 2rem;">🌳 Evolutionary Tech Tree</h1>
+          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Drag to pan. Scroll to zoom. Spend DNA to evolve.</p>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; color: #fff;">DNA: <span id="lab-dna-display" style="color: var(--accent);">0</span></div>
+          <button id="btn-respec" class="btn secondary">Respec (Free)</button>
           <button id="btn-close-lab" class="btn danger">Close</button>
         </div>
-        <p style="color: var(--text-muted); margin-top: -10px;">Spend your persistent DNA to unlock permanent upgrades across all runs.</p>
-        <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">Available DNA: <span id="lab-dna-display" style="color: var(--accent);">0</span></div>
-        
-        <div class="skill-tree">
-          <div class="skill-node">
-            <div class="skill-info">
-              <h3>Sequence Capacity</h3>
-              <p>Increases the maximum active slots for the Genetic Algorithm. Starts at 4.</p>
-              <span class="skill-rank">Rank: <span id="rank-slots">0</span>/4</span>
-            </div>
-            <button id="btn-upgrade-slots" class="btn primary">Upgrade (Cost: <span id="cost-slots">50</span>)</button>
-          </div>
-          <div class="skill-node">
-            <div class="skill-info">
-              <h3>Rich Ancestry</h3>
-              <p>Start each run with +20 additional Gold.</p>
-              <span class="skill-rank">Rank: <span id="rank-gold">0</span>/5</span>
-            </div>
-            <button id="btn-upgrade-gold" class="btn primary">Upgrade (Cost: <span id="cost-gold">20</span>)</button>
-          </div>
-          <div class="skill-node">
-            <div class="skill-info">
-              <h3>Overclocked AI</h3>
-              <p>Increases Genetic Algorithm Population Size by 2. Makes it smarter.</p>
-              <span class="skill-rank">Rank: <span id="rank-pop">0</span>/6</span>
-            </div>
-            <button id="btn-upgrade-pop" class="btn primary">Upgrade (Cost: <span id="cost-pop">30</span>)</button>
-          </div>
+      </div>
+      <div id="skill-tree-container" class="skill-tree-container" style="position: relative; flex-grow: 1; overflow: hidden; border: 2px solid #333; background: #0a0a0a;">
+        <canvas id="skill-tree-canvas" style="display: block; width: 100%; height: 100%;"></canvas>
+        <!-- The Node Info tooltip/modal when clicking -->
+        <div id="skill-purchase-modal" class="skill-purchase-modal hidden" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel-bg); border: var(--border-thick); padding: 20px; box-shadow: var(--shadow-solid); z-index: 9999; min-width: 300px; pointer-events: auto !important;">
+           <h3 id="skill-modal-title" style="margin-top: 0;">Skill Name</h3>
+           <p id="skill-modal-desc" style="margin: 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">Description</p>
+           <p id="skill-modal-progress" style="font-weight: bold;">Level 0/3</p>
+           <button id="btn-buy-skill" class="btn primary full-width" style="margin-top: 15px; cursor: pointer; pointer-events: auto !important;">Buy (Cost: 100 DNA)</button>
+           <button id="btn-close-skill-modal" class="btn secondary full-width" style="margin-top: 10px; cursor: pointer; pointer-events: auto !important;">Cancel</button>
         </div>
       </div>
     </div>
-    
-    <!-- Relic Choice Modal -->
-    <div id="relic-choice-overlay" class="screen-overlay hidden" style="z-index: 200;">
-      <div class="overlay-content relic-content" style="max-width: 800px; text-align: center;">
-        <h1 style="color: var(--accent); margin-bottom: 10px;">🏺 Milestone Reached!</h1>
-        <p style="color: var(--text-muted); margin-bottom: 20px;">Choose a Relic to purchase for this run.</p>
-        <div id="relic-options" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
-          <!-- Relic choice cards injected here -->
+  </div>
+
+  <!-- Achievements Modal -->
+  <div id="achievements-overlay" class="screen-overlay hidden" style="z-index: 400; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
+    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column; background: #111; border: 4px solid #fcd34d; box-shadow: 0 0 40px rgba(252,211,77,0.4);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
+        <div>
+          <h1 style="margin: 0; color: #fcd34d; font-size: 2rem;">🏆 Hall of Achievements</h1>
+          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Your legacy across the multiverse. <span id="achievements-count">0 / 150</span></p>
         </div>
-        <button id="btn-skip-relic" class="btn secondary">Skip Relic</button>
+        <button id="btn-close-achievements" class="btn danger">Close</button>
+      </div>
+      <div id="achievements-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; padding-right: 10px; align-content: start;">
+        <!-- Injected here -->
       </div>
     </div>
-    <div id="toast-container" class="toast-container"></div>
-    <div id="global-tooltip" class="global-tooltip hidden"></div>
-    
-    <div class="app-container">
-      <header class="top-bar">
-        <div style="display: flex; align-items: center; gap: 15px;">
-          <h1>Beast Battler</h1>
-          <button id="btn-open-lab" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">🧬 Laboratory</button>
+  </div>
+
+  <!-- Relic Choice Modal -->
+  <div id="relic-choice-overlay" class="screen-overlay hidden" style="z-index: 200;">
+    <div class="overlay-content relic-content" style="max-width: 800px; text-align: center;">
+      <h1 style="color: var(--accent); margin-bottom: 10px;">🏺 Milestone Reached!</h1>
+      <p style="color: var(--text-muted); margin-bottom: 20px;">Choose a Relic to purchase for this run.</p>
+      <div id="relic-options"
+        style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+        <!-- Relic choice cards injected here -->
+      </div>
+      <button id="btn-skip-relic" class="btn secondary">Skip Relic</button>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <div id="global-tooltip" class="global-tooltip hidden"></div>
+
+  <div class="app-container">
+    <header class="top-bar">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <h1>Beast Battler</h1>
+        <button id="btn-open-lab" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">🧬 Laboratory</button>
+        <button id="btn-abandon-run" class="btn danger" style="padding: 5px 10px; font-size: 0.9rem;">💀 Abandon Run</button>
+        <button id="btn-open-achievements" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem; border-color: #fcd34d; color: #fcd34d;">🏆 Achievements</button>
+      </div>
+      <div class="stats">
+        <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display">0</span></div>
+        <div class="stat">Level: <span id="level-display">1</span></div>
+        <div class="stat gold">Gold: <span id="gold-display">100</span></div>
+      </div>
+    </header>
+    <div id="relic-bar" class="relic-bar"
+      style="display: flex; gap: 10px; padding: 4px 20px; background: var(--surface); border-bottom: 1px solid var(--border); align-items: center;">
+      <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold;">RUN RELICS:</span>
+      <div id="relic-slots" style="display: flex; gap: 10px;"></div>
+    </div>
+
+    <main class="game-area">
+      <div class="panel lineup-panel">
+        <h2 id="inventory-header">Your Inventory</h2>
+        <div id="beast-slots" class="slots">
+          <!-- Beast items injected here -->
         </div>
-        <div class="stats">
-          <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display">0</span></div>
-          <div class="stat">Level: <span id="level-display">1</span></div>
-          <div class="stat gold">Gold: <span id="gold-display">100</span></div>
-        </div>
-      </header>
-      <div id="relic-bar" class="relic-bar" style="display: flex; gap: 10px; padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--border); min-height: 40px; align-items: center;">
-        <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: bold;">RUN RELICS:</span>
-        <div id="relic-slots" style="display: flex; gap: 10px;"></div>
       </div>
 
-      <main class="game-area">
-        <div class="panel lineup-panel">
-          <h2>Your Inventory</h2>
-          <div id="beast-slots" class="slots">
-            <!-- Beast items injected here -->
+      <div class="panel fight-panel">
+        <div class="fight-header"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h2 style="margin: 0;">Combat Arena</h2>
+          <div id="boss-stance-display"
+            style="font-size: 0.85rem; padding: 4px 10px; background: #06b6d4; border: 1px solid #0891b2; border-radius: 6px; color: #000; font-weight: bold; letter-spacing: 0.5px; text-transform: capitalize;">
           </div>
         </div>
 
-        <div class="panel fight-panel">
-          <div class="fight-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
-            <h2 style="margin: 0;">Combat Arena</h2>
-            <div class="boss-hp-header" style="text-align: right;">
-              <h2 style="margin: 0; font-size: 1.2rem;">BOSS HP</h2>
-              <div class="boss-hp-text" style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700;"><span id="boss-hp-display">40</span> / <span id="boss-hp-max">40</span></div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4px;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; letter-spacing: 1px;">BOSS
+            HEALTH</span>
+          <span
+            style="font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; font-weight: bold; color: var(--danger);"><span
+              id="boss-hp-display">60</span> / <span id="boss-hp-max">60</span></span>
+        </div>
+        <div style="width: 100%; height: 20px; flex-shrink: 0; background-color: #e5e5e5; border: 2px solid #000; border-radius: 4px; overflow: hidden; margin-bottom: 25px; box-shadow: 2px 2px 0px #000;">
+          <div id="boss-hp-bar" style="display: block; height: 100%; width: 100%; background-color: #ff0044; transition: width 0.3s ease; margin: 0; padding: 0;"></div>
+        </div>
+        <div id="fight-arena" class="fight-arena">
+          <div id="arena-left" class="arena-side"></div>
+          <div id="arena-vs" class="arena-vs">VS</div>
+          <div id="arena-right" class="arena-side">
+            <div id="arena-boss" class="boss-icon" title="Boss">
+              <video id="boss-video" src="assets/boss/void_crush_boss_full_cut.mp4" class="beast-sprite-arena" muted playsinline preload="auto" style="height: 100%; width: auto; object-fit: contain;"></video>
             </div>
           </div>
-          <div class="boss-hp-bar-container" style="margin-top: 0; margin-bottom: 5px;">
-            <div id="boss-hp-bar" class="boss-hp-bar"></div>
-          </div>
-          <div id="boss-stance-display" style="text-align: center; font-weight: bold; margin-bottom: 15px; color: var(--danger); text-transform: uppercase; font-size: 0.9rem;">STANCE: NONE</div>
-          <div id="fight-arena" class="fight-arena">
-            <div id="arena-left" class="arena-side"></div>
-            <div id="arena-vs" class="arena-vs">VS</div>
-            <div id="arena-right" class="arena-side">
-              <div id="arena-boss" class="boss-icon" title="Boss">👹</div>
+        </div>
+        <div id="combat-log" class="combat-log">
+          <!-- Combat text injected here -->
+        </div>
+      </div>
+
+      <div class="shop-area panel">
+        <h2 style="margin-bottom: 2px;">The Shop</h2>
+        <div class="shop-container">
+          <div class="shop-scroll-area" style="overflow-y: auto; flex-grow: 1; min-height: 0; padding-right: 5px;">
+            <div id="shop-items" class="shop-items" style="overflow: visible;">
+              <!-- Shop items injected here -->
             </div>
           </div>
-          <div id="combat-log" class="combat-log">
-            <!-- Combat text injected here -->
+          <div id="shop-actions" class="shop-actions">
+            <!-- Action buttons injected here -->
           </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="panel compute-panel">
+      <div class="compute-header">
+        <h2>Genetic Algorithm Optimizer</h2>
+        <div class="compute-stats">
+          <div>Compute Pool: <span id="epochs-display">0</span> Epochs / Round</div>
+          <div>Best Expected Dmg: <span id="best-dmg-display">0</span></div>
+        </div>
+      </div>
+
+      <div class="compute-body">
+        <div class="compute-sidebar">
+          <div id="best-sequence-container" class="best-sequence-container">
+            <h3>Best Sequence Found</h3>
+            <div id="best-sequence-display" class="best-sequence-display">
+              <div class="sequence-slot empty">1</div>
+              <div class="sequence-slot empty">2</div>
+              <div class="sequence-slot empty">3</div>
+              <div class="sequence-slot empty">4</div>
+              <div class="sequence-slot empty">5</div>
+              <div class="sequence-slot empty">6</div>
+              <div class="sequence-slot empty">7</div>
+              <div class="sequence-slot empty">8</div>
+            </div>
+            <div id="previous-sequences-list" class="previous-sequences-list"></div>
+          </div>
+          <button id="btn-fight" class="btn danger full-width" style="margin-top: auto; padding: 16px;">COMPUTE &
+            EXECUTE ROUND 1/3</button>
         </div>
 
-        <div class="shop-area panel">
-          <h2>The Shop</h2>
-          <div class="shop-container">
-            <div class="shop-scroll-area" style="overflow-y: auto; flex-grow: 1; min-height: 0; padding-right: 5px;">
-              <div id="shop-items" class="shop-items" style="overflow: visible;">
-                <!-- Shop items injected here -->
-              </div>
-            </div>
-            <div id="shop-actions" class="shop-actions">
-              <!-- Action buttons injected here -->
-            </div>
+        <div class="ga-visuals">
+          <div class="graph-scroll-container" style="display: none;">
+            <canvas id="bump-chart" width="550" height="400"></canvas>
+          </div>
+          <div class="convergence-container"
+            style="background: #111; flex-grow: 1; display: flex; flex-direction: column;">
+            <canvas id="convergence-chart" width="550" height="250"
+              style="width: 100%; height: 100%; display: block; flex-grow: 1;"></canvas>
           </div>
         </div>
-      </main>
+      </div>
+    </footer>
+  </div>
 
-      <footer class="panel compute-panel">
-        <div class="compute-header">
-          <h2>Genetic Algorithm Optimizer</h2>
-          <div class="compute-stats">
-            <div>Compute Pool: <span id="epochs-display">0</span> Epochs / Round</div>
-            <div>Best Expected Dmg: <span id="best-dmg-display">0</span></div>
-          </div>
-        </div>
-        
-        <div class="compute-body">
-          <div class="compute-sidebar">
-            <div id="best-sequence-container" class="best-sequence-container">
-              <h3>Best Sequence Found</h3>
-              <div id="best-sequence-display" class="best-sequence-display">
-                <div class="sequence-slot empty">1</div>
-                <div class="sequence-slot empty">2</div>
-                <div class="sequence-slot empty">3</div>
-                <div class="sequence-slot empty">4</div>
-                <div class="sequence-slot empty">5</div>
-                <div class="sequence-slot empty">6</div>
-                <div class="sequence-slot empty">7</div>
-                <div class="sequence-slot empty">8</div>
-              </div>
-              <div id="previous-sequences-list" class="previous-sequences-list"></div>
-            </div>
-            <button id="btn-fight" class="btn danger full-width" style="margin-top: auto; padding: 16px;">COMPUTE & EXECUTE ROUND 1/3</button>
-          </div>
-          
-          <div class="ga-visuals">
-            <div class="graph-scroll-container" style="display: none;">
-              <canvas id="bump-chart" width="550" height="400"></canvas>
-            </div>
-            <div class="convergence-container" style="background: #111; flex-grow: 1; display: flex; flex-direction: column;">
-              <canvas id="convergence-chart" width="550" height="250" style="width: 100%; height: 100%; display: block; flex-grow: 1;"></canvas>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
-    
-    <script type="module" src="./src/main.js"></script>
-  </body>
+  <script src="./src/skilltree.js"></script>
+  <script src="./src/skilltree-renderer.js"></script>
+  <script src="./src/achievements.js"></script>
+  <script type="module" src="./src/main.js"></script>
+</body>
+
 </html>
