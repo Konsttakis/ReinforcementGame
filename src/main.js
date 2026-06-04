@@ -7,7 +7,7 @@ import { initSkillTree } from './skilltree-renderer.js';
 function makeBeast(name, min, max, stat, syn, rarity, icon, color, image = null) {
   if (!image) {
     const slug = name.toLowerCase().replace(/ /g, '_');
-    const validAssets = ["arena_background","assassin","bat","beast_blood_priest","beast_blood_thirster","beast_chimera","beast_dancer","beast_executioner","beast_frost_weaver","beast_gargoyle","beast_glacier_golem","beast_sniper","beast_taskmaster","beast_the_collector","beast_time_traveler","blademaster","blood_mage","bomber","card_background","cheerleader","cleric","conductor","coward","doppelganger","dragon","electric_eel","fatigue_giant","firefly","fire_element","gambler","gold_hoarder","ice_element","kraken","leech","paladin","plague_doctor","prism_slime","scout","spider","static_slime","steam_roller","thunderbird","vanguard","venomous"];
+    const validAssets = ["arena_background","assassin","bat","beast_blood_priest","beast_blood_thirster","beast_chimera","beast_chromatic_dragon","beast_dancer","beast_executioner","beast_frost_weaver","beast_gargoyle","beast_glacier_golem","beast_infinite_fractal","beast_leviathan","beast_sniper","beast_taskmaster","beast_the_collector","beast_time_traveler","beast_vacuum_ooze","blademaster","blood_mage","bomber","card_background","cheerleader","cleric","conductor","coward","doppelganger","dragon","electric_eel","fatigue_giant","firefly","fire_element","gambler","gold_hoarder","ice_element","kraken","leech","paladin","plague_doctor","prism_slime","scout","spider","static_slime","steam_roller","thunderbird","vanguard","venomous"];
     if (validAssets.includes('beast_' + slug)) {
       image = 'assets/beasts/beast_' + slug + '.jpeg';
     } else if (validAssets.includes(slug)) {
