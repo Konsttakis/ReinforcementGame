@@ -2,3 +2,11 @@ node_modules/
 dist/
 .env
 .DS_Store
+
+# Agent & Skill Metadata
+.superpowers/
+.agents/
+skills/
+docs/superpowers/
+docs/agents/
+.gemini/

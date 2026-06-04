@@ -1,4 +1,4 @@
-import { SKILL_TREE_DATA, getSkillLevel, canUnlock, buySkill, respecTree } from './skilltree.js';
+import { SKILL_TREE_DATA, getSkillLevel, canUnlock, buySkill, respecTree, isPrereqMet } from './skilltree.js';
 
 export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
   const canvas = document.getElementById('skill-tree-canvas');
@@ -67,7 +67,7 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
         const reqNode = nodes.find(n => n.id === reqId);
         if (reqNode) {
           const isUnlocked = getSkillLevel(node.id, metaState) > 0;
-          const isAvailable = canUnlock(node.id, metaState);
+          const isAvailable = isPrereqMet(node.id, metaState);
           
           ctx.beginPath();
           ctx.moveTo(reqNode.absX, reqNode.absY);
@@ -94,7 +94,7 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
     // Draw nodes
     nodes.forEach(node => {
       const level = getSkillLevel(node.id, metaState);
-      const available = canUnlock(node.id, metaState);
+      const available = isPrereqMet(node.id, metaState);
       const isMax = level >= node.maxLevel;
 
       ctx.beginPath();
@@ -208,8 +208,9 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
       btnBuy.textContent = 'MAXED';
     } else {
       const cost = node.costs[level];
-      btnBuy.disabled = metaState.dna < cost || (!canUnlock(node.id, metaState) && level === 0);
-      btnBuy.textContent = btnBuy.disabled && level === 0 && !canUnlock(node.id, metaState) ? 'Locked (Requires Prerequisite)' : `Buy (Cost: ${cost} DNA)`;
+      const hasPrereq = isPrereqMet(node.id, metaState);
+      btnBuy.disabled = metaState.dna < cost || (!hasPrereq && level === 0);
+      btnBuy.textContent = (!hasPrereq && level === 0) ? 'Locked (Requires Prerequisite)' : `Buy (Cost: ${cost} DNA)`;
     }
     
     modal.classList.remove('hidden');
