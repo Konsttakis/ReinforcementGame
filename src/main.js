@@ -1,20 +1,13 @@
 import { createBeast, calculateDamage } from './combat.js';
 import { orderCrossover, mutateSwap } from './ga.js';
 import { buyBeast, buyEpochs } from './economy.js';
-import { getSkillEffect } from './skilltree.js';
+import { getSkillEffect, SKILL_TREE_DATA } from './skilltree.js';
 import { initSkillTree } from './skilltree-renderer.js';
 
 function makeBeast(name, min, max, stat, syn, rarity, icon, color, image = null) {
   if (!image) {
     const slug = name.toLowerCase().replace(/ /g, '_');
-    const validAssets = ["arena_background","assassin","bat","beast_blood_priest","beast_blood_thirster","beast_chimera","beast_chromatic_dragon","beast_dancer","beast_executioner","beast_frost_weaver","beast_gargoyle","beast_glacier_golem","beast_infinite_fractal","beast_leviathan","beast_sniper","beast_taskmaster","beast_the_collector","beast_time_traveler","beast_vacuum_ooze","blademaster","blood_mage","bomber","card_background","cheerleader","cleric","conductor","coward","doppelganger","dragon","electric_eel","fatigue_giant","firefly","fire_element","gambler","gold_hoarder","ice_element","kraken","leech","paladin","plague_doctor","prism_slime","scout","spider","static_slime","steam_roller","thunderbird","vanguard","venomous"];
-    if (validAssets.includes('beast_' + slug)) {
-      image = 'assets/beasts/beast_' + slug + '.jpeg';
-    } else if (validAssets.includes(slug)) {
-      image = 'assets/beasts/' + slug + '.png';
-    } else {
-      image = null;
-    }
+    image = 'assets/beasts/beast_' + slug + '.jpeg';
   }
   const b = createBeast(name, min, max, stat, syn);
   b.rarity = rarity;
@@ -28,6 +21,7 @@ function makeBeast(name, min, max, stat, syn, rarity, icon, color, image = null)
 // --- Meta Progression State ---
 let metaState = JSON.parse(localStorage.getItem('antigravity_meta')) || { dna: 0, skillTree: {} };
 if (!metaState.skillTree) metaState.skillTree = {};
+if (!metaState.settings) metaState.settings = { autoPlayTurns: false };
 
 function saveMetaState() {
   localStorage.setItem('antigravity_meta', JSON.stringify(metaState));
@@ -47,6 +41,7 @@ let state = {
   upgradeCost: 30,
   shopOfferings: [],
   relics: [],
+  runHistory: [],
   beasts: [
     makeBeast('Vanguard', 10, 15, null, 'FIRST_STRIKE', 'Uncommon', '🛡️', '#78716c', 'assets/beasts/vanguard.png'),
     makeBeast('Coward', 15, 15, null, 'HIDE', 'Common', '🙈', '#d6d3d1', 'assets/beasts/coward.png'),
@@ -86,6 +81,7 @@ function loadRunState() {
     try {
       const parsed = JSON.parse(saved);
       state = parsed.state;
+      window.__activeTemporarySkill = state.temporarySkill;
       bossHp = parsed.bossHp;
       bossMaxHp = parsed.bossMaxHp;
       combatRound = parsed.combatRound;
@@ -93,6 +89,26 @@ function loadRunState() {
       globalStatuses = parsed.globalStatuses || {};
       bestSequence = parsed.bestSequence || [];
       bestExpectedDmg = parsed.bestExpectedDmg || 0;
+
+      const fixImagePath = (imgUrl) => {
+        if (!imgUrl) return imgUrl;
+        if (imgUrl.includes('/beasts/') && !imgUrl.endsWith('.jpeg')) {
+          const file = imgUrl.split('/').pop();
+          const slug = file.replace('beast_', '').replace('.png', '').replace('.jpeg', '');
+          return `assets/beasts/beast_${slug}.jpeg`;
+        }
+        if (imgUrl.includes('/relics/') && !imgUrl.endsWith('.jpeg')) {
+          return imgUrl.replace('.png', '.jpeg');
+        }
+        return imgUrl;
+      };
+
+      if (state.beasts) state.beasts.forEach(b => { b.image = fixImagePath(b.image); });
+      if (state.shopOfferings) state.shopOfferings.forEach(b => { b.image = fixImagePath(b.image); });
+      if (state.relics) state.relics.forEach(r => { r.image = fixImagePath(r.image); });
+      if (state.relicOfferings) state.relicOfferings.forEach(r => { r.image = fixImagePath(r.image); });
+      if (bestSequence) bestSequence.forEach(b => { b.image = fixImagePath(b.image); });
+
       return true;
     } catch (e) {
       console.error("Failed to load run state", e);
@@ -240,6 +256,7 @@ function init() {
 }
 
 function renderBestSequenceUI() {
+  if (!elBestSequenceDisplay) return;
   elBestSequenceDisplay.innerHTML = '';
   const activeSeq = bestSequence.slice(0, getMaxSlots());
   
@@ -260,6 +277,61 @@ function renderBestSequenceUI() {
     }
     elBestSequenceDisplay.appendChild(slot);
   }
+  renderHistoricOrders();
+}
+
+function renderHistoricOrders() {
+  const container = document.getElementById('historic-orders-list');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  if (!state.runHistory || state.runHistory.length === 0) {
+    container.innerHTML = '<div style="font-size: 0.8rem; color: #666; text-align: center;">No previous turns yet.</div>';
+    return;
+  }
+  
+  let allTurns = [];
+  state.runHistory.forEach(lvl => {
+    lvl.turns.forEach(t => {
+      allTurns.push({ level: lvl.level, ...t });
+    });
+  });
+  
+  const last3 = allTurns.slice(-3).reverse();
+  
+  last3.forEach(turn => {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.justifyContent = 'space-between';
+    row.style.alignItems = 'center';
+    row.style.background = '#0f0f0f';
+    row.style.padding = '6px';
+    row.style.borderRadius = '4px';
+    row.style.borderLeft = '2px solid var(--accent)';
+    
+    let seqHtml = '';
+    turn.seq.forEach(b => {
+      if (b.image) {
+        seqHtml += `<div class="sequence-slot filled" style="width: 20px; height: 20px; min-width: 20px; margin-right: 2px;"><img src="${b.image}" class="beast-sprite-small" style="width: 100%; height: 100%; margin: 0; display: block;"/></div>`;
+      } else {
+        seqHtml += `<div class="sequence-slot filled" style="width: 20px; height: 20px; min-width: 20px; margin-right: 2px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center;">${b.icon}</div>`;
+      }
+    });
+    
+    row.innerHTML = `
+      <div style="font-size: 0.75rem; color: #ccc; font-family: monospace; line-height: 1.1; width: 40px;">
+        L${turn.level}<br/>
+        <span style="color: var(--gold)">T${turn.round}</span>
+      </div>
+      <div style="display: flex; flex-direction: row-reverse;">
+        ${seqHtml}
+      </div>
+      <div style="font-size: 0.8rem; font-weight: bold; color: var(--accent); width: 45px; text-align: right;">
+        ${Math.floor(turn.expectedDmg)}
+      </div>
+    `;
+    container.appendChild(row);
+  });
 }
 
 // --- UI Updates ---
@@ -321,7 +393,7 @@ function updateUI() {
     elBossStance.style.display = 'block';
   }
   if (btnFight) {
-    if (combatRound <= 3 && bossHp > 0 && btnFight.disabled === false) {
+    if (combatRound <= 3 && bossHp > 0) {
       btnFight.textContent = `COMPUTE & EXECUTE ROUND ${combatRound}/3`;
     }
   }
@@ -329,9 +401,9 @@ function updateUI() {
 
 function getTooltipText(b) {
   let text = `Damage: ${b.minDamage}-${b.maxDamage}\n`;
-  if (b.appliesStatus) text += `Applies: ${b.appliesStatus}\n`;
+  if (b.appliesStatus) text += `Applies: ${b.appliesStatus.replace(/_/g, ' ')}\n`;
   if (b.synergy) {
-    text += `Synergy: ${b.synergy}\n`;
+    text += `Synergy: ${b.synergy.replace(/_/g, ' ')}\n`;
     if (b.synergy === 'TIME_BOMB') text += `Detonates after 2 attacks for 150 dmg.`;
     else if (b.synergy === 'FINISHER') text += `Deals 5x damage if placed in the last slot.`;
     else if (b.synergy === 'PUNISHER') text += `Deals 3x damage if previous beast dealt < 15 dmg.`;
@@ -505,12 +577,41 @@ function renderFightArena(activeIndex = -1) {
   });
 }
 
-function logCombat(msg, type = 'normal') {
+function logCombat(msg, type = 'normal', breakdownHtml = null) {
   const div = document.createElement('div');
   div.className = `log-entry ${type}`;
-  div.textContent = msg;
+  div.innerHTML = msg; // allow icons in text
+  
+  if (breakdownHtml) {
+    div.classList.add('has-combat-tooltip');
+    const tooltip = document.createElement('div');
+    tooltip.className = 'combat-tooltip';
+    tooltip.innerHTML = breakdownHtml;
+    div.appendChild(tooltip);
+  }
+  
   elCombatLog.appendChild(div);
   elCombatLog.scrollTop = elCombatLog.scrollHeight;
+}
+
+function showFloatingText(text, type = 'normal') {
+  const arena = document.getElementById('arena-boss');
+  if (!arena) return;
+  const floatDiv = document.createElement('div');
+  floatDiv.className = `floating-dmg ${type}`;
+  floatDiv.textContent = text;
+  
+  // Randomize start position slightly
+  const offsetX = (Math.random() - 0.5) * 60;
+  const offsetY = (Math.random() - 0.5) * 30;
+  floatDiv.style.left = `calc(50% + ${offsetX}px)`;
+  floatDiv.style.top = `calc(50% + ${offsetY}px)`;
+  floatDiv.style.transform = 'translate(-50%, -50%)';
+  
+  arena.parentElement.appendChild(floatDiv);
+  setTimeout(() => {
+    if (floatDiv.parentElement) floatDiv.parentElement.removeChild(floatDiv);
+  }, 1200);
 }
 
 // --- Shop Logic ---
@@ -568,10 +669,10 @@ const shopPool = [
 
 const relicPool = [
   // Existing
-  { id: 'venom_gland', name: 'Venom Gland', icon: '☠️', desc: 'Poison ticks for 25 dmg instead of 15', cost: 120, image: 'assets/relics/venom_gland.png' },
-  { id: 'molten_core', name: 'Molten Core', icon: '🌋', desc: 'Fire never degrades its stacks', cost: 150, image: 'assets/relics/molten_core.png' },
-  { id: 'heavy_anvil', name: 'Heavy Anvil', icon: '🗜️', desc: 'All beasts gain +10 minimum and maximum damage', cost: 100, image: 'assets/relics/heavy_anvil.png' },
-  { id: 'golden_dice', name: 'Golden Dice', icon: '🎲', desc: 'Shop refreshes cost 2G instead of 5G', cost: 200, image: 'assets/relics/golden_dice.png' },
+  { id: 'venom_gland', name: 'Venom Gland', icon: '☠️', desc: 'Poison ticks for 25 dmg instead of 15', cost: 120, image: 'assets/relics/venom_gland.jpeg' },
+  { id: 'molten_core', name: 'Molten Core', icon: '🌋', desc: 'Fire never degrades its stacks', cost: 150, image: 'assets/relics/molten_core.jpeg' },
+  { id: 'heavy_anvil', name: 'Heavy Anvil', icon: '🗜️', desc: 'All beasts gain +10 minimum and maximum damage', cost: 100, image: 'assets/relics/heavy_anvil.jpeg' },
+  { id: 'golden_dice', name: 'Golden Dice', icon: '🎲', desc: 'Shop refreshes cost 2G instead of 5G', cost: 200, image: 'assets/relics/golden_dice.jpeg' },
 
   // Combat & Damage
   { id: 'sharpening_stone', name: 'Sharpening Stone', icon: '🪨', desc: 'First beast deals +50 flat damage', cost: 80 },
@@ -610,6 +711,7 @@ const relicPool = [
   { id: 'recycling_bin', name: 'Recycling Bin', icon: '♻️', desc: 'Selling a beast refunds its full base cost', cost: 300 },
   { id: 'golden_ticket', name: 'Golden Ticket', icon: '🎟️', desc: '1 free reroll every shop visit', cost: 260 },
   { id: 'tax_evasion', name: 'Tax Evasion', icon: '💼', desc: 'Gain +10 Gold every time you enter the shop', cost: 140 },
+  { id: 'expanded_display', name: 'Expanded Display', icon: '🏪', desc: 'Shop offers an additional beast every refresh', cost: 180 },
 
   // GA & Lab
   { id: 'overclocked_cpu', name: 'Overclocked CPU', icon: '🖥️', desc: 'Start every GA round with +100 Epochs', cost: 160 },
@@ -646,7 +748,7 @@ const relicPool = [
   { id: 'second_wind', name: 'Second Wind', icon: '🌬️', desc: 'If you fail a round, gain 100 Epochs for the next computation', cost: 240 }
 ].map(r => {
   if (!r.image) {
-    r.image = 'assets/relics/' + r.id + '.png';
+    r.image = 'assets/relics/' + r.id + '.jpeg';
   }
   return r;
 });
@@ -667,7 +769,9 @@ function rollShop() {
   weights['Epic'] = (weights['Epic'] || 0) + getSkillEffect('inv_luck_epic', metaState) * 2;
   weights['Legendary'] = (weights['Legendary'] || 0) + getSkillEffect('inv_luck_leg', metaState) * 2;
 
-  for (let i = 0; i < 3 + getSkillEffect('eco_extra_shop', metaState); i++) {
+  let extraSlots = getSkillEffect('eco_extra_shop', metaState);
+  if (state.relics && state.relics.some(r => r.id === 'expanded_display')) extraSlots += 1;
+  for (let i = 0; i < 3 + extraSlots; i++) {
     let rand = Math.random() * 100;
     let chosenRarity = 'Common';
     let cumulative = 0;
@@ -724,10 +828,11 @@ function renderShop() {
     <span class="gold">${refreshCost === 0 ? 'FREE' : refreshCost + 'G'}</span>
   `;
   refreshCard.onclick = () => {
-    if (state.gold >= refreshCost || refreshCost === 0) {
-      if (refreshCost === 0 && state.freeRerolls > 0) {
+    const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+    if (state.gold >= refreshCost || refreshCost === 0 || isGod) {
+      if (refreshCost === 0 && state.freeRerolls > 0 && !isGod) {
         state.freeRerolls--;
-      } else {
+      } else if (!isGod) {
         state.gold -= refreshCost;
       }
       rollShop();
@@ -748,8 +853,9 @@ function renderShop() {
     <span class="gold">5G</span>
   `;
   epochCard.onclick = () => {
-    if (state.gold >= 5) {
-      state.gold -= 5;
+    const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+    if (state.gold >= 5 || isGod) {
+      if (!isGod) state.gold -= 5;
       state.epochs += 5;
       updateUI();
       saveRunState();
@@ -771,10 +877,12 @@ function renderShop() {
       <span class="gold">${actualUpgCost}G</span>
     `;
     upgCard.onclick = () => {
-      if (state.gold >= actualUpgCost) {
-        state.gold -= actualUpgCost;
+      const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+      if (state.gold >= actualUpgCost || isGod) {
+        if (!isGod) state.gold -= actualUpgCost;
         state.shopLevel++;
         state.upgradeCost = 30 * state.shopLevel * state.shopLevel;
+        renderShop();
         updateUI();
         saveRunState();
       } else {
@@ -803,9 +911,9 @@ function renderShop() {
         showToast("Your inventory is full (40 max)!");
         return;
       }
-      const oldGold = state.gold;
+      const oldBeastCount = state.beasts.length;
       state = buyBeast(state, randBeast);
-      if (state.gold < oldGold) { // Success
+      if (state.beasts.length > oldBeastCount) { // Success
         state.shopOfferings.splice(idx, 1);
         if (state.relics.some(r => r.id === 'counterfeit_coin') && Math.random() < 0.05) {
           if (state.beasts.length < 40) {
@@ -1123,7 +1231,8 @@ async function executeRound() {
 
     let populationHistory = [];
     for (let gen = 0; gen < epochsToRun; gen++) {
-      const scored = population.map(seq => ({ seq, score: evaluateFitness(seq, 10) }));
+      const sims = 10 + getSkillEffect('gen_sims', metaState) * 5;
+      const scored = population.map(seq => ({ seq, score: evaluateFitness(seq, sims) }));
       scored.sort((a, b) => b.score - a.score);
 
       populationHistory.push({
@@ -1136,12 +1245,32 @@ async function executeRound() {
         bestSequence = [...scored[0].seq];
       }
 
+      if (getSkillEffect('gen_cap', metaState) > 0) {
+        if (!state.allTimeBestSequence) state.allTimeBestSequence = { seq: [...bestSequence], score: bestExpectedDmg };
+        else if (bestExpectedDmg > state.allTimeBestSequence.score) {
+           state.allTimeBestSequence = { seq: [...bestSequence], score: bestExpectedDmg };
+        }
+      }
+
       const newPop = [];
-      newPop.push([...scored[0].seq]);
+      let elitesToKeep = 1 + getSkillEffect('gen_elite', metaState);
+      if (state.relics.some(r => r.id === 'elite_pedigree')) elitesToKeep += 1;
+      
+      if (getSkillEffect('gen_cap', metaState) > 0 && state.allTimeBestSequence) {
+        newPop.push([...state.allTimeBestSequence.seq]);
+        elitesToKeep = Math.max(0, elitesToKeep - 1);
+      }
+
+      for (let i = 0; i < elitesToKeep && i < scored.length; i++) {
+        if (newPop.length < getPopSize()) {
+           newPop.push([...scored[i].seq]);
+        }
+      }
 
       const tournamentSelect = () => {
         const t = [];
-        for (let i = 0; i < 3; i++) {
+        const tourneySize = 3 + getSkillEffect('gen_tourney', metaState) * 2;
+        for (let i = 0; i < tourneySize; i++) {
           t.push(scored[Math.floor(Math.random() * getPopSize())]);
         }
         t.sort((a, b) => b.score - a.score);
@@ -1201,399 +1330,121 @@ async function executeRound() {
   updateUI();
 
   const activeSeq = bestSequence.slice(0, getMaxSlots());
-  let index = 0;
-  let nextBeastBuff = 0;
-  let globalBeastBuff = 0;
-  let beastsAttacked = 0;
-  let lastDamage = 0;
-  let lastDamage2 = 0;
-  let bombTimer = -1;
-  let bombDamage = 0;
-  let zeroNextBeast = false;
 
-  function attackStep() {
-    if (index >= activeSeq.length || bossHp <= 0) {
-      let dotDamage = 0;
-      if (globalStatuses['POISON'] > 0) {
-        let poisonMultiplier = state.relics.some(r => r.id === 'venom_gland') ? 25 : 15;
-        let dmg = globalStatuses['POISON'] * poisonMultiplier;
-        dotDamage += dmg;
-        logCombat(`POISON deals ${dmg} damage!`, 'danger');
-      }
-      if (globalStatuses['FIRE'] > 0) {
-        let dmg = globalStatuses['FIRE'] * 20;
-        if (state.relics.some(r => r.id === 'thermite_paste') && globalStatuses['VULNERABLE'] > 0) {
-          dmg = Math.floor(dmg * (1 + 0.2 * globalStatuses['VULNERABLE']));
-        }
-        dotDamage += dmg;
-        logCombat(`FIRE deals ${dmg} damage!`, 'danger');
-        if (!state.relics.some(r => r.id === 'molten_core')) {
-          globalStatuses['FIRE'] = Math.max(0, globalStatuses['FIRE'] - 1);
-        }
-      }
-      if (dotDamage > 0) {
-        bossHp -= dotDamage;
-        updateUI();
-        elArenaBoss.style.background = 'var(--danger)';
-        setTimeout(() => { elArenaBoss.style.background = '#fff'; }, 150);
-      }
+  // --- Unified Combat Execution ---
+  // We call calculateDamage with generateLog: true to get the exact sequence of actions
+  const combatResult = calculateDamage(activeSeq, bossHp, currentStance, globalStatuses, {
+    gold: state.gold,
+    epochs: state.totalEpochsRun,
+    inventorySize: state.beasts.length,
+    level: state.level,
+    relics: state.relics,
+    metaState: metaState,
+    generateLog: true
+  });
+
+  const actions = combatResult.actions;
+  
+  if (!state.runHistory) state.runHistory = [];
+  let currentLevelHistory = state.runHistory.find(h => h.level === state.level);
+  if (!currentLevelHistory) {
+    currentLevelHistory = { level: state.level, turns: [] };
+    state.runHistory.push(currentLevelHistory);
+    if (state.runHistory.length > 5) state.runHistory.shift();
+  }
+  currentLevelHistory.turns.push({
+    round: combatRound,
+    seq: [...activeSeq],
+    expectedDmg: bestExpectedDmg,
+    actions: [...actions]
+  });
+
+  let actionIndex = 0;
+
+  function buildBreakdownHtml(breakdown, total) {
+    if (!breakdown || breakdown.length === 0) return null;
+    let html = '';
+    breakdown.forEach(b => {
+      html += `<div class="breakdown-row"><span>${b.label}</span><strong>${b.value}</strong></div>`;
+    });
+    html += `<div class="breakdown-row breakdown-total"><span>Total</span><strong>${total}</strong></div>`;
+    return html;
+  }
+
+  function processNextAction() {
+    if (bossHp <= 0 || actionIndex >= actions.length) {
       setTimeout(finishRound, 100);
       return;
     }
 
-    const beast = activeSeq[index];
-    let baseMinDmg = beast.minDamage;
-    if (state.relics.some(r => r.id === 'weighted_dice')) baseMinDmg = Math.floor(baseMinDmg * 1.2);
-    let minDmg = baseMinDmg + nextBeastBuff + globalBeastBuff;
-    let maxDmg = beast.maxDamage + nextBeastBuff + globalBeastBuff;
-    
-    if (state.relics.some(r => r.id === 'heavy_anvil')) {
-      minDmg += 10;
-      maxDmg += 10;
-    }
-    
-    nextBeastBuff = 0;
+    const action = actions[actionIndex];
+    actionIndex++;
 
-    let dmg = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
-    if (zeroNextBeast) {
-      dmg = 0; zeroNextBeast = false;
-      logCombat(`${beast.name} dealt 0 damage due to BLOOD PRICE!`, 'danger');
-    }
-    let isCrit = false;
-
-    if (beast.synergy === 'COMBO_SCALER') {
-      let comboScaling = 0.20;
-      if (state.relics.some(r => r.id === 'combo_meter')) comboScaling += 0.10;
-      dmg = Math.floor(dmg * (1 + comboScaling * beastsAttacked));
-      logCombat(`${beast.name} scales from combo!`);
-    }
-
-    if (currentStance === 'ARMORED') {
-      if (beast.synergy === 'PIERCING') {
-        logCombat(`${beast.name} PIERCED the armor!`, 'crit');
-      } else {
-        let baseReduction = 0.5;
-        if (state.relics.some(r => r.id === 'armor_piercing_rounds')) baseReduction = 0.7; // meaning 30% reduction
-        dmg = Math.floor(dmg * baseReduction);
-      }
-    }
-
-    if (Math.random() < 0.1) {
-      dmg = Math.floor(dmg * 1.5);
-      isCrit = true;
-    }
-
-    if (beast.synergy === 'DOUBLE_IF_POISONED' && globalStatuses['POISON'] > 0) {
-      dmg *= 2; logCombat(`${beast.name} exploits POISON!`, 'crit');
-    }
-    if (beast.synergy === 'DOUBLE_IF_FIRE' && globalStatuses['FIRE'] > 0) {
-      dmg *= 2; logCombat(`${beast.name} exploits FIRE!`, 'crit');
-    }
-    if (beast.synergy === 'TRIPLE_IF_SHOCK' && globalStatuses['SHOCK'] > 0) {
-      dmg *= 3; logCombat(`${beast.name} exploits SHOCK!`, 'crit');
-    }
-    if (beast.synergy === 'CONSUME_POISON' && globalStatuses['POISON'] > 0) {
-      dmg += 50; globalStatuses['POISON'] = 0; logCombat(`${beast.name} consumed POISON!`, 'crit');
-    }
-    if (beast.synergy === 'BUFF_NEXT_20') {
-      nextBeastBuff = 20; logCombat(`${beast.name} buffs next beast!`);
-    }
-    if (beast.synergy === 'DOUBLE_IF_VULNERABLE' && globalStatuses['VULNERABLE'] > 0) {
-      dmg *= 2; logCombat(`${beast.name} exploits VULNERABLE!`, 'crit');
-    }
-    if (beast.synergy === 'CONSUME_FIRE' && globalStatuses['FIRE'] > 0) {
-      let fireConsume = 60;
-      if (state.relics.some(r => r.id === 'ashes_to_ashes')) fireConsume = 100;
-      dmg += fireConsume; globalStatuses['FIRE'] = 0; logCombat(`${beast.name} consumed FIRE!`, 'crit');
-    }
-    if (beast.synergy === 'BUFF_NEXT_40') {
-      nextBeastBuff = 40; logCombat(`${beast.name} mega-buffs next beast!`);
-    }
-    if (beast.synergy === 'CATALYST' && globalStatuses['POISON'] > 0) {
-      let catDmg = 15;
-      if (state.relics.some(r => r.id === 'catalytic_converter')) catDmg = 25;
-      dmg += globalStatuses['POISON'] * catDmg * 3; globalStatuses['POISON'] = 0; logCombat(`${beast.name} detonate POISON!`, 'crit');
-    }
-    if (beast.synergy === 'PROLIFERATE') {
-      let prolifMult = 2;
-      if (state.relics.some(r => r.id === 'pandemic_spore')) prolifMult = 3;
-      for (const [status, stacks] of Object.entries(globalStatuses)) {
-        if (stacks > 0) globalStatuses[status] *= prolifMult;
-      }
-      logCombat(`${beast.name} proliferated statuses!`, 'crit');
-    }
-    if (beast.synergy === 'EXECUTE') {
-      let threshold = 0.3;
-      if (state.relics.some(r => r.id === 'executioners_axe')) threshold = 0.4;
-      if (bossHp <= bossMaxHp * threshold) {
-        let execMult = 4;
-        if (state.relics.some(r => r.id === 'ritual_dagger')) execMult = 6;
-        dmg *= execMult; logCombat(`${beast.name} executes!`, 'crit');
-      }
-    }
-    if (beast.synergy === 'CONSUME_ALL') {
-      let removed = 0;
-      for (const [status, stacks] of Object.entries(globalStatuses)) {
-        if (stacks > 0) { removed++; globalStatuses[status] = 0; }
-      }
-      nextBeastBuff = removed * 50; logCombat(`${beast.name} consumed the void!`);
-    }
-    if (beast.synergy === 'SHATTER' && globalStatuses['FROSTBITE'] > 0) {
-      dmg *= 3;
-      globalStatuses['FROSTBITE'] = 0;
-      logCombat(`${beast.name} SHATTERED the frostbite!`, 'crit');
-    }
-    if (beast.synergy === 'DROWN' && globalStatuses['FROSTBITE'] > 0 && globalStatuses['VULNERABLE'] > 0) {
-      dmg *= 5;
-      logCombat(`${beast.name} DROWNED the boss!`, 'crit');
-    }
-    if (beast.synergy === 'OVERCHARGE') {
-      if (globalStatuses['SHOCK'] === 3) {
-        dmg *= 10;
-        logCombat(`${beast.name} unleashed OVERCHARGE!`, 'crit');
-      } else {
-        dmg = 1;
-        logCombat(`${beast.name} failed to overcharge...`);
-      }
-    }
-    if (beast.synergy === 'REVERBERATE') {
-      let echoBase = state.relics.some(r => r.id === 'echo_chamber') ? 1.5 : 1.0;
-      let echoDmg = Math.floor((lastDamage + lastDamage2) * echoBase);
-      dmg += echoDmg;
-      logCombat(`${beast.name} REVERBERATED for ${echoDmg} extra damage!`);
-    }
-    if (beast.synergy === 'RHYTHM' && index % 2 === 1) {
-      dmg *= 3;
-      logCombat(`${beast.name} hit the RHYTHM!`, 'crit');
-    }
-    if (beast.synergy === 'BLOOD_PRICE') {
-      zeroNextBeast = true;
-      logCombat(`${beast.name} paid the BLOOD PRICE!`, 'danger');
-    }
-    if (beast.synergy === 'OMNI_STRIKE') {
-      globalStatuses['POISON'] = (globalStatuses['POISON'] || 0) + 1;
-      globalStatuses['FIRE'] = (globalStatuses['FIRE'] || 0) + 1;
-      globalStatuses['SHOCK'] = (globalStatuses['SHOCK'] || 0) + 1;
-      globalStatuses['VULNERABLE'] = (globalStatuses['VULNERABLE'] || 0) + 1;
-      globalStatuses['FROSTBITE'] = (globalStatuses['FROSTBITE'] || 0) + 1;
-      logCombat(`${beast.name} unleashed an OMNI STRIKE!`, 'crit');
-    }
-
-    if (beast.synergy === 'TIME_BOMB') {
-      bombTimer = 2;
-      bombDamage = state.relics.some(r => r.id === 'time_bomb_detonator') ? 300 : 150;
-      logCombat(`${beast.name} planted a TIME BOMB!`, 'danger');
-    }
-    if (beast.synergy === 'FINISHER' && beastsAttacked === activeSeq.length - 1) {
-      dmg *= 5;
-      logCombat(`${beast.name} activated FINISHER!`, 'crit');
-    }
-    if (beast.synergy === 'PUNISHER') {
-      let punishThresh = state.relics.some(r => r.id === 'punishers_whip') ? 30 : 15;
-      if (lastDamage > 0 && lastDamage < punishThresh) {
-        dmg *= 3;
-        logCombat(`${beast.name} PUNISHED the weak attack!`, 'crit');
-      }
-    }
-    if (beast.synergy === 'ECHO' && lastDamage > 0) {
-      let echoBase = state.relics.some(r => r.id === 'echo_chamber') ? 1.5 : 1.0;
-      dmg += Math.floor(lastDamage * echoBase);
-      logCombat(`${beast.name} ECHOED for ${Math.floor(lastDamage * echoBase)} extra damage!`);
-    }
-
-    // Previous Complex Synergies
-    if (beast.synergy === 'TRIGGER_NEXT') {
-      const nextB = activeSeq[index + 1];
-      if (nextB && nextB.appliesStatus) {
-        globalStatuses[nextB.appliesStatus] = (globalStatuses[nextB.appliesStatus] || 0) + 1;
-        logCombat(`${beast.name} triggered ${nextB.name}'s status early!`);
-      }
-    }
-    if (beast.synergy === 'MIRROR_SYMMETRY') {
-      const oppIdx = (activeSeq.length - 1) - index;
-      const oppBeast = activeSeq[oppIdx];
-      if (oppBeast) {
-        const oppDmg = Math.floor(Math.random() * (oppBeast.maxDamage - oppBeast.minDamage + 1)) + oppBeast.minDamage;
-        dmg += oppDmg;
-        logCombat(`${beast.name} mirrored damage! (+${oppDmg})`);
-      }
-    }
-    if (beast.synergy === 'MOMENTUM_LOSS') {
-      let penalty = state.relics.some(r => r.id === 'momentum_pendulum') ? 7.5 : 15;
-      dmg -= (penalty * beastsAttacked);
-      if (dmg < 0) dmg = 0;
-      logCombat(`${beast.name} lost momentum...`);
-    }
-    if (beast.synergy === 'STATUS_CONVERSION') {
-      let converted = 0;
-      if (globalStatuses['POISON'] > 0) {
-        converted += globalStatuses['POISON'];
-        globalStatuses['FROSTBITE'] = (globalStatuses['FROSTBITE'] || 0) + globalStatuses['POISON'];
-        globalStatuses['POISON'] = 0;
-      }
-      if (globalStatuses['FIRE'] > 0) {
-        converted += globalStatuses['FIRE'];
-        globalStatuses['SHOCK'] = (globalStatuses['SHOCK'] || 0) + globalStatuses['FIRE'];
-        globalStatuses['FIRE'] = 0;
-      }
-      let baseConv = state.relics.some(r => r.id === 'conversion_kit') ? 25 : 10;
-      dmg += converted * baseConv;
-      if (converted > 0) logCombat(`${beast.name} converted statuses!`);
-    }
-    if (beast.synergy === 'VACUUM_SCALER') {
-      let cleared = 0;
-      for (const [status, stacks] of Object.entries(globalStatuses)) {
-        if (stacks > 0) { cleared += stacks; globalStatuses[status] = 0; }
-      }
-      let vacDmg = state.relics.some(r => r.id === 'vacuum_cleaner') ? 10 : 5;
-      globalBeastBuff += cleared * vacDmg;
-      if (cleared > 0) logCombat(`${beast.name} vacuumed the board!`);
-    }
-    if (beast.synergy === 'MISSING_HP_SCALING') {
-      const missingHp = Math.max(0, bossMaxHp - bossHp);
-      dmg += Math.floor(missingHp * 0.15);
-    }
-
-    // Early Game Variety
-    if (beast.synergy === 'FIRST_STRIKE' && beastsAttacked === 0) {
-      let firstMult = state.relics.some(r => r.id === 'first_blood_medal') ? 4 : 3;
-      dmg *= firstMult; logCombat(`${beast.name} First Strike!`, 'crit');
-    }
-    if (beast.synergy === 'HIDE') {
-      if (beastsAttacked === 0 || beastsAttacked === 1) {
-        dmg = 0; logCombat(`${beast.name} hides in fear!`, 'danger');
-        if (state.relics.some(r => r.id === 'telescope')) nextBeastBuff += 20;
-      }
-    }
-    if (beast.synergy === 'GROWTH') {
-      let growthMult = state.relics.some(r => r.id === 'growth_hormone') ? 5 : 2;
-      dmg += (growthMult * beastsAttacked); logCombat(`${beast.name} grows from combo!`);
-    }
-    if (beast.synergy === 'MINOR_BUFF') {
-      nextBeastBuff += 5; logCombat(`${beast.name} cheers the next beast!`);
-      if (state.relics.some(r => r.id === 'cheerleader_pompoms')) globalBeastBuff += 10;
-    }
-    if (beast.synergy === 'KINDLING' && globalStatuses['FIRE'] > 0) {
-      let kindleMult = state.relics.some(r => r.id === 'kindling_wood') ? 3 : 2;
-      dmg *= kindleMult; logCombat(`${beast.name} ignited kindling!`, 'crit');
-    }
-    if (beast.synergy === 'HIGH_ROLLER') {
-      let rollChance = state.relics.some(r => r.id === 'high_roller_chips') ? 0.75 : 0.50;
-      if (Math.random() < rollChance) { dmg *= 2; logCombat(`${beast.name} rolls HIGH!`, 'crit'); }
-      else { dmg = Math.floor(dmg / 2); logCombat(`${beast.name} rolls LOW!`, 'danger'); }
-    }
-
-    // Super Late Game Scalers
-    if (beast.synergy === 'GOLD_SCALING') {
-      let goldMult = state.relics.some(r => r.id === 'gold_plating') ? 2 : 1;
-      dmg += (state.gold || 0) * goldMult; logCombat(`${beast.name} cashes in!`);
-    }
-    if (beast.synergy === 'EPOCH_SCALING') {
-      let divisor = state.relics.some(r => r.id === 'epoch_clock') ? 2 : 5;
-      dmg += Math.floor((state.totalEpochsRun || 0) / divisor); logCombat(`${beast.name} shifts time!`);
-    }
-    if (beast.synergy === 'INVENTORY_SCALING') {
-      let invBase = state.relics.some(r => r.id === 'collectors_edition') ? 15 : 5;
-      dmg += ((state.beasts.length || 0) * invBase); logCombat(`${beast.name} rallies the reserve!`);
-    }
-    if (beast.synergy === 'LEVEL_SCALING') {
-      let lvlBase = state.relics.some(r => r.id === 'level_up_potion') ? 20 : 10;
-      dmg += ((state.level || 0) * lvlBase); logCombat(`${beast.name} draws blood!`);
-    }
-    if (beast.synergy === 'LEGENDARY_MULTIPLIER') {
-      const legCount = activeSeq.filter(b => b.rarity === 'Legendary').length;
-      if (legCount > 0) {
-        let baseMult = state.relics.some(r => r.id === 'crown_of_legends') ? 2.5 : 1.8;
-        dmg = Math.floor(dmg * Math.pow(baseMult, legCount));
-        logCombat(`${beast.name} forms fractal!`);
-      }
-    }
-
-    if (globalStatuses['VULNERABLE'] > 0) {
-      dmg = Math.floor(dmg * 1.5);
-    }
-    if (globalStatuses['FROSTBITE'] > 0) {
-      dmg += globalStatuses['FROSTBITE'] * 5;
-    }
-
-    const isPoisonBeast = beast.appliesStatus === 'POISON' || (beast.synergy && beast.synergy.includes('POISON'));
-    const isFireBeast = beast.appliesStatus === 'FIRE' || (beast.synergy && beast.synergy.includes('FIRE'));
-    const isShockBeast = beast.appliesStatus === 'SHOCK' || (beast.synergy && beast.synergy.includes('SHOCK'));
-    const isVulnBeast = beast.appliesStatus === 'VULNERABLE' || (beast.synergy && beast.synergy.includes('VULNERABLE'));
-
-    if (currentStance === 'POISON_WEAKNESS' && isPoisonBeast) { dmg *= 2; logCombat(`POISON WEAKNESS EXPLOITED!`, 'crit'); }
-    if (currentStance === 'FIRE_IMMUNITY' && isFireBeast) { dmg = 0; logCombat(`FIRE IMMUNITY BLOCKED DAMAGE!`, 'danger'); }
-    if (currentStance === 'SHOCK_WEAKNESS' && isShockBeast) { dmg *= 2; logCombat(`SHOCK WEAKNESS EXPLOITED!`, 'crit'); }
-    if (currentStance === 'VULNERABLE_WEAKNESS' && isVulnBeast) { dmg *= 2; logCombat(`VULNERABLE WEAKNESS EXPLOITED!`, 'crit'); }
-
-    bossHp -= dmg;
-    logCombat(`${beast.name} attacks for ${dmg} damage! ${isCrit ? '(CRIT!)' : ''}`);
-    
-    // Visual Combat Feedback
-    if (dmg > 0) {
-      const floatEl = document.createElement('div');
-      floatEl.className = 'floating-damage' + (isCrit ? ' crit' : '');
-      floatEl.textContent = `-${dmg}`;
-      const offsetX = (Math.random() - 0.5) * 60;
-      floatEl.style.left = `calc(50% + ${offsetX}px)`;
-      floatEl.style.top = `0px`;
-      elArenaBoss.parentElement.appendChild(floatEl);
-      setTimeout(() => floatEl.remove(), 1200);
+    if (action.type === 'attack') {
+      const beast = action.beast;
+      const dmg = action.totalDmg;
+      const breakdownHtml = buildBreakdownHtml(action.breakdown, dmg);
       
-      if (dmg > 50 || isCrit) {
-        const arena = document.querySelector('.fight-panel');
-        if (arena) {
-          arena.classList.remove('shake-heavy');
-          void arena.offsetWidth;
-          arena.classList.add('shake-heavy');
-        }
+      let logType = action.isCrit ? 'crit' : 'normal';
+      let msg = `${beast.icon} <strong>${beast.name}</strong> dealt ${dmg} damage!`;
+      if (action.isDouble) msg = `${beast.icon} <strong>${beast.name}</strong> double-attacked for ${dmg} damage!`;
+      
+      logCombat(msg, logType, breakdownHtml);
+      
+      if (dmg > 0) {
+         showFloatingText(dmg, logType);
+         bossHp -= dmg;
+         updateUI();
+         elArenaBoss.classList.add('hit-anim');
+         setTimeout(() => elArenaBoss.classList.remove('hit-anim'), 150);
+      } else {
+         showFloatingText('0', 'normal');
       }
+
+      const uiBeasts = document.querySelectorAll('#arena-sequence .beast-item');
+      uiBeasts.forEach(b => b.classList.remove('active-attacker'));
+      const attackIdx = actions.slice(0, actionIndex).filter(a => a.type === 'attack').length - 1;
+      if (uiBeasts[attackIdx]) uiBeasts[attackIdx].classList.add('active-attacker');
+
+      setTimeout(processNextAction, 300);
+    } 
+    else if (action.type === 'dot') {
+      const isPoison = action.status === 'POISON';
+      bossHp -= action.dmg;
+      logCombat(`${isPoison?'🟢':'🔥'} ${action.status} dealt ${action.dmg} damage!`, 'danger');
+      showFloatingText(action.dmg, 'dot');
+      updateUI();
+      elArenaBoss.style.background = 'var(--danger)';
+      setTimeout(() => { elArenaBoss.style.background = '#fff'; processNextAction(); }, 150);
     }
-
-    if (beast.appliesStatus) {
-      globalStatuses[beast.appliesStatus] = (globalStatuses[beast.appliesStatus] || 0) + 1;
-      logCombat(`${beast.name} applied ${beast.appliesStatus}!`);
+    else if (action.type === 'bomb') {
+      bossHp -= action.dmg;
+      logCombat(`💣 TIME BOMB detonated for ${action.dmg} damage!`, 'crit');
+      showFloatingText(action.dmg, 'crit');
+      updateUI();
+      setTimeout(processNextAction, 300);
     }
-
-    if (bombTimer > 0) {
-      bombTimer--;
-      if (bombTimer === 0) {
-        bossHp -= bombDamage;
-        logCombat(`TIME BOMB EXPLODED for ${bombDamage} damage!`, 'crit');
-        const floatEl = document.createElement('div');
-        floatEl.className = 'floating-damage crit';
-        floatEl.textContent = `-${bombDamage}`;
-        floatEl.style.left = `50%`;
-        floatEl.style.top = `0px`;
-        elArenaBoss.parentElement.appendChild(floatEl);
-        setTimeout(() => floatEl.remove(), 1200);
-        
-        const arena = document.querySelector('.fight-panel');
-        if (arena) {
-          arena.classList.remove('shake-heavy');
-          void arena.offsetWidth;
-          arena.classList.add('shake-heavy');
-        }
-      }
+    else if (action.type === 'heal') {
+      bossHp += action.amount;
+      logCombat(`🩸 Boss healed for ${action.amount} due to Blood Chalice!`, 'heal');
+      showFloatingText(`+${action.amount}`, 'heal');
+      updateUI();
+      setTimeout(processNextAction, 150);
     }
-
-    lastDamage2 = lastDamage;
-    lastDamage = dmg;
-    beastsAttacked++;
-
-    updateUI();
-    renderFightArena(index);
-
-    elArenaBoss.style.background = 'var(--danger)';
-    setTimeout(() => { elArenaBoss.style.background = '#fff'; }, 150);
-
-    index++;
-    setTimeout(attackStep, 250);
+    else if (action.type === 'execute_boss') {
+      bossHp = 0;
+      logCombat(`⚡ Boss EXECUTED by Resilience Capstone!`, 'crit');
+      showFloatingText('EXECUTED', 'crit');
+      updateUI();
+      setTimeout(processNextAction, 300);
+    }
+    else {
+      processNextAction();
+    }
   }
 
-  attackStep();
+  processNextAction();
 }
-
 function finishRound() {
   renderFightArena(-1);
   if (bossHp <= 0) {
@@ -1711,6 +1562,10 @@ function finishRound() {
       updateUI();
       saveRunState();
       if (typeof checkAchievements !== 'undefined') checkAchievements();
+      
+      if (metaState.settings && metaState.settings.autoPlayTurns) {
+        setTimeout(executeRound, 1000);
+      }
     }
   }
 }
@@ -1757,9 +1612,20 @@ function resetRun() {
     secondChanceUsed: false,
     shopOfferings: [],
     relicOfferings: [],
-    relics: [],
-    beasts: initialBeasts
+    temporarySkill: null
   };
+
+  if (getSkillEffect('chaos_cap', metaState) > 0) {
+    const candidates = SKILL_TREE_DATA.filter(s => s.tier > 0);
+    if (candidates.length > 0) {
+      const randomSkill = candidates[Math.floor(Math.random() * candidates.length)];
+      state.temporarySkill = randomSkill.id;
+    }
+  }
+  window.__activeTemporarySkill = state.temporarySkill;  state.relics = [];
+  state.runHistory = [];
+  state.beasts = initialBeasts;
+  
   bossMaxHp = 60;
   bossHp = 60;
   combatRound = 1;
@@ -1824,8 +1690,9 @@ function triggerRelicMilestone() {
       btn.textContent = `Too Expensive (${relic.cost}G)`;
     }
     btn.onclick = () => {
-      if (state.gold >= relic.cost && picksRemaining > 0) {
-        state.gold -= relic.cost;
+      const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+      if ((state.gold >= relic.cost || isGod) && picksRemaining > 0) {
+        if (!isGod) state.gold -= relic.cost;
         if (relic.id === 'rusty_piggy_bank') state.gold += 50;
         if (relic.id === 'ancestral_skull') {
            metaState.dna = (metaState.dna || 0) + 200;
@@ -1894,7 +1761,8 @@ if (btnCloseAchievements) btnCloseAchievements.addEventListener('click', () => {
 
 // Render logic for achievements
 window.renderAchievementsModal = function() {
-  if (!elAchievementsList || !metaState || !metaState.achievements) return;
+  if (!elAchievementsList || !metaState) return;
+  if (!metaState.achievements) metaState.achievements = [];
   elAchievementsList.innerHTML = '';
   
   let unlockedCount = 0;
@@ -1917,7 +1785,10 @@ window.renderAchievementsModal = function() {
       if (ach.type === 'progression') icon = '🔥';
       
       const title = (!isUnlocked && ach.hidden) ? '???' : ach.name;
-      const desc = (!isUnlocked && ach.hidden) ? 'Hidden Easter Egg. Discover it through gameplay.' : ach.desc;
+      let desc = ach.desc;
+      if (!isUnlocked && ach.hidden) {
+        desc = ach.hint ? ach.hint : 'Hidden Easter Egg. Discover it through gameplay.';
+      }
       
       card.innerHTML = `
         <div class="icon">${icon}</div>
@@ -1952,7 +1823,26 @@ document.body.addEventListener('mouseover', (e) => {
   if (target) {
     const text = target.getAttribute('data-tooltip');
     if (text) {
-      elGlobalTooltip.innerHTML = text.replace(/\n/g, '<br>');
+      let html = `<div style="display: flex; gap: 15px;">`;
+      html += `<div style="min-width: 200px;">${text.replace(/\n/g, '<br>')}</div>`;
+      
+      let extra = [];
+      const upText = text.toUpperCase();
+      if (upText.includes('POISON')) extra.push('<b style="color:#22c55e">POISON</b><br/>Deals 5 damage per stack at the end of the round. Loses 1 stack per round.');
+      if (upText.includes('FIRE')) extra.push('<b style="color:#ef4444">FIRE</b><br/>Deals 10 damage per stack at the end of the round. Loses 2 stacks per round.');
+      if (upText.includes('SHOCK')) extra.push('<b style="color:#eab308">SHOCK</b><br/>Multiplies next damage by 1.5x per stack, then removes all stacks.');
+      if (upText.includes('VULNERABLE')) extra.push('<b style="color:#a855f7">VULNERABLE</b><br/>Multiplies all damage taken by 1.5x. Loses 1 stack per round.');
+      if (upText.includes('FROSTBITE')) extra.push('<b style="color:#0ea5e9">FROSTBITE</b><br/>Deals 2 damage per stack when taking direct damage. Does not decay naturally.');
+      if (upText.includes('CONSUME')) extra.push('<b style="color:#f43f5e">CONSUME</b><br/>Removes all status effect stacks from the Boss.');
+      if (upText.includes('PROLIFERATE')) extra.push('<b style="color:#8b5cf6">PROLIFERATE</b><br/>Multiplies the current stacks of all active statuses.');
+      
+      if (extra.length > 0) {
+        html += `<div style="border-left: 1px dashed #555; padding-left: 15px; width: 220px; font-size: 0.8rem; color: #bbb;">`;
+        html += extra.join('<br/><br/>');
+        html += `</div>`;
+      }
+      html += `</div>`;
+      elGlobalTooltip.innerHTML = html;
       elGlobalTooltip.classList.remove('hidden');
       
       const rect = target.getBoundingClientRect();
@@ -2027,4 +1917,193 @@ if (bossVideo) {
   }, 7000);
 }
 
+// Settings Overlay Logic
+const btnOpenSettings = document.getElementById('btn-open-settings');
+const btnCloseSettings = document.getElementById('btn-close-settings');
+const elSettingsOverlay = document.getElementById('settings-overlay');
+const chkAutoPlay = document.getElementById('chk-autoplay-turns');
+
+if (btnOpenSettings) btnOpenSettings.addEventListener('click', () => {
+  if (chkAutoPlay) chkAutoPlay.checked = metaState.settings.autoPlayTurns || false;
+  elSettingsOverlay.classList.remove('hidden');
+});
+if (btnCloseSettings) btnCloseSettings.addEventListener('click', () => {
+  elSettingsOverlay.classList.add('hidden');
+});
+if (chkAutoPlay) chkAutoPlay.addEventListener('change', (e) => {
+  metaState.settings.autoPlayTurns = e.target.checked;
+  saveMetaState();
+});
+
+// Settings Tabs Logic
+const tabBtns = document.querySelectorAll('.settings-tab-btn');
+const tabPanes = document.querySelectorAll('.settings-tab-pane');
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabPanes.forEach(p => p.classList.add('hidden'));
+    btn.classList.add('active');
+    const tabId = btn.getAttribute('data-tab');
+    document.getElementById(`settings-tab-${tabId}`).classList.remove('hidden');
+  });
+});
+
+// Run History Overlay Logic
+const btnOpenHistory = document.getElementById('btn-open-history');
+const btnCloseHistory = document.getElementById('btn-close-history');
+const elHistoryOverlay = document.getElementById('history-overlay');
+const elHistoryList = document.getElementById('history-list');
+
+if (btnOpenHistory) btnOpenHistory.addEventListener('click', () => {
+  renderHistoryModal();
+  elHistoryOverlay.classList.remove('hidden');
+});
+if (btnCloseHistory) btnCloseHistory.addEventListener('click', () => {
+  elHistoryOverlay.classList.add('hidden');
+});
+
+function renderHistoryModal() {
+  if (!elHistoryList) return;
+  elHistoryList.innerHTML = '';
+  
+  if (!state.runHistory || state.runHistory.length === 0) {
+    elHistoryList.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 20px;">No history available yet. Compute rounds to see the algorithm history.</p>';
+    return;
+  }
+  
+  state.runHistory.slice().reverse().forEach(lvlHistory => {
+    const card = document.createElement('div');
+    card.className = 'history-level-card';
+    card.innerHTML = `<div class="history-level-header">Boss Level ${lvlHistory.level}</div>`;
+    
+    lvlHistory.turns.forEach(turn => {
+      const turnRow = document.createElement('div');
+      turnRow.className = 'history-turn-row';
+      
+      let seqHtml = '';
+      turn.seq.forEach((b, index) => {
+        // Try to find the corresponding attack action to build a tooltip
+        let breakdownTooltip = getTooltipText(b);
+        if (turn.actions) {
+          const actionCountForThisBeast = turn.actions.filter(a => a.type === 'attack').findIndex((a, i) => i === index);
+          // Wait, finding the action is simple since actions are strictly in sequence for 'attack'.
+          const attacks = turn.actions.filter(a => a.type === 'attack');
+          const myAction = attacks[index];
+          if (myAction && myAction.breakdown) {
+             breakdownTooltip += '\n\n-- Damage Breakdown --\n';
+             myAction.breakdown.forEach(bk => {
+               breakdownTooltip += `${bk.label}: ${bk.value}\n`;
+             });
+             breakdownTooltip += `Total: ${myAction.totalDmg}`;
+          }
+        }
+        
+        const safeTooltip = breakdownTooltip.replace(/\"/g, '&quot;');
+
+        if (b.image) {
+          seqHtml += `<div class="sequence-slot filled has-tooltip" data-tooltip="${safeTooltip}"><img src="${b.image}" class="beast-sprite-small" /></div>`;
+        } else {
+          seqHtml += `<div class="sequence-slot filled has-tooltip" data-tooltip="${safeTooltip}">${b.icon}</div>`;
+        }
+      });
+      
+      turnRow.innerHTML = `
+        <div class="history-turn-info">
+          <span>Turn ${turn.round}/3</span>
+          <span class="dmg">Expected Dmg: ${Math.floor(turn.expectedDmg)}</span>
+        </div>
+        <div class="history-turn-seq">
+          ${seqHtml}
+        </div>
+      `;
+      card.appendChild(turnRow);
+    });
+    
+    elHistoryList.appendChild(card);
+  });
+}
+
+// Local-Only God Mode
+const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+if (isLocalDev) {
+  const godOverlay = document.createElement('div');
+  godOverlay.className = 'god-mode-panel';
+  godOverlay.innerHTML = `
+    <div style="font-weight: bold; margin-bottom: 10px; color: gold; text-shadow: 0 0 5px gold; text-align: center;">GOD MODE</div>
+    <button id="btn-god-on" class="btn" style="width: 100%; margin-bottom: 5px; background: #333; color: gold; border-color: gold;">ACTIVATE</button>
+    <button id="btn-god-off" class="btn hidden" style="width: 100%; background: #333; color: white;">DEACTIVATE</button>
+  `;
+  document.body.appendChild(godOverlay);
+
+  const btnGodOn = document.getElementById('btn-god-on');
+  const btnGodOff = document.getElementById('btn-god-off');
+
+  const isGodMode = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+  if (isGodMode) {
+    document.body.classList.add('god-mode-active');
+    btnGodOn.classList.add('hidden');
+    btnGodOff.classList.remove('hidden');
+  }
+
+  btnGodOn.addEventListener('click', () => {
+    localStorage.setItem('antigravity_god_backup_state', JSON.stringify(state));
+    localStorage.setItem('antigravity_god_backup_meta', JSON.stringify(metaState));
+    localStorage.setItem('antigravity_god_mode_flag', 'true');
+
+    metaState.dna = 9999999;
+    
+    import('./skilltree.js').then(module => {
+      module.SKILL_TREE_DATA.forEach(skill => {
+        metaState.skillTree[skill.id] = skill.maxLevel;
+      });
+      saveMetaState();
+      if (skillTreeRenderer) skillTreeRenderer.render();
+    });
+
+    shopPool.forEach(poolItem => {
+      const b = poolItem.factory();
+      b.id = b.name + '_' + Math.random().toString(36).substr(2, 9);
+      b.rarity = poolItem.rarity;
+      state.beasts.push(b);
+    });
+
+    document.body.classList.add('god-mode-active');
+    btnGodOn.classList.add('hidden');
+    btnGodOff.classList.remove('hidden');
+
+    saveState();
+    saveMetaState();
+    updateUI();
+    renderBeasts();
+    renderSequence();
+    renderRelics();
+    renderShop();
+  });
+
+  btnGodOff.addEventListener('click', () => {
+    const backupState = localStorage.getItem('antigravity_god_backup_state');
+    const backupMeta = localStorage.getItem('antigravity_god_backup_meta');
+    
+    if (backupState) state = JSON.parse(backupState);
+    if (backupMeta) metaState = JSON.parse(backupMeta);
+    
+    localStorage.removeItem('antigravity_god_mode_flag');
+    
+    document.body.classList.remove('god-mode-active');
+    btnGodOff.classList.add('hidden');
+    btnGodOn.classList.remove('hidden');
+
+    saveState();
+    saveMetaState();
+    updateUI();
+    renderBeasts();
+    renderSequence();
+    renderRelics();
+    renderShop();
+    if (skillTreeRenderer) skillTreeRenderer.render();
+  });
+}
+
 init();
+

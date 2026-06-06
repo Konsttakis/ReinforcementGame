@@ -105,37 +105,37 @@ for (let i = 1; i <= 20; i++) {
 
 // 9. Easter Eggs & Hidden (26 Custom Achievements)
 const easterEggs = [
-  { id: 'ee_broke', name: 'Broke', desc: 'Have exactly 0 Gold.', type: 'hidden', condition: s => s.gold === 0 },
-  { id: 'ee_pacifist', name: 'The Pacifist', desc: 'Compute a sequence with exactly 0 expected damage.', type: 'hidden', condition: s => typeof bestExpectedDmg !== 'undefined' && bestExpectedDmg === 0 && s.beasts.length > 0 },
-  { id: 'ee_overkill_2x', name: 'Overkill', desc: 'Expected damage is at least 2x the Boss Max HP.', type: 'hidden', condition: s => typeof bestExpectedDmg !== 'undefined' && typeof bossMaxHp !== 'undefined' && bestExpectedDmg >= bossMaxHp * 2 },
-  { id: 'ee_overkill_10x', name: 'Ludicrous Gibs', desc: 'Expected damage is at least 10x the Boss Max HP.', type: 'hidden', condition: s => typeof bestExpectedDmg !== 'undefined' && typeof bossMaxHp !== 'undefined' && bestExpectedDmg >= bossMaxHp * 10 },
-  { id: 'ee_clutch', name: 'Calculated Risk', desc: 'Boss is alive with exactly 1 HP left.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp === 1 },
-  { id: 'ee_common_only_10', name: 'The Purist', desc: 'Reach Level 10 with ONLY Common beasts in inventory.', type: 'hidden', condition: s => s.level >= 10 && s.beasts.length > 0 && s.beasts.every(b => b.rarity === "Common") },
-  { id: 'ee_no_relics_20', name: 'Naked Run', desc: 'Reach Level 20 without acquiring a single relic.', type: 'hidden', condition: s => s.level >= 20 && s.relics.length === 0 },
-  { id: 'ee_all_legendary', name: 'Legendary Board', desc: 'Have at least 5 Legendary beasts in your inventory.', type: 'hidden', condition: s => s.beasts && s.beasts.filter(b => b.rarity === "Legendary").length >= 5 },
-  { id: 'ee_lucky_shop', name: 'Lucky Roll', desc: 'Roll a shop containing at least 2 Legendary beasts.', type: 'hidden', condition: s => s.shopOfferings && s.shopOfferings.filter(o => o.beast.rarity === "Legendary").length >= 2 },
-  { id: 'ee_unlucky_shop', name: 'Cursed Shop', desc: 'Roll a Level 5+ Shop with ONLY Common beasts.', type: 'hidden', condition: s => s.shopLevel >= 5 && s.shopOfferings && s.shopOfferings.length > 0 && s.shopOfferings.every(o => o.beast.rarity === "Common") },
-  { id: 'ee_speedrun_epoch', name: 'Zero Thinking', desc: 'Defeat a boss having computed exactly 0 epochs in the run.', type: 'hidden', condition: s => s.level > 1 && s.totalEpochsRun === 0 },
-  { id: 'ee_clone_army', name: 'Clone Army', desc: 'Have 10 of the exact same beast in your inventory.', type: 'hidden', condition: s => {
+  { id: 'ee_broke', name: 'Broke', desc: 'Have exactly 0 Gold.', hint: 'Spend every last penny.', type: 'hidden', condition: s => s.gold === 0 },
+  { id: 'ee_pacifist', name: 'The Pacifist', desc: 'Compute a sequence with exactly 0 expected damage.', hint: 'Find a way to do no harm.', type: 'hidden', condition: s => typeof bestExpectedDmg !== 'undefined' && bestExpectedDmg === 0 && s.beasts.length > 0 },
+  { id: 'ee_overkill_2x', name: 'Overkill', desc: 'Expected damage is at least 2x the Boss Max HP.', hint: 'Hit them twice as hard as necessary.', type: 'hidden', condition: s => typeof bestExpectedDmg !== 'undefined' && typeof bossMaxHp !== 'undefined' && bestExpectedDmg >= bossMaxHp * 2 },
+  { id: 'ee_overkill_10x', name: 'Ludicrous Gibs', desc: 'Expected damage is at least 10x the Boss Max HP.', hint: 'An absurd amount of unnecessary damage.', type: 'hidden', condition: s => typeof bestExpectedDmg !== 'undefined' && typeof bossMaxHp !== 'undefined' && bestExpectedDmg >= bossMaxHp * 10 },
+  { id: 'ee_clutch', name: 'Calculated Risk', desc: 'Boss is alive with exactly 1 HP left.', hint: 'Leave them clinging to a single thread of life.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp === 1 },
+  { id: 'ee_common_only_10', name: 'The Purist', desc: 'Reach Level 10 with ONLY Common beasts in inventory.', hint: 'Progress far with only the most basic units.', type: 'hidden', condition: s => s.level >= 10 && s.beasts.length > 0 && s.beasts.every(b => b.rarity === "Common") },
+  { id: 'ee_no_relics_20', name: 'Naked Run', desc: 'Reach Level 20 without acquiring a single relic.', hint: 'Rely only on beasts for a long time.', type: 'hidden', condition: s => s.level >= 20 && s.relics.length === 0 },
+  { id: 'ee_all_legendary', name: 'Legendary Board', desc: 'Have at least 5 Legendary beasts in your inventory.', hint: 'Gather a mythic team.', type: 'hidden', condition: s => s.beasts && s.beasts.filter(b => b.rarity === "Legendary").length >= 5 },
+  { id: 'ee_lucky_shop', name: 'Lucky Roll', desc: 'Roll a shop containing at least 2 Legendary beasts.', hint: 'An extraordinarily lucky shop refresh.', type: 'hidden', condition: s => s.shopOfferings && s.shopOfferings.filter(o => o.beast && o.beast.rarity === "Legendary" || o.rarity === "Legendary").length >= 2 },
+  { id: 'ee_unlucky_shop', name: 'Cursed Shop', desc: 'Roll a Level 5+ Shop with ONLY Common beasts.', hint: 'Max shop level, terrible choices.', type: 'hidden', condition: s => s.shopLevel >= 5 && s.shopOfferings && s.shopOfferings.length > 0 && s.shopOfferings.every(o => o.beast && o.beast.rarity === "Common" || o.rarity === "Common") },
+  { id: 'ee_speedrun_epoch', name: 'Zero Thinking', desc: 'Defeat a boss having computed exactly 0 epochs in the run.', hint: 'Win without letting the algorithm think.', type: 'hidden', condition: s => s.level > 1 && s.totalEpochsRun === 0 },
+  { id: 'ee_clone_army', name: 'Clone Army', desc: 'Have 10 of the exact same beast in your inventory.', hint: 'Quantity over variety.', type: 'hidden', condition: s => {
       if(!s.beasts) return false;
       const counts = {};
       for(let b of s.beasts) { counts[b.name] = (counts[b.name] || 0) + 1; if(counts[b.name]>=10) return true; }
       return false;
   }},
-  { id: 'ee_one_beast', name: 'Lone Wolf', desc: 'Reach Level 15 with only 1 beast in your inventory.', type: 'hidden', condition: s => s.level >= 15 && s.beasts && s.beasts.length === 1 },
-  { id: 'ee_max_slots', name: 'The General', desc: 'Unlock all 8 combat arena slots.', type: 'hidden', condition: (s, m) => typeof getMaxSlots === "function" && getMaxSlots() >= 8 },
-  { id: 'ee_first_death', name: 'First Blood (Yours)', desc: 'Die to a boss for the first time.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp > 0 && typeof combatRound !== 'undefined' && combatRound > 3 },
-  { id: 'ee_max_shop_level', name: 'Monopoly', desc: 'Reach Shop Level 6.', type: 'hidden', condition: s => s.shopLevel >= 6 },
-  { id: 'ee_cowardice', name: 'Tactical Retreat', desc: 'Have 5 Cowards in your inventory.', type: 'hidden', condition: s => s.beasts && s.beasts.filter(b => b.name === "Coward").length >= 5 },
-  { id: 'ee_vanguard', name: 'Shield Wall', desc: 'Have 5 Vanguards in your inventory.', type: 'hidden', condition: s => s.beasts && s.beasts.filter(b => b.name === "Vanguard").length >= 5 },
-  { id: 'ee_hoarder', name: 'Digital Hoarder', desc: 'Fill your inventory completely (cap reached).', type: 'hidden', condition: (s, m) => s.beasts && m && s.beasts.length >= 20 + (m.skillTree && m.skillTree["inv_cap"] ? m.skillTree["inv_cap"].level * 5 : 0) },
-  { id: 'ee_round3_kill', name: 'Down to the Wire', desc: 'Kill the boss on exactly Round 3.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp <= 0 && typeof combatRound !== 'undefined' && combatRound === 3 },
-  { id: 'ee_round1_kill', name: 'One Punch', desc: 'Kill the boss on Round 1.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp <= 0 && typeof combatRound !== 'undefined' && combatRound === 1 },
-  { id: 'ee_broke_late', name: 'Poverty Simulator', desc: 'Have exactly 0 Gold on Level 50+.', type: 'hidden', condition: s => s.gold === 0 && s.level >= 50 },
-  { id: 'ee_rich_early', name: 'Trust Fund', desc: 'Have 1000 Gold before Level 10.', type: 'hidden', condition: s => s.gold >= 1000 && s.level < 10 },
-  { id: 'ee_dna_hoard', name: 'Genetic Ascendance', desc: 'Have 100,000 DNA unspent.', type: 'hidden', condition: (s, m) => m && m.dna >= 100000 },
-  { id: 'ee_god_mode', name: 'The Architect', desc: 'Reach Level 100.', type: 'hidden', condition: s => s.level >= 100 },
-  { id: 'ee_impossible', name: 'Schrodingers Boss', desc: 'Boss is dead but combat round is 4.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp <= 0 && typeof combatRound !== 'undefined' && combatRound === 4 }
+  { id: 'ee_one_beast', name: 'Lone Wolf', desc: 'Reach Level 15 with only 1 beast in your inventory.', hint: 'A single beast can go far.', type: 'hidden', condition: s => s.level >= 15 && s.beasts && s.beasts.length === 1 },
+  { id: 'ee_max_slots', name: 'The General', desc: 'Unlock all 8 combat arena slots.', hint: 'Unlock maximum tactical space.', type: 'hidden', condition: (s, m) => typeof getMaxSlots === "function" && getMaxSlots() >= 8 },
+  { id: 'ee_first_death', name: 'First Blood (Yours)', desc: 'Die to a boss for the first time.', hint: 'Failure is a stepping stone.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp > 0 && typeof combatRound !== 'undefined' && combatRound > 3 },
+  { id: 'ee_max_shop_level', name: 'Monopoly', desc: 'Reach Shop Level 6.', hint: 'Beyond the regular shop upgrades.', type: 'hidden', condition: s => s.shopLevel >= 6 },
+  { id: 'ee_cowardice', name: 'Tactical Retreat', desc: 'Have 5 Cowards in your inventory.', hint: 'Sometimes it is better to hide.', type: 'hidden', condition: s => s.beasts && s.beasts.filter(b => b.name === "Coward").length >= 5 },
+  { id: 'ee_vanguard', name: 'Shield Wall', desc: 'Have 5 Vanguards in your inventory.', hint: 'A formidable defensive frontline.', type: 'hidden', condition: s => s.beasts && s.beasts.filter(b => b.name === "Vanguard").length >= 5 },
+  { id: 'ee_hoarder', name: 'Digital Hoarder', desc: 'Fill your inventory completely (cap reached).', hint: 'No more room for beasts.', type: 'hidden', condition: (s, m) => s.beasts && m && s.beasts.length >= 20 + (m.skillTree && m.skillTree["inv_cap"] ? m.skillTree["inv_cap"].level * 5 : 0) },
+  { id: 'ee_round3_kill', name: 'Down to the Wire', desc: 'Kill the boss on exactly Round 3.', hint: 'Cut it incredibly close.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp <= 0 && typeof combatRound !== 'undefined' && combatRound === 3 },
+  { id: 'ee_round1_kill', name: 'One Punch', desc: 'Kill the boss on Round 1.', hint: 'Finish them instantly.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp <= 0 && typeof combatRound !== 'undefined' && combatRound === 1 },
+  { id: 'ee_broke_late', name: 'Poverty Simulator', desc: 'Have exactly 0 Gold on Level 50+.', hint: 'Deep dive, empty pockets.', type: 'hidden', condition: s => s.gold === 0 && s.level >= 50 },
+  { id: 'ee_rich_early', name: 'Trust Fund', desc: 'Have 1000 Gold before Level 10.', hint: 'Insane early wealth.', type: 'hidden', condition: s => s.gold >= 1000 && s.level < 10 },
+  { id: 'ee_dna_hoard', name: 'Genetic Ascendance', desc: 'Have 100,000 DNA unspent.', hint: 'Hoard an immense amount of genetic material.', type: 'hidden', condition: (s, m) => m && m.dna >= 100000 },
+  { id: 'ee_god_mode', name: 'The Architect', desc: 'Reach Level 100.', hint: 'Reach the ultimate depths.', type: 'hidden', condition: s => s.level >= 100 },
+  { id: 'ee_impossible', name: 'Schrodingers Boss', desc: 'Boss is dead but combat round is 4.', hint: 'A paradox in combat.', type: 'hidden', condition: s => typeof bossHp !== 'undefined' && bossHp <= 0 && typeof combatRound !== 'undefined' && combatRound === 4 }
 ];
 
 easterEggs.forEach(e => {

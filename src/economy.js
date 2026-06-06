@@ -1,8 +1,10 @@
 export function buyBeast(state, beast) {
-  if (state.gold >= beast.cost) {
+  const isGodMode = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+  const cost = isGodMode ? 0 : beast.cost;
+  if (state.gold >= cost) {
     return {
       ...state,
-      gold: state.gold - beast.cost,
+      gold: state.gold - cost,
       beasts: [...state.beasts, beast]
     };
   }
@@ -10,10 +12,12 @@ export function buyBeast(state, beast) {
 }
 
 export function buyEpochs(state, amount) {
-  if (state.gold >= amount) {
+  const isGodMode = localStorage.getItem('antigravity_god_mode_flag') === 'true';
+  const cost = isGodMode ? 0 : amount;
+  if (state.gold >= cost) {
     return {
       ...state,
-      gold: state.gold - amount,
+      gold: state.gold - cost,
       epochs: state.epochs + amount
     };
   }

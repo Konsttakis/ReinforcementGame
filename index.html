@@ -78,6 +78,59 @@
       <button id="btn-skip-relic" class="btn secondary">Skip Relic</button>
     </div>
   </div>
+  <!-- Settings Modal -->
+  <div id="settings-overlay" class="screen-overlay hidden" style="z-index: 400; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
+    <div class="overlay-content full-screen-modal" style="width: 60vw; height: 60vh; max-width: 800px; padding: 0; display: flex; flex-direction: column; background: #111; border: 4px solid var(--text); box-shadow: 0 0 40px rgba(255,255,255,0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; flex-shrink: 0; border-bottom: 2px solid #333;">
+        <h1 style="margin: 0; font-size: 1.8rem;">⚙️ Settings</h1>
+        <button id="btn-close-settings" class="btn danger">Close</button>
+      </div>
+      <div style="display: flex; flex-grow: 1; overflow: hidden;">
+        <div class="settings-sidebar" style="width: 200px; background: #0a0a0a; border-right: 2px solid #333; display: flex; flex-direction: column;">
+          <button class="settings-tab-btn active" data-tab="general">General</button>
+          <button class="settings-tab-btn" data-tab="help">Help & Lore</button>
+        </div>
+        <div class="settings-content" style="flex-grow: 1; padding: 20px; overflow-y: auto;">
+          <div id="settings-tab-general" class="settings-tab-pane active">
+            <h2 style="margin-top: 0;">General Settings</h2>
+            <div class="setting-row">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1rem;">
+                <input type="checkbox" id="chk-autoplay-turns" style="width: 20px; height: 20px; cursor: pointer;">
+                Auto-Play All 3 Turns
+              </label>
+              <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">When enabled, combat rounds 2 and 3 will automatically start after a 1-second delay.</p>
+            </div>
+          </div>
+          <div id="settings-tab-help" class="settings-tab-pane hidden">
+            <h2 style="margin-top: 0;">The Void Crushers</h2>
+            <p>You are a Master Geneticist in a distant future where the multiverse is collapsing under the weight of <strong>The Void</strong>. Evil Bosses representing entropy and decay stand between your civilization and survival.</p>
+            <p>Using DNA extracted from fallen foes, you synthesize, mutate, and evolve a roster of <strong>Beasts</strong>—living weapons designed to exploit elemental weaknesses, scale synergistically, and crush the Void Bosses.</p>
+            <h3>Gameplay Guide</h3>
+            <ul>
+              <li><strong>DNA & Gold:</strong> Defeating Bosses earns Gold for the run. Failing to kill a boss earns persistent DNA.</li>
+              <li><strong>Laboratory:</strong> Spend DNA here to permanently upgrade your evolutionary tech tree across all runs.</li>
+              <li><strong>Compute & Execute:</strong> Uses a Genetic Algorithm to find the optimal arrangement of beasts from your inventory based on their synergies, elemental affinities, and the Boss's current stance.</li>
+              <li><strong>Epochs:</strong> More epochs = more time for the GA to mutate and crossover sequences, finding higher damage combinations.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Run History Modal -->
+  <div id="history-overlay" class="screen-overlay hidden" style="z-index: 400; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
+    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column; background: #111; border: 4px solid var(--text); box-shadow: 0 0 40px rgba(255,255,255,0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
+        <h1 style="margin: 0; font-size: 2rem;">📜 Algorithm History</h1>
+        <button id="btn-close-history" class="btn danger">Close</button>
+      </div>
+      <div id="history-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px;">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
   <div id="toast-container" class="toast-container"></div>
   <div id="global-tooltip" class="global-tooltip hidden"></div>
 
@@ -88,6 +141,8 @@
         <button id="btn-open-lab" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">🧬 Laboratory</button>
         <button id="btn-abandon-run" class="btn danger" style="padding: 5px 10px; font-size: 0.9rem;">💀 Abandon Run</button>
         <button id="btn-open-achievements" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem; border-color: #fcd34d; color: #fcd34d;">🏆 Achievements</button>
+        <button id="btn-open-history" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">📜 Algorithm History</button>
+        <button id="btn-open-settings" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">⚙️ Settings</button>
       </div>
       <div class="stats">
         <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display">0</span></div>
@@ -179,6 +234,10 @@
               <div class="sequence-slot empty">6</div>
               <div class="sequence-slot empty">7</div>
               <div class="sequence-slot empty">8</div>
+            </div>
+            <div id="historic-orders-container" style="margin-top: 15px; border-top: 1px dashed #333; padding-top: 10px;">
+              <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted);">Recent Turns History</h4>
+              <div id="historic-orders-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
             <div id="previous-sequences-list" class="previous-sequences-list"></div>
           </div>
