@@ -1,8 +1,19 @@
+import gsap from 'gsap';
 import { createBeast, calculateDamage } from './combat.js';
 import { orderCrossover, mutateSwap } from './ga.js';
 import { buyBeast, buyEpochs } from './economy.js';
 import { getSkillEffect, SKILL_TREE_DATA } from './skilltree.js';
 import { initSkillTree } from './skilltree-renderer.js';
+
+// Setup custom cursor
+document.addEventListener('mousemove', (e) => {
+  gsap.to('#custom-cursor', {
+    x: e.clientX,
+    y: e.clientY,
+    duration: 0.1,
+    ease: 'power2.out'
+  });
+});
 
 function makeBeast(name, min, max, stat, syn, rarity, icon, color, image = null) {
   if (!image) {
@@ -601,55 +612,74 @@ function showFloatingText(text, type = 'normal') {
   floatDiv.className = `floating-dmg ${type}`;
   floatDiv.textContent = text;
   
-  // Randomize start position slightly
-  const offsetX = (Math.random() - 0.5) * 60;
-  const offsetY = (Math.random() - 0.5) * 30;
-  floatDiv.style.left = `calc(50% + ${offsetX}px)`;
-  floatDiv.style.top = `calc(50% + ${offsetY}px)`;
-  floatDiv.style.transform = 'translate(-50%, -50%)';
+  // Start near the center of the boss arena
+  floatDiv.style.left = `50%`;
+  floatDiv.style.top = `50%`;
+  floatDiv.style.transform = 'translate(-50%, -50%) scale(0.5)';
+  floatDiv.style.opacity = 1;
   
   arena.parentElement.appendChild(floatDiv);
-  setTimeout(() => {
-    if (floatDiv.parentElement) floatDiv.parentElement.removeChild(floatDiv);
-  }, 1200);
+
+  // Random explosion physics
+  const randomX = (Math.random() - 0.5) * 150;
+  const randomY = -100 - Math.random() * 50;
+
+  gsap.to(floatDiv, {
+    x: randomX,
+    y: randomY,
+    scale: 1.5,
+    duration: 0.5,
+    ease: "power2.out",
+    onComplete: () => {
+      gsap.to(floatDiv, {
+        y: randomY + 50,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power1.in",
+        onComplete: () => {
+          if (floatDiv.parentElement) floatDiv.parentElement.removeChild(floatDiv);
+        }
+      });
+    }
+  });
 }
 
 // --- Shop Logic ---
 const shopPool = [
-  { factory: () => makeBeast('Coward', 15, 15, null, 'HIDE', 'Common', '🙈', '#d6d3d1', 'assets/beasts/coward.png'), rarity: 'Common' },
-  { factory: () => makeBeast('Scout', 4, 8, null, 'GROWTH', 'Common', '🦅', '#93c5fd', 'assets/beasts/scout.png'), rarity: 'Common' },
-  { factory: () => makeBeast('Cheerleader', 2, 4, null, 'MINOR_BUFF', 'Common', '📣', '#fca5a5', 'assets/beasts/cheerleader.png'), rarity: 'Common' },
-  { factory: () => makeBeast('Static Slime', 4, 8, 'SHOCK', null, 'Common', '💧', '#fbbf24', 'assets/beasts/static_slime.png'), rarity: 'Common' },
-  { factory: () => makeBeast('Bomber', 5, 10, null, 'TIME_BOMB', 'Rare', '💣', '#ef4444', 'assets/beasts/bomber.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Blood Mage', 5, 15, null, 'MISSING_HP_SCALING', 'Epic', '🩸', '#991b1b', 'assets/beasts/blood_mage.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Conductor', 10, 20, null, 'TRIGGER_NEXT', 'Epic', '🎼', '#fbcfe8', 'assets/beasts/conductor.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Doppelganger', 5, 10, null, 'MIRROR_SYMMETRY', 'Rare', '👥', '#a78bfa', 'assets/beasts/doppelganger.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon', '🦟', '#c084fc', 'assets/beasts/leech.png'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon', '🧙', '#fde047', 'assets/beasts/cleric.png'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon', '🐍', '#4ade80', 'assets/beasts/venomous.png'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Coward', 15, 15, null, 'HIDE', 'Common', '🙈', '#d6d3d1'), rarity: 'Common' },
+  { factory: () => makeBeast('Scout', 4, 8, null, 'GROWTH', 'Common', '🦅', '#93c5fd'), rarity: 'Common' },
+  { factory: () => makeBeast('Cheerleader', 2, 4, null, 'MINOR_BUFF', 'Common', '📣', '#fca5a5'), rarity: 'Common' },
+  { factory: () => makeBeast('Static Slime', 4, 8, 'SHOCK', null, 'Common', '💧', '#fbbf24'), rarity: 'Common' },
+  { factory: () => makeBeast('Bomber', 5, 10, null, 'TIME_BOMB', 'Rare', '💣', '#ef4444'), rarity: 'Rare' },
+  { factory: () => makeBeast('Blood Mage', 5, 15, null, 'MISSING_HP_SCALING', 'Epic', '🩸', '#991b1b'), rarity: 'Epic' },
+  { factory: () => makeBeast('Conductor', 10, 20, null, 'TRIGGER_NEXT', 'Epic', '🎼', '#fbcfe8'), rarity: 'Epic' },
+  { factory: () => makeBeast('Doppelganger', 5, 10, null, 'MIRROR_SYMMETRY', 'Rare', '👥', '#a78bfa'), rarity: 'Rare' },
+  { factory: () => makeBeast('Leech', 5, 10, 'VULNERABLE', null, 'Uncommon', '🦟', '#c084fc'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Cleric', 2, 5, null, 'BUFF_NEXT_20', 'Uncommon', '🧙', '#fde047'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Venomous', 5, 10, 'POISON', null, 'Uncommon', '🐍', '#4ade80'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Frost Weaver', 4, 8, 'FROSTBITE', null, 'Uncommon', '🕸️', '#38bdf8'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Bat', 5, 12, null, 'ECHO', 'Uncommon', '🦇', '#a855f7', 'assets/beasts/bat.png'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Vanguard', 10, 15, null, 'FIRST_STRIKE', 'Uncommon', '🛡️', '#78716c', 'assets/beasts/vanguard.png'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Firefly', 5, 8, 'FIRE', 'KINDLING', 'Uncommon', '🪲', '#f97316', 'assets/beasts/firefly.png'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Gambler', 1, 25, null, 'HIGH_ROLLER', 'Uncommon', '🎲', '#fef08a', 'assets/beasts/gambler.png'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Bat', 5, 12, null, 'ECHO', 'Uncommon', '🦇', '#a855f7'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Vanguard', 10, 15, null, 'FIRST_STRIKE', 'Uncommon', '🛡️', '#78716c'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Firefly', 5, 8, 'FIRE', 'KINDLING', 'Uncommon', '🪲', '#f97316'), rarity: 'Uncommon' },
+  { factory: () => makeBeast('Gambler', 1, 25, null, 'HIGH_ROLLER', 'Uncommon', '🎲', '#fef08a'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Taskmaster', 5, 10, null, 'PUNISHER', 'Uncommon', '💢', '#b45309'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Sniper', 8, 12, null, 'PIERCING', 'Uncommon', '🎯', '#166534'), rarity: 'Uncommon' },
   { factory: () => makeBeast('Dancer', 5, 10, null, 'RHYTHM', 'Uncommon', '💃', '#f43f5e'), rarity: 'Uncommon' },
-  { factory: () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare', '🔥', '#ef4444', 'assets/beasts/fire_element.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Ice Element', 10, 15, 'FROSTBITE', null, 'Rare', '❄️', '#38bdf8', 'assets/beasts/ice_element.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare', '⚡', '#fbbf24', 'assets/beasts/electric_eel.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Fatigue Giant', 60, 80, null, 'MOMENTUM_LOSS', 'Rare', '🥱', '#d6d3d1', 'assets/beasts/fatigue_giant.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Blademaster', 10, 15, null, 'COMBO_SCALER', 'Rare', '⚔️', '#52525b', 'assets/beasts/blademaster.png'), rarity: 'Rare' },
-  { factory: () => makeBeast('Assassin', 5, 25, null, 'FINISHER', 'Rare', '🥷', '#52525b', 'assets/beasts/assassin.png'), rarity: 'Rare' },
+  { factory: () => makeBeast('Fire Element', 10, 15, 'FIRE', null, 'Rare', '🔥', '#ef4444'), rarity: 'Rare' },
+  { factory: () => makeBeast('Ice Element', 10, 15, 'FROSTBITE', null, 'Rare', '❄️', '#38bdf8'), rarity: 'Rare' },
+  { factory: () => makeBeast('Electric Eel', 10, 15, 'SHOCK', null, 'Rare', '⚡', '#fbbf24'), rarity: 'Rare' },
+  { factory: () => makeBeast('Fatigue Giant', 60, 80, null, 'MOMENTUM_LOSS', 'Rare', '🥱', '#d6d3d1'), rarity: 'Rare' },
+  { factory: () => makeBeast('Blademaster', 10, 15, null, 'COMBO_SCALER', 'Rare', '⚔️', '#52525b'), rarity: 'Rare' },
+  { factory: () => makeBeast('Assassin', 5, 25, null, 'FINISHER', 'Rare', '🥷', '#52525b'), rarity: 'Rare' },
   { factory: () => makeBeast('Glacier Golem', 10, 15, null, 'SHATTER', 'Rare', '🧊', '#bae6fd'), rarity: 'Rare' },
   { factory: () => makeBeast('Blood Priest', 150, 200, null, 'BLOOD_PRICE', 'Rare', '🩸', '#991b1b'), rarity: 'Rare' },
-  { factory: () => makeBeast('Steam Roller', 15, 20, null, 'CONSUME_FIRE', 'Epic', '🚂', '#a1a1aa', 'assets/beasts/steam_roller.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic', '🦅', '#fcd34d', 'assets/beasts/thunderbird.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Dragon', 20, 35, 'FIRE', 'DOUBLE_IF_FIRE', 'Epic', '🐲', '#dc2626', 'assets/beasts/dragon.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Paladin', 10, 15, null, 'BUFF_NEXT_40', 'Epic', '🛡️', '#fef08a', 'assets/beasts/paladin.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Plague Doctor', 5, 10, 'POISON', 'PROLIFERATE', 'Epic', '🐦‍⬛', '#16a34a', 'assets/beasts/plague_doctor.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Prism Slime', 10, 15, null, 'STATUS_CONVERSION', 'Epic', '🌈', '#f472b6', 'assets/beasts/prism_slime.png'), rarity: 'Epic' },
-  { factory: () => makeBeast('Gold Hoarder', 5, 15, null, 'GOLD_SCALING', 'Epic', '💰', '#eab308', 'assets/beasts/gold_hoarder.png'), rarity: 'Epic' },
+  { factory: () => makeBeast('Steam Roller', 15, 20, null, 'CONSUME_FIRE', 'Epic', '🚂', '#a1a1aa'), rarity: 'Epic' },
+  { factory: () => makeBeast('Thunderbird', 15, 25, null, 'TRIPLE_IF_SHOCK', 'Epic', '🦅', '#fcd34d'), rarity: 'Epic' },
+  { factory: () => makeBeast('Dragon', 20, 35, 'FIRE', 'DOUBLE_IF_FIRE', 'Epic', '🐲', '#dc2626'), rarity: 'Epic' },
+  { factory: () => makeBeast('Paladin', 10, 15, null, 'BUFF_NEXT_40', 'Epic', '🛡️', '#fef08a'), rarity: 'Epic' },
+  { factory: () => makeBeast('Plague Doctor', 5, 10, 'POISON', 'PROLIFERATE', 'Epic', '🐦‍⬛', '#16a34a'), rarity: 'Epic' },
+  { factory: () => makeBeast('Prism Slime', 10, 15, null, 'STATUS_CONVERSION', 'Epic', '🌈', '#f472b6'), rarity: 'Epic' },
+  { factory: () => makeBeast('Gold Hoarder', 5, 15, null, 'GOLD_SCALING', 'Epic', '💰', '#eab308'), rarity: 'Epic' },
   { factory: () => makeBeast('The Collector', 5, 10, null, 'INVENTORY_SCALING', 'Epic', '🐝', '#65a30d'), rarity: 'Epic' },
   { factory: () => makeBeast('Executioner', 15, 25, null, 'EXECUTE', 'Epic', '🪓', '#991b1b'), rarity: 'Epic' },
   { factory: () => makeBeast('Void Terror', 15, 20, null, 'CONSUME_ALL', 'Epic', '🌌', '#581c87'), rarity: 'Epic' },
@@ -917,7 +947,7 @@ function renderShop() {
         state.shopOfferings.splice(idx, 1);
         if (state.relics.some(r => r.id === 'counterfeit_coin') && Math.random() < 0.05) {
           if (state.beasts.length < 40) {
-            state.beasts.push(randBeast);
+            state.beasts.push({ ...randBeast, id: Math.random().toString(36).substr(2, 9) });
             showToast(`Counterfeit Coin activated! You got a duplicate!`);
           }
         }
@@ -1395,16 +1425,37 @@ async function executeRound() {
          showFloatingText(dmg, logType);
          bossHp -= dmg;
          updateUI();
+         
+         // Screen shake for heavy hits
+         if (dmg >= 30) {
+            gsap.fromTo('.fight-panel', 
+              { x: -5 }, 
+              { x: 5, duration: 0.05, yoyo: true, repeat: 5, ease: 'power1.inOut', onComplete: () => gsap.set('.fight-panel', {x: 0}) }
+            );
+         }
          elArenaBoss.classList.add('hit-anim');
          setTimeout(() => elArenaBoss.classList.remove('hit-anim'), 150);
       } else {
          showFloatingText('0', 'normal');
       }
 
-      const uiBeasts = document.querySelectorAll('#arena-sequence .beast-item');
+      const uiBeasts = document.querySelectorAll('#arena-left .beast-icon');
       uiBeasts.forEach(b => b.classList.remove('active-attacker'));
       const attackIdx = actions.slice(0, actionIndex).filter(a => a.type === 'attack').length - 1;
-      if (uiBeasts[attackIdx]) uiBeasts[attackIdx].classList.add('active-attacker');
+      const activeBeastEl = uiBeasts[attackIdx];
+      
+      if (activeBeastEl) {
+        activeBeastEl.classList.add('active-attacker');
+        // Beast lunge animation using GSAP
+        gsap.to(activeBeastEl, {
+          y: -20,
+          scale: 1.1,
+          duration: 0.1,
+          yoyo: true,
+          repeat: 1,
+          ease: 'power2.inOut'
+        });
+      }
 
       setTimeout(processNextAction, 300);
     } 

@@ -10,10 +10,15 @@ export function orderCrossover(p1, p2, startIdx, endIdx) {
   let p2Idx = 0;
   for (let i = 0; i < child.length; i++) {
     if (child[i] === null) {
-      while (child.includes(p2[p2Idx])) {
+      while (p2Idx < p2.length && child.includes(p2[p2Idx])) {
         p2Idx++;
       }
-      child[i] = p2[p2Idx];
+      if (p2Idx < p2.length) {
+        child[i] = p2[p2Idx];
+      } else {
+        // Fallback for edge cases where p2 lacks unique elements (shouldn't happen with clones)
+        child[i] = p1[i];
+      }
     }
   }
   return child;

@@ -14,6 +14,9 @@
 </head>
 
 <body>
+  <div id="world-bg"></div>
+  <div id="custom-cursor"></div>
+
   <div id="screen-overlay" class="screen-overlay hidden">
     <div id="overlay-content" class="overlay-content">
       <h1 id="overlay-title">Title</h1>
@@ -23,15 +26,15 @@
   </div>
 
   <!-- Laboratory Modal -->
-  <div id="lab-overlay" class="screen-overlay hidden" style="z-index: 300; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
-    <div class="overlay-content lab-content full-screen-modal" style="width: 95vw; height: 95vh; padding: 20px; display: flex; flex-direction: column; background: #111; border: 4px solid var(--accent); box-shadow: 0 0 40px rgba(0,0,0,0.8);">
+  <div id="lab-overlay" class="screen-overlay hidden" style="z-index: 300;">
+    <div class="overlay-content lab-content full-screen-modal" style="width: 95vw; height: 95vh; padding: 20px; display: flex; flex-direction: column;">
       <div class="lab-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
         <div>
-          <h1 style="margin: 0; color: var(--accent); font-size: 2rem;">🌳 Evolutionary Tech Tree</h1>
+          <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-accent">🌳 Evolutionary Tech Tree</h1>
           <p style="color: var(--text-muted); margin: 5px 0 0 0;">Drag to pan. Scroll to zoom. Spend DNA to evolve.</p>
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
-          <div style="font-size: 1.5rem; font-weight: bold; color: #fff;">DNA: <span id="lab-dna-display" style="color: var(--accent);">0</span></div>
+          <div style="font-size: 1.5rem; font-weight: bold; color: #fff;">DNA: <span id="lab-dna-display" class="text-gradient-accent">0</span></div>
           <button id="btn-respec" class="btn secondary">Respec (Free)</button>
           <button id="btn-close-lab" class="btn danger">Close</button>
         </div>
@@ -51,11 +54,11 @@
   </div>
 
   <!-- Achievements Modal -->
-  <div id="achievements-overlay" class="screen-overlay hidden" style="z-index: 400; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
-    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column; background: #111; border: 4px solid #fcd34d; box-shadow: 0 0 40px rgba(252,211,77,0.4);">
+  <div id="achievements-overlay" class="screen-overlay hidden" style="z-index: 400;">
+    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
         <div>
-          <h1 style="margin: 0; color: #fcd34d; font-size: 2rem;">🏆 Hall of Achievements</h1>
+          <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-gold">🏆 Hall of Achievements</h1>
           <p style="color: var(--text-muted); margin: 5px 0 0 0;">Your legacy across the multiverse. <span id="achievements-count">0 / 150</span></p>
         </div>
         <button id="btn-close-achievements" class="btn danger">Close</button>
@@ -69,7 +72,7 @@
   <!-- Relic Choice Modal -->
   <div id="relic-choice-overlay" class="screen-overlay hidden" style="z-index: 200;">
     <div class="overlay-content relic-content" style="max-width: 800px; text-align: center;">
-      <h1 style="color: var(--accent); margin-bottom: 10px;">🏺 Milestone Reached!</h1>
+      <h1 style="color: var(--accent); margin-bottom: 10px;" class="text-gradient-gold">🏺 Milestone Reached!</h1>
       <p style="color: var(--text-muted); margin-bottom: 20px;">Choose a Relic to purchase for this run.</p>
       <div id="relic-options"
         style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
@@ -79,8 +82,8 @@
     </div>
   </div>
   <!-- Settings Modal -->
-  <div id="settings-overlay" class="screen-overlay hidden" style="z-index: 400; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
-    <div class="overlay-content full-screen-modal" style="width: 60vw; height: 60vh; max-width: 800px; padding: 0; display: flex; flex-direction: column; background: #111; border: 4px solid var(--text); box-shadow: 0 0 40px rgba(255,255,255,0.2);">
+  <div id="settings-overlay" class="screen-overlay hidden" style="z-index: 500;">
+    <div class="overlay-content full-screen-modal" style="width: 60vw; height: 60vh; max-width: 800px; padding: 0; display: flex; flex-direction: column;">
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; flex-shrink: 0; border-bottom: 2px solid #333;">
         <h1 style="margin: 0; font-size: 1.8rem;">⚙️ Settings</h1>
         <button id="btn-close-settings" class="btn danger">Close</button>
@@ -119,10 +122,10 @@
   </div>
 
   <!-- Run History Modal -->
-  <div id="history-overlay" class="screen-overlay hidden" style="z-index: 400; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);">
-    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column; background: #111; border: 4px solid var(--text); box-shadow: 0 0 40px rgba(255,255,255,0.2);">
+  <div id="history-overlay" class="screen-overlay hidden" style="z-index: 350;">
+    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
-        <h1 style="margin: 0; font-size: 2rem;">📜 Algorithm History</h1>
+        <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-accent">📜 Algorithm History</h1>
         <button id="btn-close-history" class="btn danger">Close</button>
       </div>
       <div id="history-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px;">
@@ -145,9 +148,9 @@
         <button id="btn-open-settings" class="btn secondary" style="padding: 5px 10px; font-size: 0.9rem;">⚙️ Settings</button>
       </div>
       <div class="stats">
-        <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display">0</span></div>
+        <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display" class="text-gradient-accent">0</span></div>
         <div class="stat">Level: <span id="level-display">1</span></div>
-        <div class="stat gold">Gold: <span id="gold-display">100</span></div>
+        <div class="stat gold" style="font-weight: bold;">Gold: <span id="gold-display" class="text-gradient-gold">100</span></div>
       </div>
     </header>
     <div id="relic-bar" class="relic-bar"
@@ -180,7 +183,7 @@
             style="font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; font-weight: bold; color: var(--danger);"><span
               id="boss-hp-display">60</span> / <span id="boss-hp-max">60</span></span>
         </div>
-        <div style="width: 100%; height: 20px; flex-shrink: 0; background-color: #e5e5e5; border: 2px solid #000; border-radius: 4px; overflow: hidden; margin-bottom: 25px; box-shadow: 2px 2px 0px #000;">
+        <div style="width: 100%; height: 20px; flex-shrink: 0; background-color: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; overflow: hidden; margin-bottom: 25px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
           <div id="boss-hp-bar" style="display: block; height: 100%; width: 100%; background-color: #ff0044; transition: width 0.3s ease; margin: 0; padding: 0;"></div>
         </div>
         <div id="fight-arena" class="fight-arena">

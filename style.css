@@ -1,22 +1,43 @@
 :root {
-  --bg-color: #0f172a;
-  --panel-bg: #1e293b;
+  /* Core Colors */
+  --bg-color: #0a0a0a;
+  --panel-bg: rgba(30, 41, 59, 0.4);
+  --panel-border: rgba(255, 255, 255, 0.08);
   --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --accent: #10b981;
-  --accent-hover: #059669;
+  --text-muted: #64748b;
+  --accent: #22c55e;
+  --accent-hover: #16a34a;
   --gold: #fbbf24;
   --danger: #ef4444;
   --danger-hover: #dc2626;
   --success: #10b981;
+  --void: #581c87;
   
-  /* Casino Tokens */
-  --border-thick: 2px solid rgba(255, 255, 255, 0.1);
-  --border-thin: 1px solid rgba(255, 255, 255, 0.05);
-  --border-radius: 8px;
-  --shadow-solid: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.8);
+  /* Modern CSS Tokens */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --border-thick: 2px solid var(--panel-border);
+  --border-thin: 1px solid var(--panel-border);
+  --border-radius: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-full: 9999px;
+
+  /* Glassmorphism & Shadow Depth */
+  --glass-blur: blur(12px);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.3);
+  --shadow-glow: 0 0 15px rgba(34, 197, 94, 0.4);
+  --shadow-glow-gold: 0 0 15px rgba(251, 191, 36, 0.4);
+  
+  /* Physics Animation Curves */
   --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --spring-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * {
@@ -25,6 +46,54 @@
   padding: 0;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  cursor: none !important; /* Hide native cursor for custom cursor */
+}
+
+body {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 10% 100%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+#world-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat-x;
+  /* Ready for the scrolling background image */
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);
+  mix-blend-mode: screen;
+}
+
+/* Gradient Text Utilities */
+.text-gradient-accent {
+  background: linear-gradient(to right, #4ade80, #22c55e);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.text-gradient-gold {
+  background: linear-gradient(to right, #fde047, #fbbf24);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 /* Achievements UI */
@@ -158,10 +227,11 @@ body {
 
 .panel {
   background: var(--panel-bg);
-  border: var(--border-thick);
-  border-radius: var(--border-radius);
+  border: var(--border-thin);
+  border-radius: var(--border-radius-lg);
   padding: 16px;
-  box-shadow: var(--shadow-solid);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
   overflow-y: auto;
 }
 
@@ -200,12 +270,13 @@ h1, h2, h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  padding: 12px 20px;
   background: var(--panel-bg);
+  backdrop-filter: var(--glass-blur);
   color: var(--text-main);
-  border: var(--border-thick);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-solid);
+  border: var(--border-thin);
+  border-radius: var(--border-radius-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
 }
 
 .top-bar h1 {
@@ -235,9 +306,9 @@ h1, h2, h3 {
 
 /* Casino Buttons */
 .btn {
-  background: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
-  border: var(--border-thin);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 18px;
   border-radius: var(--border-radius);
   font-family: 'Space Grotesk', sans-serif;
@@ -245,26 +316,63 @@ h1, h2, h3 {
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: var(--shadow-solid);
-  transition: all 0.2s var(--spring);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-sm);
+  transition: all 0.4s var(--spring-bouncy);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .btn:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--shadow-hover);
-  background: var(--accent-hover);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--shadow-md);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px #000;
+  transform: translateY(2px) scale(0.96);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  transition: all 0.1s;
 }
 
+/* Primary Button (Neon Green) */
+.btn.primary {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+}
+.btn.primary:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), var(--shadow-glow), var(--shadow-lg);
+  color: #fff;
+}
+
+/* Secondary Button */
+.btn.secondary {
+  /* Inherits base glass */
+}
+
+/* Danger Button */
 .btn.danger {
-  background: var(--danger);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
 }
 .btn.danger:hover:not(:disabled) {
-  background: var(--danger-hover);
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 15px rgba(239, 68, 68, 0.4), var(--shadow-lg);
+  color: #fff;
 }
 
 .btn.full-width {
@@ -993,14 +1101,14 @@ h1, h2, h3 {
 .screen-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(245, 245, 220, 0.9);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(16px);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 1;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease;
 }
 .screen-overlay.hidden {
   opacity: 0;
@@ -1008,33 +1116,34 @@ h1, h2, h3 {
 }
 .overlay-content {
   text-align: center;
-  background: #fff;
+  background: rgba(30, 41, 59, 0.6);
   padding: 60px 80px;
-  border: 6px solid #000;
-  box-shadow: 15px 15px 0px var(--accent);
-  transform: scale(1) rotate(-2deg);
-  transition: transform 0.4s var(--spring);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 25px 50px -12px rgba(0, 0, 0, 0.8), var(--shadow-glow);
+  transform: scale(1) translateY(0);
+  transition: transform 0.5s var(--spring-bouncy);
 }
 .screen-overlay.hidden .overlay-content {
-  transform: scale(0.5) rotate(10deg);
+  transform: scale(0.9) translateY(20px);
 }
 .overlay-content h1 {
   font-size: 4rem;
   margin-bottom: 15px;
   text-transform: uppercase;
-  color: #000;
-  text-shadow: 4px 4px 0px #fff, 8px 8px 0px #000;
+  color: var(--text-main);
+  text-shadow: 0 0 20px rgba(255,255,255,0.2);
   font-weight: 900;
 }
 .overlay-content p {
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.3rem;
   font-weight: 700;
-  color: #000;
+  color: var(--text-muted);
   margin-bottom: 30px;
 }
-.overlay-content.win h1 { text-shadow: 4px 4px 0px #fff, 8px 8px 0px var(--success); }
-.overlay-content.loss h1 { text-shadow: 4px 4px 0px #fff, 8px 8px 0px var(--danger); }
+.overlay-content.win h1 { text-shadow: 0 0 30px var(--success); color: var(--success); }
+.overlay-content.loss h1 { text-shadow: 0 0 30px var(--danger); color: var(--danger); }
 .overlay-content .btn.hidden { display: none; }
 
 .toast-container {
