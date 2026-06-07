@@ -375,6 +375,27 @@ h1, h2, h3 {
   color: #fff;
 }
 
+.btn.gold {
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--gold);
+  border-color: rgba(255, 215, 0, 0.5);
+}
+.btn.gold:hover {
+  background: rgba(255, 215, 0, 0.3);
+  border-color: var(--gold);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Button Utilities */
+.btn-sm { padding: 5px 10px; font-size: 0.9rem; }
+.btn-lg { padding: 16px; font-size: 1.2rem; }
+.mt-auto { margin-top: auto; }
+.mt-3 { margin-top: 15px; }
+.mt-2 { margin-top: 10px; }
+.mb-2 { margin-bottom: 10px; }
+.mb-1 { margin-bottom: 5px; }
+.full-width { width: 100%; }
+
 .btn.full-width {
   width: 100%;
   padding: 14px;
@@ -392,8 +413,8 @@ h1, h2, h3 {
 
 /* Beast Slots */
 .slots {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   max-height: 380px;
   overflow-y: auto;
@@ -422,6 +443,7 @@ h1, h2, h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   transition: all 0.2s var(--spring);
   color: var(--text-main);
 }
@@ -576,15 +598,16 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: rgba(0, 0, 0, 0.4);
   font-size: 1.4rem;
-  border: var(--border-thick);
-  box-shadow: 2px 2px 0px #000;
-  transition: all 0.2s ease;
+  border: var(--border-thin);
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
+  transition: all 0.2s var(--spring);
 }
 
 .sequence-slot.empty {
-  color: #ccc;
+  color: var(--text-muted);
   border-style: dashed;
   box-shadow: none;
   background: transparent;
@@ -592,14 +615,16 @@ h1, h2, h3 {
 }
 
 .sequence-slot.filled {
-  background: var(--success);
-  color: #000;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.4));
+  color: #fff;
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 10px rgba(34, 197, 94, 0.3);
   animation: slamIn 0.3s var(--spring);
 }
 
 @keyframes slamIn {
-  0% { transform: scale(1.2); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% { transform: scale(1.5) translateY(-10px); opacity: 0; box-shadow: 0 20px 20px rgba(0,0,0,0.5); }
+  100% { transform: scale(1) translateY(0); opacity: 1; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 10px rgba(34, 197, 94, 0.3); }
 }
 
 .previous-sequences-list {
@@ -680,24 +705,9 @@ h1, h2, h3 {
 
 /* Sell Button */
 .btn-sell {
-  background: #fff;
-  color: var(--danger);
-  border: 2px solid var(--danger);
-  padding: 4px 6px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.75rem;
   margin-left: 10px;
-  box-shadow: 2px 2px 0px var(--danger);
-  transition: all 0.2s var(--spring);
-}
-.btn-sell:hover {
-  background: var(--danger);
-  color: #fff;
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0px #000;
 }
 
 .beast-header {
@@ -787,6 +797,11 @@ h1, h2, h3 {
   background: transparent;
   font-size: 2.5rem;
   overflow: hidden;
+  transition: filter 0.05s;
+}
+
+.hit-flash {
+  filter: brightness(1000%) contrast(100%) !important;
 }
 
 .beast-icon:hover {
@@ -833,16 +848,18 @@ h1, h2, h3 {
 .combat-log {
   margin-top: 10px;
   flex-grow: 1;
-  min-height: 100px; /* Take up remaining space, but don't force overflow */
+  min-height: 100px;
   overflow-y: auto;
-  background: #000;
+  background: var(--panel-bg);
+  backdrop-filter: var(--glass-blur);
   color: #fff;
   padding: 12px;
   font-size: 0.85rem;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  border: var(--border-thick);
-  box-shadow: var(--shadow-solid);
+  border: var(--border-thin);
+  border-radius: var(--border-radius-lg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
 }
 
 .log-entry {
@@ -859,41 +876,18 @@ h1, h2, h3 {
   border-bottom: 1px dotted rgba(255, 255, 255, 0.4);
 }
 
-.combat-tooltip {
-  display: none;
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  width: max-content;
-  max-width: 250px;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid var(--primary);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 0.85em;
-  color: var(--text-muted);
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  margin-bottom: 5px;
-  pointer-events: none;
-}
-
-.has-combat-tooltip:hover .combat-tooltip {
-  display: block;
-}
-
-.combat-tooltip strong {
+.global-tooltip strong {
   color: #fff;
 }
 
-.combat-tooltip .breakdown-row {
+.global-tooltip .breakdown-row {
   display: flex;
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 2px;
 }
 
-.combat-tooltip .breakdown-total {
+.global-tooltip .breakdown-total {
   border-top: 1px solid var(--border);
   margin-top: 4px;
   padding-top: 4px;
@@ -980,28 +974,16 @@ h1, h2, h3 {
 }
 
 .shop-action-btn {
-  background: #fff;
-  border: var(--border-thick);
-  padding: 4px 6px;
+  padding: 8px 6px;
   text-align: center;
-  cursor: pointer;
-  transition: all 0.2s var(--spring);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.8rem;
   flex: 1;
   min-width: 80px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 2px;
-  box-shadow: 2px 2px 0px #000;
-}
-
-.shop-action-btn:hover {
-  background: #000;
-  color: #fff;
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0px var(--accent);
 }
 
 .shop-action-btn .gold {
@@ -1180,21 +1162,23 @@ h1, h2, h3 {
 
 .global-tooltip {
   position: fixed;
-  background: #000;
+  background: var(--panel-bg);
   color: #fff;
-  padding: 8px 12px;
+  padding: 10px 14px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   white-space: pre-wrap;
   width: max-content;
   max-width: 500px;
-  border: 2px solid #fff;
-  box-shadow: 4px 4px 0px var(--accent);
+  border: var(--border-thin);
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
+  backdrop-filter: var(--glass-blur);
   z-index: 100000;
   pointer-events: none;
   opacity: 1;
-  transition: opacity 0.1s;
+  transition: opacity 0.15s ease-out;
 }
 
 .global-tooltip.hidden {
@@ -1206,16 +1190,21 @@ h1, h2, h3 {
 .relic-slot {
   width: 32px;
   height: 32px;
-  background: var(--surface);
-  border: 2px solid var(--text-main);
+  background: rgba(0, 0, 0, 0.4);
+  border: var(--border-thin);
   border-radius: var(--border-radius);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1.2rem;
-  box-shadow: 2px 2px 0px #000;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-sm);
   cursor: help;
   overflow: hidden;
+  transition: all 0.2s var(--spring);
+}
+.relic-slot:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--shadow-hover);
 }
 .relic-slot img {
   width: 100%;
@@ -1364,26 +1353,23 @@ h1, h2, h3 {
 
 /* Settings Overlay Styles */
 .settings-tab-btn {
-  background: #111;
-  color: var(--text-muted);
-  border: none;
-  border-bottom: 2px solid #333;
-  padding: 15px;
   text-align: left;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.settings-tab-btn:hover {
-  background: #222;
-  color: #fff;
+  margin: 5px;
+  width: calc(100% - 10px);
+  border-radius: 0;
+  border-top: none;
+  border-right: none;
+  border-left: 4px solid transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: var(--text-muted);
 }
 .settings-tab-btn.active {
-  background: var(--accent);
-  color: #000;
-  border-bottom-color: var(--accent);
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), var(--shadow-glow), var(--shadow-lg);
+  color: #fff;
+  border-left-color: #4ade80;
+  transform: translateY(-2px) scale(1.02);
 }
 .settings-tab-pane {
   display: flex;
@@ -1396,10 +1382,12 @@ h1, h2, h3 {
 
 /* History Overlay Styles */
 .history-level-card {
-  background: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 15px;
+  background: var(--panel-bg);
+  border: var(--border-thin);
+  border-radius: var(--border-radius-lg);
+  padding: 16px;
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: 10px;

@@ -541,13 +541,14 @@ function renderBeasts() {
     div.className = `beast-item beast-item-${b.rarity}`;
     const sellPrice = 5 + (getSkillEffect('eco_sell', metaState) * 3);
     div.innerHTML = `
-      <div class="beast-header">
-        <div class="beast-info has-tooltip" data-tooltip="${getTooltipText(b).replace(/"/g, '&quot;')}">
-          <div class="beast-name rarity-${b.rarity}">${b.image ? `<img src="${b.image}" class="beast-sprite-small" />` : b.icon} ${b.name}</div>
-          <div class="beast-stats">${getAbilityTitle(b)}</div>
-        </div>
-        <button class="btn-sell" title="Sell Beast">Sell (${sellPrice}G)</button>
+      <div class="shop-card-icon">
+        ${b.image ? `<img src="${b.image}" class="beast-sprite-large" />` : `<span class="beast-emoji-large">${b.icon}</span>`}
       </div>
+      <div class="shop-card-info has-tooltip" data-tooltip="${getTooltipText(b).replace(/"/g, '&quot;')}">
+        <h3 class="rarity-${b.rarity}">${b.name} <span style="font-size:0.7em">[${b.rarity}]</span></h3>
+        <p>${getAbilityTitle(b)}</p>
+      </div>
+      <button class="btn danger btn-sell has-tooltip" data-tooltip="Sell Beast">Sell (${sellPrice}G)</button>
     `;
 
     div.querySelector('.btn-sell').onclick = () => {
@@ -595,10 +596,8 @@ function logCombat(msg, type = 'normal', breakdownHtml = null) {
   
   if (breakdownHtml) {
     div.classList.add('has-combat-tooltip');
-    const tooltip = document.createElement('div');
-    tooltip.className = 'combat-tooltip';
-    tooltip.innerHTML = breakdownHtml;
-    div.appendChild(tooltip);
+    div.classList.add('has-tooltip');
+    div.setAttribute('data-tooltip', breakdownHtml.replace(/"/g, '&quot;'));
   }
   
   elCombatLog.appendChild(div);
@@ -612,34 +611,25 @@ function showFloatingText(text, type = 'normal') {
   floatDiv.className = `floating-dmg ${type}`;
   floatDiv.textContent = text;
   
-  // Start near the center of the boss arena
-  floatDiv.style.left = `50%`;
-  floatDiv.style.top = `50%`;
+  // Start exactly where the hit occurred (randomized slightly near center)
+  const startX = (Math.random() - 0.5) * 40;
+  const startY = (Math.random() - 0.5) * 40;
+
+  floatDiv.style.left = `calc(50% + ${startX}px)`;
+  floatDiv.style.top = `calc(50% + ${startY}px)`;
   floatDiv.style.transform = 'translate(-50%, -50%) scale(0.5)';
   floatDiv.style.opacity = 1;
   
   arena.parentElement.appendChild(floatDiv);
 
-  // Random explosion physics
-  const randomX = (Math.random() - 0.5) * 150;
-  const randomY = -100 - Math.random() * 50;
-
   gsap.to(floatDiv, {
-    x: randomX,
-    y: randomY,
+    y: "-=80",
     scale: 1.5,
-    duration: 0.5,
+    opacity: 0,
+    duration: 1.0,
     ease: "power2.out",
     onComplete: () => {
-      gsap.to(floatDiv, {
-        y: randomY + 50,
-        opacity: 0,
-        duration: 0.4,
-        ease: "power1.in",
-        onComplete: () => {
-          if (floatDiv.parentElement) floatDiv.parentElement.removeChild(floatDiv);
-        }
-      });
+      if (floatDiv.parentElement) floatDiv.parentElement.removeChild(floatDiv);
     }
   });
 }
@@ -847,7 +837,7 @@ function renderShop() {
 
   // Refresh item
   const refreshCard = document.createElement('button');
-  refreshCard.className = 'shop-action-btn';
+  refreshCard.className = 'btn secondary shop-action-btn';
   const baseRefreshCost = state.relics.some(r => r.id === 'golden_dice') ? Math.max(1, 2 * state.shopLevel) : 5 * state.shopLevel;
   let refreshCost = Math.max(1, baseRefreshCost - getSkillEffect('eco_refresh', metaState));
   if (state.relics.some(r => r.id === 'rusty_piggy_bank')) refreshCost += 1;
@@ -877,7 +867,7 @@ function renderShop() {
 
   // Epoch item
   const epochCard = document.createElement('button');
-  epochCard.className = 'shop-action-btn';
+  epochCard.className = 'btn secondary shop-action-btn';
   epochCard.innerHTML = `
     <span>+5 Epochs</span>
     <span class="gold">5G</span>
@@ -901,7 +891,7 @@ function renderShop() {
     if (state.relics.some(r => r.id === 'vip_card')) actualUpgCost = Math.floor(actualUpgCost * 0.8);
     
     const upgCard = document.createElement('button');
-    upgCard.className = 'shop-action-btn';
+    upgCard.className = 'btn secondary shop-action-btn';
     upgCard.innerHTML = `
       <span>Upgrade Shop</span>
       <span class="gold">${actualUpgCost}G</span>
@@ -1427,14 +1417,18 @@ async function executeRound() {
          updateUI();
          
          // Screen shake for heavy hits
-         if (dmg >= 30) {
-            gsap.fromTo('.fight-panel', 
-              { x: -5 }, 
-              { x: 5, duration: 0.05, yoyo: true, repeat: 5, ease: 'power1.inOut', onComplete: () => gsap.set('.fight-panel', {x: 0}) }
-            );
+         if (action.isCrit || dmg >= 30) {
+            const tl = gsap.timeline();
+            tl.to('.app-container', {x: -5, y: 3, duration: 0.02})
+              .to('.app-container', {x: 5, y: -3, duration: 0.02})
+              .to('.app-container', {x: -3, y: 5, duration: 0.02})
+              .to('.app-container', {x: 3, y: -5, duration: 0.02})
+              .to('.app-container', {x: 0, y: 0, duration: 0.02});
          }
-         elArenaBoss.classList.add('hit-anim');
-         setTimeout(() => elArenaBoss.classList.remove('hit-anim'), 150);
+         
+         // Hit Flash
+         elArenaBoss.classList.add('hit-flash');
+         setTimeout(() => elArenaBoss.classList.remove('hit-flash'), 80);
       } else {
          showFloatingText('0', 'normal');
       }
@@ -1733,7 +1727,7 @@ function triggerRelicMilestone() {
       <div style="font-size: 3rem; margin-bottom: 10px;">${relic.image ? `<img src="${relic.image}" style="width: 48px; height: 48px; object-fit: contain;" onerror="this.style.display='none'; this.parentNode.textContent='${relic.icon}'" />` : relic.icon}</div>
       <h3 style="color: #fcd34d; margin: 0 0 5px 0;">${relic.name}</h3>
       <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0 0 15px 0; min-height: 40px;">${relic.desc}</p>
-      <button class="btn primary" style="width: 100%;">Buy: ${relic.cost}G</button>
+      <button class="btn primary full-width">Buy: ${relic.cost}G</button>
     `;
     const btn = card.querySelector('button');
     if (state.gold < relic.cost) {
@@ -1986,6 +1980,16 @@ if (chkAutoPlay) chkAutoPlay.addEventListener('change', (e) => {
   saveMetaState();
 });
 
+const btnHardReset = document.getElementById('btn-hard-reset');
+if (btnHardReset) {
+  btnHardReset.addEventListener('click', () => {
+    if (confirm("Are you absolutely sure you want to completely wipe all your progress? This cannot be undone.")) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  });
+}
+
 // Settings Tabs Logic
 const tabBtns = document.querySelectorAll('.settings-tab-btn');
 const tabPanes = document.querySelectorAll('.settings-tab-pane');
@@ -2082,8 +2086,8 @@ if (isLocalDev) {
   godOverlay.className = 'god-mode-panel';
   godOverlay.innerHTML = `
     <div style="font-weight: bold; margin-bottom: 10px; color: gold; text-shadow: 0 0 5px gold; text-align: center;">GOD MODE</div>
-    <button id="btn-god-on" class="btn" style="width: 100%; margin-bottom: 5px; background: #333; color: gold; border-color: gold;">ACTIVATE</button>
-    <button id="btn-god-off" class="btn hidden" style="width: 100%; background: #333; color: white;">DEACTIVATE</button>
+    <button id="btn-god-on" class="btn gold full-width mb-1">ACTIVATE</button>
+    <button id="btn-god-off" class="btn hidden full-width" style="background: #333; color: white;">DEACTIVATE</button>
   `;
   document.body.appendChild(godOverlay);
 
