@@ -245,5 +245,56 @@ export const SynergyRegistry = {
     let baseMult = 1.5;
     if (hasRelic('crown_of_legends', ctx.gameState.relics)) baseMult = 2.0;
     ctx.track(Math.floor(ctx.dmg * Math.pow(baseMult, legCount)), 'Legendary Multiplier');
+  },
+  PRIME_NUMBER_STRIKE: (ctx) => {
+    const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+    if (primes.includes(ctx.index + 1)) ctx.track(ctx.dmg * 3, 'Prime Number Strike');
+  },
+  LONE_WOLF: (ctx) => {
+    const myRarity = ctx.beast.rarity;
+    const sameRarityCount = ctx.beastArray.filter(b => b.rarity === myRarity).length;
+    if (sameRarityCount === 1) ctx.track(ctx.dmg * 5, 'Lone Wolf');
+  },
+  SANDWICH: (ctx) => {
+    const prev = ctx.beastArray[ctx.index - 1];
+    const next = ctx.beastArray[ctx.index + 1];
+    if (prev && next && prev.rarity === next.rarity) ctx.track(ctx.dmg * 3, 'Sandwich Multiplier');
+  },
+  STATUS_MIRROR: (ctx) => {
+    let totalStacks = 0;
+    for (const stacks of Object.values(ctx.currentStatuses)) totalStacks += stacks;
+    ctx.track(ctx.dmg + totalStacks * 15, 'Status Mirror');
+  },
+  DETONATOR: (ctx) => {
+    if (ctx.bombTimer >= 0) {
+      ctx.track(ctx.dmg + (ctx.bombDamage * 2.5), 'Detonator');
+      ctx.bombTimer = -1;
+      ctx.bombDamage = 0;
+    }
+  },
+  MARTYRDOM: (ctx) => {
+    ctx.globalBeastBuff += Math.floor(ctx.beast.maxDamage * 0.5);
+    ctx.track(0, 'Martyrdom');
+  },
+  RUSSIAN_ROULETTE: (ctx) => {
+    if (Math.random() < (1 / 6)) {
+      ctx.track(ctx.dmg * 50, 'Russian Roulette (BANG!)');
+    } else {
+      for (const status of Object.keys(ctx.currentStatuses)) ctx.currentStatuses[status] = 0;
+      ctx.track(0, 'Russian Roulette (Click)');
+    }
+  },
+  ALL_OR_NOTHING: (ctx) => {
+    let totalStacks = 0;
+    for (const stacks of Object.values(ctx.currentStatuses)) totalStacks += stacks;
+    if (totalStacks === 0) ctx.track(ctx.dmg * 10, 'All Or Nothing');
+    else ctx.track(1, 'All Or Nothing Penalty');
+  },
+  REPEATER: (ctx) => {
+    const prev = ctx.beastArray[ctx.index - 1];
+    if (prev && prev.name === ctx.beast.name) ctx.track(ctx.dmg * 3, 'Repeater');
+  },
+  ELEVATOR: (ctx) => {
+    ctx.track(ctx.dmg * (1 + (ctx.index * 0.5)), 'Elevator');
   }
 };

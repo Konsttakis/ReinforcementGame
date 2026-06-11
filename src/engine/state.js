@@ -4,7 +4,9 @@ import { hasRelic } from '../utils.js';
 
 export const metaState = JSON.parse(localStorage.getItem('antigravity_meta')) || { dna: 0, skillTree: {} };
 if (!metaState.skillTree) metaState.skillTree = {};
-if (!metaState.settings) metaState.settings = { autoPlayTurns: false };
+if (!metaState.settings) metaState.settings = { autoPlayTurns: false, autoPlayRuns: false };
+if (!metaState.discoveredBeasts) metaState.discoveredBeasts = [];
+if (!metaState.discoveredRelics) metaState.discoveredRelics = [];
 
 export function saveMetaState() {
   localStorage.setItem('antigravity_meta', JSON.stringify(metaState));

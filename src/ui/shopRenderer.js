@@ -1,5 +1,5 @@
 import { DOM } from './dom.js';
-import { state, metaState } from '../engine/state.js';
+import { state, metaState, saveMetaState } from '../engine/state.js';
 import { getSkillEffect } from '../skilltree.js';
 import { hasRelic } from '../utils.js';
 import { buyBeast } from '../economy.js';
@@ -37,7 +37,9 @@ export function renderShop() {
     <span>Refresh</span>
     <span class="gold">${refreshCost === 0 ? 'FREE' : refreshCost + 'G'}</span>
   `;
-  refreshCard.onclick = () => {
+  refreshCard.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
     const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
     if (state.gold >= refreshCost || refreshCost === 0 || isGod) {
       if (refreshCost === 0 && state.freeRerolls > 0 && !isGod) {
@@ -52,9 +54,8 @@ export function renderShop() {
     } else {
       showToast("Not enough gold!");
     }
-  };
-  DOM.elShopActions.appendChild(refreshCard);
-
+  });
+  
   // Epoch item
   const epochCard = document.createElement('button');
   epochCard.className = 'btn secondary shop-action-btn';
@@ -62,7 +63,9 @@ export function renderShop() {
     <span>+5 Epochs</span>
     <span class="gold">5G</span>
   `;
-  epochCard.onclick = () => {
+  epochCard.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
     const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
     if (state.gold >= 5 || isGod) {
       if (!isGod) state.gold -= 5;
@@ -72,9 +75,8 @@ export function renderShop() {
     } else {
       showToast("Not enough gold!");
     }
-  };
-  DOM.elShopActions.appendChild(epochCard);
-
+  });
+  
   // Upgrade Shop item
   if (state.shopLevel < 5) {
     let actualUpgCost = state.upgradeCost;
@@ -86,7 +88,9 @@ export function renderShop() {
       <span>Upgrade Shop</span>
       <span class="gold">${actualUpgCost}G</span>
     `;
-    upgCard.onclick = () => {
+    upgCard.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
       const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
       if (state.gold >= actualUpgCost || isGod) {
         if (!isGod) state.gold -= actualUpgCost;
@@ -98,16 +102,22 @@ export function renderShop() {
       } else {
         showToast("Not enough gold!");
       }
-    };
+    });
     DOM.elShopActions.appendChild(upgCard);
   }
+  
+  DOM.elShopActions.appendChild(epochCard);
+  DOM.elShopActions.appendChild(refreshCard);
 
   // Render Offerings
   if (state.shopOfferings) {
     state.shopOfferings.forEach((randBeast, idx) => {
       const card = document.createElement('div');
       card.className = `shop-card beast-item-${randBeast.rarity}`;
+      card.style.position = 'relative';
+      if (randBeast.isFrozen) card.style.boxShadow = '0 0 10px #38bdf8';
       card.innerHTML = `
+        <div class="shop-card-freeze" style="position: absolute; top: 5px; right: 5px; cursor: pointer; font-size: 1.2em; filter: grayscale(${randBeast.isFrozen ? '0' : '100%'}); opacity: ${randBeast.isFrozen ? '1' : '0.3'};">❄️</div>
         <div class="shop-card-icon">
           ${randBeast.image ? `<img src="${randBeast.image}" class="beast-sprite-large" />` : `<span class="beast-emoji-large">${randBeast.icon}</span>`}
         </div>
@@ -117,7 +127,16 @@ export function renderShop() {
         </div>
         <button class="btn shop-buy-btn">${randBeast.cost}G</button>
       `;
-      card.querySelector('button').onclick = () => {
+      card.querySelector('.shop-card-freeze').addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        randBeast.isFrozen = !randBeast.isFrozen;
+        renderShop();
+      });
+      card.querySelector('.shop-buy-btn').addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
         if (state.beasts.length >= 40) {
           showToast("Your inventory is full (40 max)!");
           return;
@@ -136,16 +155,23 @@ export function renderShop() {
           }
           // Note: we'll have to expose population invalidation. 
           // For now, we'll assume gameLoop will handle population reset if lengths mismatch, which it does.
-          if (window.invalidatePopulation) window.invalidatePopulation();
+          if (window.invalidatePopulation && (!DOM.btnFight || !DOM.btnFight.disabled)) window.invalidatePopulation();
           
           renderBeasts();
           updateUI();
           renderShop();
           saveRunState();
+          if (!metaState.discoveredBeasts) metaState.discoveredBeasts = [];
+          if (!metaState.discoveredBeasts.includes(randBeast.name)) {
+            metaState.discoveredBeasts.push(randBeast.name);
+            saveMetaState();
+          }
+          
+          showToast(`Bought ${randBeast.name}!`);
         } else {
           showToast("Not enough gold!");
         }
-      };
+      });
       DOM.elShopItems.appendChild(card);
     });
   }
@@ -189,7 +215,9 @@ export function triggerRelicMilestone() {
       btn.disabled = true;
       btn.textContent = `Too Expensive (${relic.cost}G)`;
     }
-    btn.onclick = () => {
+    btn.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
       const isGod = localStorage.getItem('antigravity_god_mode_flag') === 'true';
       if ((state.gold >= relic.cost || isGod) && picksRemaining > 0) {
         if (!isGod) state.gold -= relic.cost;
@@ -200,6 +228,12 @@ export function triggerRelicMilestone() {
            if (window.globalSaveMetaState) window.globalSaveMetaState();
         }
         state.relics.push(relic);
+        if (!metaState.discoveredRelics) metaState.discoveredRelics = [];
+        if (!metaState.discoveredRelics.includes(relic.id)) {
+          metaState.discoveredRelics.push(relic.id);
+          saveMetaState();
+        }
+        
         picksRemaining--;
         btn.disabled = true;
         btn.textContent = 'Acquired';
@@ -213,7 +247,7 @@ export function triggerRelicMilestone() {
           if (DOM.btnFight) DOM.btnFight.disabled = false;
         }
       }
-    };
+    });
     DOM.elRelicOptions.appendChild(card);
   });
   

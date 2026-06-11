@@ -95,10 +95,10 @@ export const SKILL_TREE_DATA = [
   { id: 'res_armor_pen', name: 'Armor Piercing', branch: 'resilience', tier: 4, localX: -0.5, maxLevel: 3, color: '#f472b6', costs: [200, 500, 1000], desc: (l) => `ARMORED reduction -${[10, 15, 25][l-1]}%`, prereq: ['res_hp'] },
   { id: 'res_level_gold', name: 'War Chest', branch: 'resilience', tier: 4, localX: 1, maxLevel: 3, color: '#f472b6', costs: [200, 500, 1000], desc: (l) => `+${l*10}G per clear`, prereq: ['res_dna_bonus'] },
   { id: 'res_boss_slow', name: 'Exhaustion', branch: 'resilience', tier: 5, localX: -1.5, maxLevel: 3, color: '#f472b6', costs: [400, 1000, 2000], desc: (l) => `Boss HP scale -${l*3}%`, prereq: ['res_armor_pen'] },
-  { id: 'res_stance_weak', name: 'Exploit Intel', branch: 'resilience', tier: 5, localX: 0.5, maxLevel: 2, color: '#f472b6', costs: [500, 1200], desc: (l) => `Weakness stances do ${2+l*0.5}x`, prereq: ['res_level_gold'] },
-  { id: 'res_no_immune', name: 'Vuln Serum', branch: 'resilience', tier: 6, localX: 1.5, maxLevel: 1, color: '#f472b6', costs: [2000], desc: () => `FIRE IMMUNITY becomes RESISTANCE`, prereq: ['res_stance_weak'] },
+  { id: 'res_stance_weak', name: 'Decay Resist', branch: 'resilience', tier: 5, localX: 0.5, maxLevel: 2, color: '#f472b6', costs: [500, 1200], desc: (l) => `DECAY penalty is ${10 - l*2}%`, prereq: ['res_level_gold'] },
+  { id: 'res_momentum', name: 'Momentum+', branch: 'resilience', tier: 6, localX: 1.5, maxLevel: 1, color: '#f472b6', costs: [2000], desc: () => `MOMENTUM buff is 15%`, prereq: ['res_stance_weak'] },
   { id: 'res_second_chance', name: 'Undying', branch: 'resilience', tier: 7, localX: -0.5, maxLevel: 1, color: '#f472b6', costs: [3000], desc: () => `1 emergency round if killed`, prereq: ['res_boss_slow'] },
-  { id: 'res_round', name: 'Extended Battle', branch: 'resilience', tier: 7, localX: 1, maxLevel: 1, color: '#f472b6', costs: [5000], desc: () => `4 combat rounds (from 3)`, prereq: ['res_no_immune'] },
+  { id: 'res_round', name: 'Extended Battle', branch: 'resilience', tier: 7, localX: 1, maxLevel: 1, color: '#f472b6', costs: [5000], desc: () => `4 combat rounds (from 3)`, prereq: ['res_momentum'] },
   { id: 'res_cap', name: 'Final Stand', branch: 'resilience', tier: 8, localX: 0, maxLevel: 1, color: '#f472b6', costs: [15000], desc: () => `CAPSTONE: Auto-kill boss if <10% HP`, prereq: ['res_second_chance', 'res_round'] },
 
   // CHAOS (color: #fbbf24)

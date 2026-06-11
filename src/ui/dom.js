@@ -21,9 +21,7 @@ export const DOM = {
   get elBeastSlots() { return document.getElementById('beast-slots'); },
   get elBestSequenceDisplay() { return document.getElementById('best-sequence-display'); },
   get elPreviousSequencesList() { return document.getElementById('previous-sequences-list'); },
-  get elMutationControl() { return document.getElementById('mutation-control'); },
-  get elMutationSlider() { return document.getElementById('mutation-slider'); },
-  get elMutationSliderVal() { return document.getElementById('mutation-slider-val'); },
+
   get elHistoricOrdersList() { return document.getElementById('historic-orders-list'); },
   get elInventoryHeader() { return document.getElementById('inventory-header'); },
   
@@ -59,6 +57,7 @@ export const DOM = {
   get btnCloseSettings() { return document.getElementById('btn-close-settings'); },
   get elSettingsOverlay() { return document.getElementById('settings-overlay'); },
   get chkAutoPlay() { return document.getElementById('chk-autoplay-turns'); },
+  get chkAutoPlayRuns() { return document.getElementById('chk-autoplay-runs'); },
   get btnHardReset() { return document.getElementById('btn-hard-reset'); },
   get btnAbandonRun() { return document.getElementById('btn-abandon-run'); },
   

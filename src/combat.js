@@ -184,23 +184,31 @@ export function calculateDamage(beastArray, bossHp, bossStance = 'NONE', initial
       track(Math.floor(dmg * 1.3), 'Glass Cannon');
     }
 
-    // Stance multipliers based on beast themes
+    // Advanced Stances
     const isPoisonBeast = beast.appliesStatus === 'POISON' || beast.synergy?.includes('POISON');
     const isFireBeast = beast.appliesStatus === 'FIRE' || beast.synergy?.includes('FIRE');
     const isShockBeast = beast.appliesStatus === 'SHOCK' || beast.synergy?.includes('SHOCK');
     const isVulnBeast = beast.appliesStatus === 'VULNERABLE' || beast.synergy?.includes('VULNERABLE');
 
-    let immunityDmg = 0;
-    if (getSkillEffect('res_no_immune', ms) > 0) immunityDmg = Math.floor(dmg / 2); // Resistance instead of immunity
-    if (hasRelic('fireproof_vest', gameState.relics) && bossStance === 'FIRE_IMMUNITY') {
-       immunityDmg = Math.floor(dmg / 2); // 50% instead of 0
+    if (bossStance === 'ETHEREAL' && ctx.index % 2 !== 0) {
+       track(0, 'Ethereal Stance (Phased Out)');
     }
 
-    if (bossStance === 'POISON_WEAKNESS' && isPoisonBeast) track(dmg * (2 + getSkillEffect('res_stance_weak', ms)), 'Poison Weakness Stance');
-    if (bossStance === 'FIRE_IMMUNITY' && isFireBeast) track(immunityDmg, 'Fire Immunity Stance');
-    if (bossStance === 'SHOCK_WEAKNESS' && isShockBeast) track(dmg * (2 + getSkillEffect('res_stance_weak', ms)), 'Shock Weakness Stance');
-    if (bossStance === 'VULNERABLE_WEAKNESS' && isVulnBeast) track(dmg * (2 + getSkillEffect('res_stance_weak', ms)), 'Vulnerable Weakness Stance');
+    if (bossStance === 'DECAY') {
+       const decayVal = (10 - getSkillEffect('res_stance_weak', ms) * 2) / 100;
+       track(Math.max(0, dmg * (1 - (ctx.index * decayVal))), 'Decay Stance');
+    }
 
+    if (bossStance === 'MOMENTUM') {
+       const momVal = getSkillEffect('res_momentum', ms) > 0 ? 0.15 : 0.1;
+       track(dmg * (1 + (ctx.index * momVal)), 'Momentum Stance');
+    }
+
+    if (bossStance === 'ANTI_MAGIC' && (isPoisonBeast || isFireBeast || isShockBeast || isVulnBeast || beast.appliesStatus === 'FROSTBITE' || beast.synergy?.includes('FROSTBITE'))) {
+       let magicDmg = 0;
+       if (hasRelic('anti_magic_amulet', gameState.relics)) magicDmg = Math.floor(dmg / 2);
+       track(magicDmg, 'Anti-Magic Stance');
+    }
     // Chaos Jackpot
     if (getSkillEffect('chaos_jackpot', ms) > 0) {
       if (gameState.generateLog) {
@@ -259,6 +267,39 @@ export function calculateDamage(beastArray, bossHp, bossStance = 'NONE', initial
   if (getSkillEffect('res_cap', ms) > 0 && (bossHp - totalDamage) > 0 && (bossHp - totalDamage) <= bossHp * 0.1) {
      if (gameState.generateLog) actions.push({ type: 'execute_boss', dmg: bossHp - totalDamage, source: 'Resilience Capstone' });
      totalDamage = bossHp; // Execute!
+  }
+
+  if (gameState.generateLog) {
+    let synergyTotals = {};
+    actions.forEach(act => {
+      if (act.type === 'attack' && act.breakdown) {
+        act.breakdown.forEach(b => {
+          if (b.label !== 'Base Roll' && b.label !== 'Boss Armor' && b.label.indexOf('Penalty') === -1) {
+            const valStr = String(b.value).replace('+', '');
+            const val = parseInt(valStr, 10);
+            if (!isNaN(val) && val > 0) {
+              synergyTotals[b.label] = (synergyTotals[b.label] || 0) + val;
+            }
+          }
+        });
+      } else if (act.type === 'dot') {
+        const dotLabel = `${act.status} (DoT)`;
+        synergyTotals[dotLabel] = (synergyTotals[dotLabel] || 0) + act.dmg;
+      }
+    });
+    
+    let mvpLabel = null;
+    let mvpDamage = 0;
+    for (const [lbl, dmg] of Object.entries(synergyTotals)) {
+      if (dmg > mvpDamage) {
+        mvpDamage = dmg;
+        mvpLabel = lbl;
+      }
+    }
+    
+    if (mvpLabel && mvpDamage > 0) {
+      actions.push({ type: 'mvp', label: mvpLabel, dmg: mvpDamage, percentage: Math.round((mvpDamage / totalDamage) * 100) });
+    }
   }
 
   return { totalDamage, dotDamage, bossKilled: totalDamage >= bossHp, currentStatuses, actions };

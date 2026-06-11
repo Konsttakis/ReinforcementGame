@@ -69,8 +69,7 @@ export const relicPool = [
   // Boss & Arena
   { id: 'exhaustion_gas', name: 'Exhaustion Gas', icon: '💨', desc: 'Boss maximum HP is reduced by 10%', cost: 200 },
   { id: 'armor_piercing_rounds', name: 'Armor Piercing Rounds', icon: '🎯', desc: 'ARMORED stance reduces damage by 30% instead of 50%', cost: 160 },
-  { id: 'scouts_binoculars', name: 'Scout\'s Binoculars', icon: '🔭', desc: 'Boss stances are always revealed', cost: 120 },
-  { id: 'fireproof_vest', name: 'Fireproof Vest', icon: '🦺', desc: 'FIRE_IMMUNITY stance only reduces damage by 50%', cost: 150 },
+  { id: 'anti_magic_amulet', name: 'Anti-Magic Amulet', icon: '🔮', desc: 'ANTI_MAGIC stance only reduces elemental damage by 50% instead of 100%', cost: 150 },
   { id: 'second_wind', name: 'Second Wind', icon: '🌬️', desc: 'If you fail a turn, gain 100 Epochs for the next computation', cost: 240 }
 ].map(r => {
   if (!r.image) {

@@ -131,20 +131,20 @@ export function updateUI() {
   }
 
   if (DOM.elBossStance) {
-    let hasBinoculars = hasRelic('scouts_binoculars', state?.relics);
-    let displayStance = runState.currentStance === 'NONE' ? 'None' : runState.currentStance.replace(/_/g, ' ').toLowerCase();
+    let displayStance = runState.currentStance === 'NONE' ? 'None' : runState.currentStance.replace(/_/g, ' ');
     let tooltipText = 'No active effects.';
 
-    if (runState.currentStance !== 'NONE' && !hasBinoculars) {
-       displayStance = '???';
-       tooltipText = "Stance is hidden. Acquire Scout's Binoculars to reveal.";
-    } else {
-      if (runState.currentStance === 'ARMORED') tooltipText = hasRelic('armor_piercing_rounds', state?.relics) ? 'Boss takes 30% reduced damage.' : 'Boss takes 50% reduced damage.';
-      if (runState.currentStance === 'FIRE_IMMUNITY') tooltipText = hasRelic('fireproof_vest', state?.relics) ? 'FIRE beasts deal 50% damage.' : 'FIRE beasts deal 0 damage.';
-      if (runState.currentStance === 'POISON_WEAKNESS') tooltipText = 'POISON beasts deal double damage.';
-      if (runState.currentStance === 'SHOCK_WEAKNESS') tooltipText = 'SHOCK beasts deal double damage.';
-      if (runState.currentStance === 'VULNERABLE_WEAKNESS') tooltipText = 'VULNERABLE beasts deal double damage.';
+    if (runState.currentStance === 'ARMORED') tooltipText = hasRelic('armor_piercing_rounds', state?.relics) ? 'Boss takes 30% reduced damage.' : 'Boss takes 50% reduced damage.';
+    if (runState.currentStance === 'ETHEREAL') tooltipText = 'Beasts in Even slots (2, 4, 6, 8, 10) deal 0 damage.';
+    if (runState.currentStance === 'DECAY') {
+       const decayVal = 10 - getSkillEffect('res_stance_weak', metaState) * 2;
+       tooltipText = `Each attack reduces the damage of subsequent beasts by ${decayVal}%.`;
     }
+    if (runState.currentStance === 'MOMENTUM') {
+       const momVal = getSkillEffect('res_momentum', metaState) > 0 ? 15 : 10;
+       tooltipText = `Each attack increases the damage of subsequent beasts by ${momVal}%.`;
+    }
+    if (runState.currentStance === 'ANTI_MAGIC') tooltipText = hasRelic('anti_magic_amulet', state?.relics) ? 'Elemental beasts deal 50% reduced damage.' : 'Elemental beasts (FIRE, POISON, SHOCK, FROSTBITE) deal 0 damage.';
 
     DOM.elBossStance.textContent = `Stance: ${displayStance}`;
     DOM.elBossStance.classList.add('has-tooltip');
@@ -152,13 +152,7 @@ export function updateUI() {
     DOM.elBossStance.style.display = 'block';
   }
 
-  if (DOM.elMutationControl) {
-    if (getSkillEffect('gen_mutate', metaState) > 0) {
-      DOM.elMutationControl.classList.remove('hidden');
-    } else {
-      DOM.elMutationControl.classList.add('hidden');
-    }
-  }
+
 
   if (DOM.btnFight) {
     if (runState.combatRound <= 3 && runState.bossHp > 0) {
@@ -198,7 +192,9 @@ export function renderBeasts() {
       <button class="btn danger btn-sell has-tooltip" data-tooltip="Sell Beast">Sell (${sellPrice}G)</button>
     `;
 
-    div.querySelector('.btn-sell').onclick = () => {
+    div.querySelector('.btn-sell').addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
       if (DOM.btnFight && DOM.btnFight.disabled && runState.bossHp > 0) return; // Prevent selling during computing/fighting
       let finalSellPrice = sellPrice;
       if (hasRelic('recycling_bin', state.relics) && b.cost) finalSellPrice = b.cost;
@@ -215,7 +211,7 @@ export function renderBeasts() {
         renderFightArena();
       }
       saveRunState();
-    };
+    });
 
     DOM.elBeastSlots.appendChild(div);
   });
@@ -257,6 +253,7 @@ export function logCombat(msg, type = 'normal', breakdownHtml = null) {
   const div = document.createElement('div');
   div.className = `log-entry ${type}`;
   div.innerHTML = msg; 
+  div.dataset.level = state.level;
   
   if (breakdownHtml) {
     div.classList.add('has-combat-tooltip');
@@ -268,7 +265,7 @@ export function logCombat(msg, type = 'normal', breakdownHtml = null) {
   DOM.elCombatLog.scrollTop = DOM.elCombatLog.scrollHeight;
 }
 
-export function showFloatingText(text, type = 'normal') {
+export function showFloatingText(text, type = 'normal', sourceElement = null) {
   const arena = DOM.elArenaBoss;
   if (!arena) return;
   const floatDiv = document.createElement('div');
@@ -276,20 +273,32 @@ export function showFloatingText(text, type = 'normal') {
   floatDiv.textContent = text;
   
   const startX = (Math.random() - 0.5) * 40;
-  const startY = (Math.random() - 0.5) * 40;
+  
+  let targetX, targetY;
+  
+  if (sourceElement) {
+    const rect = sourceElement.getBoundingClientRect();
+    targetX = rect.left + (rect.width / 2) + startX;
+    targetY = rect.top;
+  } else {
+    const rect = arena.getBoundingClientRect();
+    targetX = rect.left + 20 + startX;
+    targetY = rect.top + 20; 
+  }
 
-  floatDiv.style.left = `calc(50% + ${startX}px)`;
-  floatDiv.style.top = `calc(50% + ${startY}px)`;
-  floatDiv.style.transform = 'translate(-50%, -50%) scale(0.5)';
+  floatDiv.style.left = `${targetX}px`;
+  floatDiv.style.top = `${targetY}px`;
+  floatDiv.style.transform = 'translate(-50%, -50%)';
   floatDiv.style.opacity = 1;
   
-  arena.parentElement.appendChild(floatDiv);
+  document.body.appendChild(floatDiv);
+  setTimeout(() => floatDiv.remove(), 1200);
 
   // GSAP animation
   if (window.gsap) {
     window.gsap.to(floatDiv, {
-      y: startY - 60,
-      x: startX + (Math.random() - 0.5) * 30,
+      y: "-=60",
+      x: "+=" + (Math.random() - 0.5) * 30,
       scale: 1.2,
       opacity: 0,
       duration: 1.2,

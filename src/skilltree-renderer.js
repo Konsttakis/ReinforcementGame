@@ -169,7 +169,10 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
     draw();
   });
 
-  canvas.addEventListener('click', e => {
+  let lastClickTime = 0;
+  let lastClickedNodeId = null;
+
+  canvas.addEventListener('pointerup', e => {
     if (!isClick) return; // it was a drag
     
     const rect = canvas.getBoundingClientRect();
@@ -187,9 +190,29 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
     });
 
     if (clickedNode) {
-      openModal(clickedNode);
+      const now = Date.now();
+      if (lastClickedNodeId === clickedNode.id && now - lastClickTime < 300) {
+        const level = getSkillLevel(clickedNode.id, metaState);
+        const maxed = level >= clickedNode.maxLevel;
+        const hasPrereq = isPrereqMet(clickedNode.id, metaState);
+        const cost = clickedNode.costs[level];
+
+        if (!maxed && hasPrereq && metaState.dna >= cost) {
+          if (buySkill(clickedNode.id, metaState, saveCallback)) {
+            uiCallback();
+            draw();
+          }
+        }
+        openModal(clickedNode);
+      } else {
+        openModal(clickedNode);
+      }
+      lastClickTime = now;
+      lastClickedNodeId = clickedNode.id;
     } else {
       modal.classList.add('hidden');
+      lastClickTime = 0;
+      lastClickedNodeId = null;
     }
   });
 
@@ -216,7 +239,7 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
     modal.classList.remove('hidden');
   }
 
-  btnBuy.addEventListener('click', (e) => {
+  btnBuy.addEventListener('pointerdown', (e) => { if (e.button !== 0) return; e.preventDefault();
     e.preventDefault();
     e.stopPropagation();
     if (selectedNodeId) {
@@ -228,13 +251,13 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
     }
   });
 
-  btnClose.addEventListener('click', (e) => {
+  btnClose.addEventListener('pointerdown', (e) => { if (e.button !== 0) return; e.preventDefault();
     e.preventDefault();
     e.stopPropagation();
     modal.classList.add('hidden');
   });
 
-  btnRespec.addEventListener('click', () => {
+  btnRespec.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     if (confirm('Are you sure you want to refund all your DNA? This is free!')) {
       respecTree(metaState, saveCallback);
       uiCallback();

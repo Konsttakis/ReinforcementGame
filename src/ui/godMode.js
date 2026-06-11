@@ -31,7 +31,7 @@ export function setupGodMode() {
       btnGodOff.classList.remove('hidden');
     }
 
-    btnGodOn.addEventListener('click', () => {
+    btnGodOn.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
       if (currentUser) {
         alert("God Mode is only available when playing locally (not logged in).");
         return;
@@ -70,7 +70,7 @@ export function setupGodMode() {
       renderShop();
     });
 
-    btnGodOff.addEventListener('click', () => {
+    btnGodOff.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
       const backupState = localStorage.getItem('antigravity_god_backup_state');
       const backupMeta = localStorage.getItem('antigravity_god_backup_meta');
       

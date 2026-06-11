@@ -4,7 +4,8 @@ import { getSkillEffect } from '../skilltree.js';
 import { hasRelic } from '../utils.js';
 
 export function rollShop() {
-  state.shopOfferings = [];
+  const frozenItems = (state.shopOfferings || []).filter(item => item.isFrozen);
+  state.shopOfferings = [...frozenItems];
   state.relicOfferings = [];
   
   const levelWeights = {
@@ -24,7 +25,10 @@ export function rollShop() {
   let extraSlots = getSkillEffect('eco_extra_shop', metaState);
   if (hasRelic('expanded_display', state.relics)) extraSlots += 1;
   
-  for (let i = 0; i < 3 + extraSlots; i++) {
+  const maxSlots = 3 + extraSlots;
+  const slotsToFill = maxSlots - frozenItems.length;
+  
+  for (let i = 0; i < slotsToFill; i++) {
     let rand = Math.random() * 100;
     let chosenRarity = 'Common';
     let cumulative = 0;

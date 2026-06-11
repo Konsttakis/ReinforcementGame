@@ -666,3 +666,132 @@ If text is required, it must be minimal, highly stylized, and outline-stroked. T
 
 Important, not text or letters
 
+---
+
+### File Name: math_wizard.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Math Wizard - A magical owl casting mathematical equations.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Prime Number Strike' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: echo_slime.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Echo Slime - A duplicating green ooze splitting into two.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Repeater' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: lpha_wolf.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Alpha Wolf - A lone, battle-scarred wolf howling.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Lone Wolf' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: mimic.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Mimic - A wooden treasure chest with sharp teeth and an incredibly long tongue.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Sandwich Multiplier' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: goblin_sapper.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Goblin Sapper - A crazy goblin holding sticks of dynamite and a detonator plunger.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Detonator' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: sacrificial_lamb.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Sacrificial Lamb - A cute, innocent lamb wearing a heroic cape and glowing with an angelic aura.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Martyrdom' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: glass_golem.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Glass Golem - A massive, heavy golem made entirely of reflective mirrors and glass.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Status Mirror' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: scendant.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Ascendant - A futuristic, floating elevator-bot with upward arrows pointing towards the sky.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Elevator' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: mad_hatter.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Mad Hatter - An erratic, manic top-hat wearing magician tossing playing cards.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'Russian Roulette' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: purifier.png
+**Prompt:**
+A detailed 2D vector illustration of a beast character. The concept is: Purifier - A radiant, angelic paladin wielding holy fire that burns away impurity.
+The illustration must be a premium, expressive sticker-art style design, centered and isolated against a solid, #22c55e background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The character must have simplified, chibi-like proportions with a large head-to-body ratio. Their face must be highly expressive, featuring large, round, sparkling kawaii/anime-style eyes. They should be facing right.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing the game ability/synergy 'All Or Nothing' must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters

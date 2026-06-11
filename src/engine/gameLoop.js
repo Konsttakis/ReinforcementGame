@@ -41,8 +41,7 @@ export async function executeRound() {
   if (DOM.elPreviousSequencesList) DOM.elPreviousSequencesList.innerHTML = '';
   
   logCombat(`--- TURN ${runState.combatRound}/3 STARTED ---`);
-  const hasBinoc = hasRelic('scouts_binoculars', state?.relics);
-  const displayStance = (!hasBinoc && runState.currentStance !== 'NONE') ? '???' : runState.currentStance;
+  const displayStance = runState.currentStance === 'NONE' ? 'None' : runState.currentStance.replace(/_/g, ' ');
   logCombat(`Boss Stance: ${displayStance}`);
   logCombat(`Boss HP: ${runState.bossHp}`);
 
@@ -485,7 +484,7 @@ export function finishRound() {
     } else {
       if (hasRelic('second_wind', state.relics)) state.epochs += 100;
       runState.currentStance = BOSS_STANCES[Math.floor(Math.random() * BOSS_STANCES.length)];
-      const displayStance = (!hasRelic('scouts_binoculars', state?.relics) && runState.currentStance !== 'NONE') ? '???' : runState.currentStance;
+      const displayStance = runState.currentStance === 'NONE' ? 'None' : runState.currentStance.replace(/_/g, ' ');
       logCombat(`Boss shifts to: ${displayStance}`);
       runState.bestExpectedDmg = 0;
       if (DOM.btnFight) DOM.btnFight.disabled = false;

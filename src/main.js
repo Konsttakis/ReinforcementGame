@@ -131,23 +131,23 @@ async function init() {
 
 // --- Event Listeners Setup ---
 
-if (DOM.btnSkipRelic) DOM.btnSkipRelic.addEventListener('click', () => {
+if (DOM.btnSkipRelic) DOM.btnSkipRelic.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   DOM.elRelicChoiceOverlay.classList.add('hidden');
   if (DOM.btnFight) DOM.btnFight.disabled = false;
 });
 
-if (DOM.btnRestart) DOM.btnRestart.addEventListener('click', resetRun);
+if (DOM.btnRestart) DOM.btnRestart.addEventListener('pointerdown', (e) => { if (e.button !== 0) return; e.preventDefault(); resetRun(e); });
 
-if (DOM.btnOpenLab) DOM.btnOpenLab.addEventListener('click', () => {
+if (DOM.btnOpenLab) DOM.btnOpenLab.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   if (window.skillTreeRenderer) window.skillTreeRenderer.refresh(metaState);
   DOM.elLabOverlay.classList.remove('hidden');
 });
-if (DOM.btnCloseLab) DOM.btnCloseLab.addEventListener('click', () => {
+if (DOM.btnCloseLab) DOM.btnCloseLab.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   DOM.elLabOverlay.classList.add('hidden');
 });
 
 if (DOM.btnAbandonRun) {
-  DOM.btnAbandonRun.addEventListener('click', () => {
+  DOM.btnAbandonRun.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     if (confirm("Are you sure you want to abandon this run? You will start over at Level 1.")) {
       clearRunState();
       resetRun();
@@ -155,21 +155,21 @@ if (DOM.btnAbandonRun) {
   });
 }
 
-if (DOM.btnOpenAchievements) DOM.btnOpenAchievements.addEventListener('click', () => {
+if (DOM.btnOpenAchievements) DOM.btnOpenAchievements.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   renderAchievementsModal();
   DOM.elAchievementsOverlay.classList.remove('hidden');
 });
-if (DOM.btnCloseAchievements) DOM.btnCloseAchievements.addEventListener('click', () => {
+if (DOM.btnCloseAchievements) DOM.btnCloseAchievements.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   DOM.elAchievementsOverlay.classList.add('hidden');
 });
 
-document.body.addEventListener('click', (e) => {
+document.body.addEventListener('pointerdown', (e) => { if (e.button !== 0) return;
   if (e.target.closest('button')) {
     setTimeout(checkAchievements, 50);
   }
 });
 
-if (DOM.btnFight) DOM.btnFight.addEventListener('click', executeRound);
+if (DOM.btnFight) DOM.btnFight.addEventListener('pointerdown', (e) => { if (e.button !== 0) return; e.preventDefault(); executeRound(e); });
 if (DOM.elMutationSlider && DOM.elMutationSliderVal) {
   DOM.elMutationSlider.addEventListener('input', (e) => {
     DOM.elMutationSliderVal.textContent = e.target.value + '%';
@@ -275,11 +275,11 @@ if (DOM.bossVideo) {
 }
 
 // Settings
-if (DOM.btnOpenSettings) DOM.btnOpenSettings.addEventListener('click', () => {
+if (DOM.btnOpenSettings) DOM.btnOpenSettings.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   if (DOM.chkAutoPlay) DOM.chkAutoPlay.checked = metaState.settings.autoPlayTurns || false;
   DOM.elSettingsOverlay.classList.remove('hidden');
 });
-if (DOM.btnCloseSettings) DOM.btnCloseSettings.addEventListener('click', () => {
+if (DOM.btnCloseSettings) DOM.btnCloseSettings.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   DOM.elSettingsOverlay.classList.add('hidden');
 });
 if (DOM.chkAutoPlay) DOM.chkAutoPlay.addEventListener('change', (e) => {
@@ -288,7 +288,7 @@ if (DOM.chkAutoPlay) DOM.chkAutoPlay.addEventListener('change', (e) => {
 });
 
 if (DOM.btnHardReset) {
-  DOM.btnHardReset.addEventListener('click', () => {
+  DOM.btnHardReset.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     if (confirm("Are you absolutely sure you want to completely wipe all your progress? This cannot be undone.")) {
       localStorage.clear();
       window.location.reload();
@@ -299,7 +299,7 @@ if (DOM.btnHardReset) {
 const tabBtns = document.querySelectorAll('.settings-tab-btn');
 const tabPanes = document.querySelectorAll('.settings-tab-pane');
 tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     tabBtns.forEach(b => b.classList.remove('active'));
     tabPanes.forEach(p => p.classList.add('hidden'));
     btn.classList.add('active');
@@ -308,12 +308,40 @@ tabBtns.forEach(btn => {
   });
 });
 
+// Console Tabs Logic (Algorithm / Camp)
+const consoleTabBtns = document.querySelectorAll('.console-tab');
+const consoleTabPanes = document.querySelectorAll('.tab-pane');
+consoleTabBtns.forEach(btn => {
+  btn.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
+    consoleTabBtns.forEach(b => {
+      b.classList.remove('active');
+      b.style.opacity = '0.6';
+      b.style.background = '';
+    });
+    consoleTabPanes.forEach(p => {
+      p.style.display = 'none';
+      p.classList.remove('active');
+    });
+    
+    btn.classList.add('active');
+    btn.style.opacity = '1';
+    btn.style.background = 'var(--panel-bg)';
+    
+    const targetId = btn.getAttribute('data-target');
+    const targetPane = document.getElementById(targetId);
+    if (targetPane) {
+      targetPane.style.display = 'flex';
+      targetPane.classList.add('active');
+    }
+  });
+});
+
 // Run History
-if (DOM.btnOpenHistory) DOM.btnOpenHistory.addEventListener('click', () => {
+if (DOM.btnOpenHistory) DOM.btnOpenHistory.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   renderHistoryModal();
   DOM.elHistoryOverlay.classList.remove('hidden');
 });
-if (DOM.btnCloseHistory) DOM.btnCloseHistory.addEventListener('click', () => {
+if (DOM.btnCloseHistory) DOM.btnCloseHistory.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   DOM.elHistoryOverlay.classList.add('hidden');
 });
 
@@ -324,7 +352,7 @@ if (DOM.elBtnAuth) DOM.elBtnAuth.addEventListener('click', () => DOM.elAuthOverl
 if (DOM.elBtnCloseAuth) DOM.elBtnCloseAuth.addEventListener('click', () => DOM.elAuthOverlay.classList.add('hidden'));
 
 if (DOM.elBtnLeaderboard) {
-  DOM.elBtnLeaderboard.addEventListener('click', async () => {
+  DOM.elBtnLeaderboard.addEventListener('pointerdown', async (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     DOM.elLeaderboardOverlay.classList.remove('hidden');
     if (DOM.elLeaderboardList) DOM.elLeaderboardList.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Fetching global scores...</div>';
     
@@ -369,7 +397,7 @@ if (DOM.elBtnCloseLeaderboard) {
 }
 
 if (DOM.btnGoogleLogin) {
-  DOM.btnGoogleLogin.addEventListener('click', async () => {
+  DOM.btnGoogleLogin.addEventListener('pointerdown', async (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     try {
       await signInWithGoogle();
     } catch (err) {
@@ -388,7 +416,7 @@ export function updateAuthUI() {
     }
     
     if (localStorage.getItem('antigravity_god_mode_flag') === 'true') {
-      if (DOM.btnGodOff) DOM.btnGodOff.click();
+      if (DOM.btnGodOff) DOM.btnGodOff.dispatchEvent(new PointerEvent('pointerdown', {button: 0, bubbles: true}));
     }
   } else {
     if (DOM.elBtnAuth) DOM.elBtnAuth.textContent = '👤 Login';
@@ -407,14 +435,14 @@ export function updateAuthUI() {
 window.updateAuthUI = updateAuthUI;
 
 if (DOM.btnLogout) {
-  DOM.btnLogout.addEventListener('click', async () => {
+  DOM.btnLogout.addEventListener('pointerdown', async (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     await signOut();
     updateAuthUI();
   });
 }
 
 if (DOM.btnChangeUsername) {
-  DOM.btnChangeUsername.addEventListener('click', async () => {
+  DOM.btnChangeUsername.addEventListener('pointerdown', async (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     const newName = DOM.authNewUsername.value;
     try {
       await updateUsername(newName);
@@ -428,7 +456,7 @@ if (DOM.btnChangeUsername) {
 }
 
 if (DOM.btnEmailLogin) {
-  DOM.btnEmailLogin.addEventListener('click', async () => {
+  DOM.btnEmailLogin.addEventListener('pointerdown', async (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     const email = DOM.authEmail.value;
     const pass = DOM.authPassword.value;
     try {
@@ -441,7 +469,7 @@ if (DOM.btnEmailLogin) {
 }
 
 if (DOM.btnEmailRegister) {
-  DOM.btnEmailRegister.addEventListener('click', async () => {
+  DOM.btnEmailRegister.addEventListener('pointerdown', async (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
     const email = DOM.authEmail.value;
     const pass = DOM.authPassword.value;
     const user = DOM.authUsername.value;
@@ -468,12 +496,14 @@ window.addEventListener('saveConflict', (e) => {
   
   if (DOM.elConflictOverlay) DOM.elConflictOverlay.classList.remove('hidden');
   
-  if (DOM.btnConflictCloud) DOM.btnConflictCloud.onclick = () => {
+  if (DOM.btnConflictCloud) DOM.btnConflictCloud.onpointerdown = (e) => {
+    if (e.button !== 0) return; e.preventDefault();
     applyCloudData(cloudData);
     if (DOM.elConflictOverlay) DOM.elConflictOverlay.classList.add('hidden');
   };
   
-  if (DOM.btnConflictLocal) DOM.btnConflictLocal.onclick = () => {
+  if (DOM.btnConflictLocal) DOM.btnConflictLocal.onpointerdown = (e) => {
+    if (e.button !== 0) return; e.preventDefault();
     keepLocalData();
     if (DOM.elConflictOverlay) DOM.elConflictOverlay.classList.add('hidden');
   };

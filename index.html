@@ -27,44 +27,103 @@
 
   <!-- Laboratory Modal -->
   <div id="lab-overlay" class="screen-overlay hidden" style="z-index: 300;">
-    <div class="overlay-content lab-content full-screen-modal" style="width: 95vw; height: 95vh; padding: 20px; display: flex; flex-direction: column;">
-      <div class="lab-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
+    <div class="overlay-content lab-content full-screen-modal"
+      style="width: 95vw; height: 95vh; padding: 20px; display: flex; flex-direction: column;">
+      <div class="lab-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
         <div>
           <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-accent">🌳 Evolutionary Tech Tree</h1>
           <p style="color: var(--text-muted); margin: 5px 0 0 0;">Drag to pan. Scroll to zoom. Spend DNA to evolve.</p>
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
-          <div style="font-size: 1.5rem; font-weight: bold; color: #fff;">DNA: <span id="lab-dna-display" class="text-gradient-accent">0</span></div>
+          <div style="font-size: 1.5rem; font-weight: bold; color: #fff;">DNA: <span id="lab-dna-display"
+              class="text-gradient-accent">0</span></div>
           <button id="btn-respec" class="btn secondary">Respec (Free)</button>
           <button id="btn-close-lab" class="btn danger">Close</button>
         </div>
       </div>
-      <div id="skill-tree-container" class="skill-tree-container" style="position: relative; flex-grow: 1; overflow: hidden; border: 2px solid #333; background: #0a0a0a;">
+      <div id="skill-tree-container" class="skill-tree-container"
+        style="position: relative; flex-grow: 1; overflow: hidden; border: 2px solid #333; background: #0a0a0a;">
         <canvas id="skill-tree-canvas" style="display: block; width: 100%; height: 100%;"></canvas>
         <!-- The Node Info tooltip/modal when clicking -->
-        <div id="skill-purchase-modal" class="skill-purchase-modal hidden" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel-bg); border: var(--border-thick); padding: 20px; box-shadow: var(--shadow-solid); z-index: 9999; min-width: 300px; pointer-events: auto !important;">
-           <h3 id="skill-modal-title" style="margin-top: 0;">Skill Name</h3>
-           <p id="skill-modal-desc" style="margin: 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">Description</p>
-           <p id="skill-modal-progress" style="font-weight: bold;">Level 0/3</p>
-           <button id="btn-buy-skill" class="btn primary full-width mt-3" style="cursor: pointer; pointer-events: auto !important;">Buy (Cost: 100 DNA)</button>
-           <button id="btn-close-skill-modal" class="btn secondary full-width mt-2" style="cursor: pointer; pointer-events: auto !important;">Cancel</button>
+        <div id="skill-purchase-modal" class="skill-purchase-modal hidden"
+          style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--panel-bg); border: var(--border-thick); padding: 20px; box-shadow: var(--shadow-solid); z-index: 9999; min-width: 300px; pointer-events: auto !important;">
+          <h3 id="skill-modal-title" style="margin-top: 0;">Skill Name</h3>
+          <p id="skill-modal-desc" style="margin: 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+            Description</p>
+          <p id="skill-modal-progress" style="font-weight: bold;">Level 0/3</p>
+          <button id="btn-buy-skill" class="btn primary full-width mt-3"
+            style="cursor: pointer; pointer-events: auto !important;">Buy (Cost: 100 DNA)</button>
+          <button id="btn-close-skill-modal" class="btn secondary full-width mt-2"
+            style="cursor: pointer; pointer-events: auto !important;">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Achievements Modal -->
+  <!-- Achievements & Codex Modal -->
   <div id="achievements-overlay" class="screen-overlay hidden" style="z-index: 400;">
-    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
-        <div>
-          <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-gold">🏆 Hall of Achievements</h1>
-          <p style="color: var(--text-muted); margin: 5px 0 0 0;">Your legacy across the multiverse. <span id="achievements-count">0 / 150</span></p>
-        </div>
-        <button id="btn-close-achievements" class="btn danger">Close</button>
+    <div class="overlay-content full-screen-modal"
+      style="width: 80vw; height: 80vh; max-width: 1000px; padding: 0; display: flex; flex-direction: row; overflow: hidden;">
+
+      <!-- Sidebar -->
+      <div class="settings-sidebar"
+        style="width: 200px; background: #0a0a0a; border-right: 2px solid #333; display: flex; flex-direction: column; padding: 20px 0;">
+        <h2 style="color: var(--accent); margin: 0 0 20px 20px; font-size: 1.5rem;" class="text-gradient-gold">Codex
+        </h2>
+        <button class="btn achievements-tab-btn active" data-tab="achievements">🏆 Achievements</button>
+        <button class="btn achievements-tab-btn" data-tab="relics">🏺 Relics</button>
+        <button class="btn achievements-tab-btn" data-tab="beasts">🐾 Beasts</button>
+
+        <div style="flex-grow: 1;"></div>
+        <button id="btn-close-achievements" class="btn danger" style="margin: 0 20px;">Close</button>
       </div>
-      <div id="achievements-list" style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; padding-right: 10px; align-content: start;">
-        <!-- Injected here -->
+
+      <!-- Content Area -->
+      <div style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column;">
+
+        <!-- Achievements Tab -->
+        <div id="achievements-tab-achievements" class="achievements-tab-pane active"
+          style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
+            <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-gold">Hall of Achievements</h1>
+            <p style="color: var(--text-muted); margin: 5px 0 0 0;">Your legacy across the multiverse. <span
+                id="achievements-count">0 / 150</span></p>
+          </div>
+          <div id="achievements-list"
+            style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; align-content: start; padding-right: 10px;">
+            <!-- Injected here -->
+          </div>
+        </div>
+
+        <!-- Relics Tab -->
+        <div id="achievements-tab-relics" class="achievements-tab-pane hidden"
+          style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
+            <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-gold">Relic Codex</h1>
+            <p style="color: var(--text-muted); margin: 5px 0 0 0;">Artifacts you have discovered. <span
+                id="relics-count">0 / 0</span></p>
+          </div>
+          <div id="relics-list"
+            style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; align-content: start; padding-right: 10px;">
+            <!-- Injected here -->
+          </div>
+        </div>
+
+        <!-- Beasts Tab -->
+        <div id="achievements-tab-beasts" class="achievements-tab-pane hidden"
+          style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
+            <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-gold">Beast Codex</h1>
+            <p style="color: var(--text-muted); margin: 5px 0 0 0;">Creatures you have dominated. <span
+                id="beasts-count">0 / 0</span></p>
+          </div>
+          <div id="beasts-list"
+            style="flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; align-content: start; padding-right: 10px;">
+            <!-- Injected here -->
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -83,13 +142,16 @@
   </div>
   <!-- Settings Modal -->
   <div id="settings-overlay" class="screen-overlay hidden" style="z-index: 500;">
-    <div class="overlay-content full-screen-modal" style="width: 60vw; height: 60vh; max-width: 800px; padding: 0; display: flex; flex-direction: column;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; flex-shrink: 0; border-bottom: 2px solid #333;">
+    <div class="overlay-content full-screen-modal"
+      style="width: 60vw; height: 60vh; max-width: 800px; padding: 0; display: flex; flex-direction: column;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; padding: 20px; flex-shrink: 0; border-bottom: 2px solid #333;">
         <h1 style="margin: 0; font-size: 1.8rem;">⚙️ Settings</h1>
         <button id="btn-close-settings" class="btn danger">Close</button>
       </div>
       <div style="display: flex; flex-grow: 1; overflow: hidden;">
-        <div class="settings-sidebar" style="width: 200px; background: #0a0a0a; border-right: 2px solid #333; display: flex; flex-direction: column;">
+        <div class="settings-sidebar"
+          style="width: 200px; background: #0a0a0a; border-right: 2px solid #333; display: flex; flex-direction: column;">
           <button class="btn settings-tab-btn active" data-tab="general">General</button>
           <button class="btn settings-tab-btn" data-tab="help">Help & Lore</button>
         </div>
@@ -101,24 +163,45 @@
                 <input type="checkbox" id="chk-autoplay-turns" style="width: 20px; height: 20px; cursor: pointer;">
                 Auto-Play All 3 Turns
               </label>
-              <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">When enabled, combat rounds 2 and 3 will automatically start after a 1-second delay.</p>
+              <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">When enabled, combat rounds 2 and
+                3 will automatically start after a 1-second delay.</p>
             </div>
-            <div class="setting-row" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="setting-row" style="margin-top: 15px;">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 1.1rem;">
+                <input type="checkbox" id="chk-autoplay-runs" style="width: 20px; height: 20px; cursor: pointer;">
+                Auto-Play Full Runs (Infinite Loop)
+              </label>
+              <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">When enabled, the game will
+                automatically skip the end-of-run screens and immediately start the next run.</p>
+            </div>
+            <div class="setting-row"
+              style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
               <h3 style="color: var(--danger); margin-top: 0;">Danger Zone</h3>
-              <p style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.9rem;">This will permanently wipe all your DNA, upgrades, achievements, and run history. This action cannot be undone.</p>
+              <p style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.9rem;">This will permanently wipe
+                all your DNA, upgrades, achievements, and run history. This action cannot be undone.</p>
               <button id="btn-hard-reset" class="btn danger btn-sm">💀 Hard Reset Game</button>
             </div>
           </div>
           <div id="settings-tab-help" class="settings-tab-pane hidden">
             <h2 style="margin-top: 0;">The Void Crushers</h2>
-            <p>You are a Master Geneticist in a distant future where the multiverse is collapsing under the weight of <strong>The Void</strong>. Evil Bosses representing entropy and decay stand between your civilization and survival.</p>
-            <p>Using DNA extracted from fallen foes, you synthesize, mutate, and evolve a roster of <strong>Beasts</strong>—living weapons designed to exploit elemental weaknesses, scale synergistically, and crush the Void Bosses.</p>
+            <p>You are a Master Geneticist in a distant future where the multiverse is collapsing under the weight of
+              <strong>The Void</strong>. Evil Bosses representing entropy and decay stand between your civilization and
+              survival.
+            </p>
+            <p>Using DNA extracted from fallen foes, you synthesize, mutate, and evolve a roster of
+              <strong>Beasts</strong>—living weapons designed to exploit elemental weaknesses, scale synergistically,
+              and crush the Void Bosses.
+            </p>
             <h3>Gameplay Guide</h3>
             <ul>
-              <li><strong>DNA & Gold:</strong> Defeating Bosses earns Gold for the run. Failing to kill a boss earns persistent DNA.</li>
-              <li><strong>Laboratory:</strong> Spend DNA here to permanently upgrade your evolutionary tech tree across all runs.</li>
-              <li><strong>Compute & Execute:</strong> Uses a Genetic Algorithm to find the optimal arrangement of beasts from your inventory based on their synergies, elemental affinities, and the Boss's current stance.</li>
-              <li><strong>Epochs:</strong> More epochs = more time for the GA to mutate and crossover sequences, finding higher damage combinations.</li>
+              <li><strong>DNA & Gold:</strong> Defeating Bosses earns Gold for the run. Failing to kill a boss earns
+                persistent DNA.</li>
+              <li><strong>Laboratory:</strong> Spend DNA here to permanently upgrade your evolutionary tech tree across
+                all runs.</li>
+              <li><strong>Compute & Execute:</strong> Uses a Genetic Algorithm to find the optimal arrangement of beasts
+                from your inventory based on their synergies, elemental affinities, and the Boss's current stance.</li>
+              <li><strong>Epochs:</strong> More epochs = more time for the GA to mutate and crossover sequences, finding
+                higher damage combinations.</li>
             </ul>
           </div>
         </div>
@@ -130,18 +213,22 @@
 
   <!-- Leaderboard Modal -->
   <div id="leaderboard-overlay" class="screen-overlay hidden" style="z-index: 550;">
-    <div class="overlay-content full-screen-modal" style="width: 500px; padding: 30px; display: flex; flex-direction: column;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px;">
+    <div class="overlay-content full-screen-modal"
+      style="width: 500px; padding: 30px; display: flex; flex-direction: column;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px;">
         <h2 style="margin: 0; color: var(--gold); font-size: 2rem;">👑 Global Leaderboard</h2>
         <button id="btn-close-leaderboard" class="btn danger btn-sm">X</button>
       </div>
-      
-      <div style="display: flex; justify-content: space-between; padding: 10px 15px; background: rgba(0,0,0,0.4); border-radius: 8px; font-weight: bold; color: var(--text-muted); margin-bottom: 10px;">
+
+      <div
+        style="display: flex; justify-content: space-between; padding: 10px 15px; background: rgba(0,0,0,0.4); border-radius: 8px; font-weight: bold; color: var(--text-muted); margin-bottom: 10px;">
         <span>Player Rank</span>
         <span>Highest Level</span>
       </div>
 
-      <div id="leaderboard-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 400px; padding-right: 5px;">
+      <div id="leaderboard-list"
+        style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 400px; padding-right: 5px;">
         <!-- Injected via JS -->
         <div style="text-align: center; color: var(--text-muted); padding: 20px;">Loading leaderboard...</div>
       </div>
@@ -150,18 +237,23 @@
 
   <!-- Auth Modal -->
   <div id="auth-overlay" class="screen-overlay hidden" style="z-index: 600;">
-    <div class="overlay-content full-screen-modal" style="width: 400px; padding: 30px; display: flex; flex-direction: column;">
+    <div class="overlay-content full-screen-modal"
+      style="width: 400px; padding: 30px; display: flex; flex-direction: column;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 id="auth-title" style="margin: 0;">Account</h2>
         <button id="btn-close-auth" class="btn danger btn-sm">X</button>
       </div>
       <div id="auth-login-view">
-        <button id="btn-google-login" class="btn secondary full-width" style="margin-bottom: 15px;">Google Login</button>
+        <button id="btn-google-login" class="btn secondary full-width" style="margin-bottom: 15px;">Google
+          Login</button>
         <div style="text-align: center; color: var(--text-muted); margin-bottom: 15px;">- or -</div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <input type="email" id="auth-email" placeholder="Email" style="padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text);">
-          <input type="password" id="auth-password" placeholder="Password" style="padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text);">
-          <input type="text" id="auth-username" placeholder="Username (Register only)" style="padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text);">
+          <input type="email" id="auth-email" placeholder="Email"
+            style="padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text);">
+          <input type="password" id="auth-password" placeholder="Password"
+            style="padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text);">
+          <input type="text" id="auth-username" placeholder="Username (Register only)"
+            style="padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text);">
           <div style="display: flex; gap: 10px; margin-top: 10px;">
             <button id="btn-email-login" class="btn primary" style="flex: 1;">Login</button>
             <button id="btn-email-register" class="btn secondary" style="flex: 1;">Register</button>
@@ -169,40 +261,60 @@
         </div>
       </div>
       <div id="auth-error" style="color: var(--danger); margin-top: 15px; font-size: 0.9rem; text-align: center;"></div>
-      
-      <div id="auth-logged-in-view" class="hidden" style="display: flex; flex-direction: column; align-items: stretch; gap: 15px;">
-        <p style="text-align: center; margin-bottom: 5px;">Logged in as: <span id="auth-current-username" style="font-weight: bold; color: var(--accent);"></span></p>
-        
+
+      <div id="auth-logged-in-view" class="hidden"
+        style="display: flex; flex-direction: column; align-items: stretch; gap: 15px;">
+        <p style="text-align: center; margin-bottom: 5px;">Logged in as: <span id="auth-current-username"
+            style="font-weight: bold; color: var(--accent);"></span></p>
+
         <div style="display: flex; gap: 10px;">
-          <input type="text" id="auth-new-username" placeholder="New Username" maxlength="20" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+          <input type="text" id="auth-new-username" placeholder="New Username" maxlength="20"
+            style="flex: 1; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
           <button id="btn-change-username" class="btn secondary">Update</button>
         </div>
 
         <button id="btn-logout" class="btn danger full-width">Logout</button>
       </div>
 
-      <div id="profile-stats-container" style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
+      <div id="profile-stats-container"
+        style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px;">
         <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--gold); text-align: center;">Lifetime Stats</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
-          <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
+          <div
+            style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
             <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Highest Level</div>
-            <div id="stat-highest-level" style="font-size: 1.4rem; font-weight: bold; color: var(--accent); font-family: 'JetBrains Mono', monospace;">1</div>
+            <div id="stat-highest-level"
+              style="font-size: 1.4rem; font-weight: bold; color: var(--accent); font-family: 'JetBrains Mono', monospace;">
+              1</div>
           </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
+          <div
+            style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
             <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Runs Played</div>
-            <div id="stat-runs-played" style="font-size: 1.4rem; font-weight: bold; color: #f8fafc; font-family: 'JetBrains Mono', monospace;">0</div>
+            <div id="stat-runs-played"
+              style="font-size: 1.4rem; font-weight: bold; color: #f8fafc; font-family: 'JetBrains Mono', monospace;">0
+            </div>
           </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
+          <div
+            style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
             <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">DNA Collected</div>
-            <div id="stat-dna-collected" style="font-size: 1.4rem; font-weight: bold; color: #a855f7; font-family: 'JetBrains Mono', monospace;">0</div>
+            <div id="stat-dna-collected"
+              style="font-size: 1.4rem; font-weight: bold; color: #a855f7; font-family: 'JetBrains Mono', monospace;">0
+            </div>
           </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
+          <div
+            style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
             <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Bosses Slain</div>
-            <div id="stat-bosses-slain" style="font-size: 1.4rem; font-weight: bold; color: var(--danger); font-family: 'JetBrains Mono', monospace;">0</div>
+            <div id="stat-bosses-slain"
+              style="font-size: 1.4rem; font-weight: bold; color: var(--danger); font-family: 'JetBrains Mono', monospace;">
+              0</div>
           </div>
-          <div style="grid-column: span 2; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
-            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Highest Damage Blow</div>
-            <div id="stat-highest-damage" style="font-size: 1.4rem; font-weight: bold; color: var(--gold); font-family: 'JetBrains Mono', monospace;">0</div>
+          <div
+            style="grid-column: span 2; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Highest Damage Blow
+            </div>
+            <div id="stat-highest-damage"
+              style="font-size: 1.4rem; font-weight: bold; color: var(--gold); font-family: 'JetBrains Mono', monospace;">
+              0</div>
           </div>
         </div>
       </div>
@@ -211,12 +323,15 @@
 
   <!-- Run History Modal -->
   <div id="history-overlay" class="screen-overlay hidden" style="z-index: 350;">
-    <div class="overlay-content full-screen-modal" style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
+    <div class="overlay-content full-screen-modal"
+      style="width: 80vw; height: 80vh; max-width: 1000px; padding: 20px; display: flex; flex-direction: column;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">
         <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-accent">📜 Algorithm History</h1>
         <button id="btn-close-history" class="btn danger">Close</button>
       </div>
-      <div id="history-list" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px;">
+      <div id="history-list"
+        style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px;">
         <!-- Injected via JS -->
       </div>
     </div>
@@ -224,20 +339,28 @@
 
   <!-- Save Conflict Modal -->
   <div id="conflict-overlay" class="screen-overlay hidden" style="z-index: 700;">
-    <div class="overlay-content full-screen-modal" style="width: 500px; padding: 30px; display: flex; flex-direction: column;">
-      <h2 style="margin-top: 0; color: var(--danger); border-bottom: 1px solid var(--border); padding-bottom: 10px;">⚠️ Save Conflict Detected</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">We found a different save file in the cloud. Which one would you like to keep?</p>
-      
+    <div class="overlay-content full-screen-modal"
+      style="width: 500px; padding: 30px; display: flex; flex-direction: column;">
+      <h2 style="margin-top: 0; color: var(--danger); border-bottom: 1px solid var(--border); padding-bottom: 10px;">⚠️
+        Save Conflict Detected</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">We found a different save file in the
+        cloud. Which one would you like to keep?</p>
+
       <div style="display: flex; flex-direction: column; gap: 15px;">
         <div style="border: 2px solid var(--accent); border-radius: 8px; padding: 15px; background: rgba(0,0,0,0.3);">
           <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--accent);">☁️ Cloud Save</h3>
-          <div id="conflict-cloud-info" style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px; font-family: monospace; line-height: 1.4;">Loading...</div>
+          <div id="conflict-cloud-info"
+            style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px; font-family: monospace; line-height: 1.4;">
+            Loading...</div>
           <button id="btn-conflict-cloud" class="btn primary full-width">Load Cloud Save</button>
         </div>
 
-        <div style="border: 2px solid var(--panel-border); border-radius: 8px; padding: 15px; background: rgba(0,0,0,0.3);">
+        <div
+          style="border: 2px solid var(--panel-border); border-radius: 8px; padding: 15px; background: rgba(0,0,0,0.3);">
           <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--text-main);">💻 Local Save</h3>
-          <div id="conflict-local-info" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; font-family: monospace; line-height: 1.4;">Loading...</div>
+          <div id="conflict-local-info"
+            style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; font-family: monospace; line-height: 1.4;">
+            Loading...</div>
           <button id="btn-conflict-local" class="btn secondary full-width">Keep Local Save (Overwrite Cloud)</button>
         </div>
       </div>
@@ -260,9 +383,11 @@
         <button id="btn-auth" class="btn primary btn-sm" style="margin-left: 10px;">👤 Login</button>
       </div>
       <div class="stats">
-        <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display" class="text-gradient-accent">0</span></div>
+        <div class="stat" style="color: var(--accent); font-weight: bold;">DNA: <span id="dna-display"
+            class="text-gradient-accent">0</span></div>
         <div class="stat">Level: <span id="level-display">1</span></div>
-        <div class="stat gold" style="font-weight: bold;">Gold: <span id="gold-display" class="text-gradient-gold">100</span></div>
+        <div class="stat gold" style="font-weight: bold;">Gold: <span id="gold-display"
+            class="text-gradient-gold">100</span></div>
       </div>
     </header>
     <div id="relic-bar" class="relic-bar"
@@ -271,111 +396,177 @@
       <div id="relic-slots" style="display: flex; gap: 10px;"></div>
     </div>
 
-    <main class="game-area">
-      <div class="panel lineup-panel">
-        <h2 id="inventory-header">Your Inventory</h2>
-        <div id="beast-slots" class="slots">
-          <!-- Beast items injected here -->
-        </div>
-      </div>
+    <main class="game-area-tabbed"
+      style="display: flex; flex-direction: column; gap: 15px; flex-grow: 1; height: calc(100vh - 120px); overflow: hidden;">
+      <!-- TOP HALF: Panoramic Arena -->
+      <section class="panoramic-arena panel"
+        style="flex: 0 0 45%; position: relative; overflow: hidden; padding: 0; display: flex; flex-direction: row; border: 1px solid #333;">
+        <!-- Left Third: Text Area -->
+        <div class="arena-text-zone"
+          style="flex: 1; padding: 15px; display: flex; flex-direction: column; background: var(--panel-bg); z-index: 10; border-right: 2px solid #333;">
+          <div class="fight-header"
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
+            <h2 style="margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Combat Arena</h2>
+            <div id="boss-stance-display"
+              style="font-size: 0.85rem; padding: 4px 10px; background: #06b6d4; border: 1px solid #0891b2; border-radius: 6px; color: #000; font-weight: bold; letter-spacing: 0.5px; text-transform: capitalize; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">
+            </div>
+          </div>
 
-      <div class="panel fight-panel">
-        <div class="fight-header"
-          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h2 style="margin: 0;">Combat Arena</h2>
-          <div id="boss-stance-display"
-            style="font-size: 0.85rem; padding: 4px 10px; background: #06b6d4; border: 1px solid #0891b2; border-radius: 6px; color: #000; font-weight: bold; letter-spacing: 0.5px; text-transform: capitalize;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4px; flex-shrink: 0;">
+            <span
+              style="font-size: 0.75rem; color: #cbd5e1; font-weight: bold; letter-spacing: 1px; text-shadow: 0 1px 2px #000;">BOSS
+              HEALTH</span>
+            <span
+              style="font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; font-weight: bold; color: var(--danger); text-shadow: 0 1px 2px #000;">
+              <span id="boss-hp-display">60</span> / <span id="boss-hp-max">60</span>
+            </span>
+          </div>
+          <div
+            style="width: 100%; height: 16px; flex-shrink: 0; background-color: rgba(0,0,0,0.5); border: 1px solid var(--panel-border); border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+            <div id="boss-hp-bar"
+              style="display: block; height: 100%; width: 100%; background-color: #ff0044; transition: width 0.3s ease; margin: 0; padding: 0;">
+            </div>
+          </div>
+
+          <div id="combat-log" class="combat-log"
+            style="flex-grow: 1; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: flex-end;">
+            <!-- Combat text injected here -->
           </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4px;">
-          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; letter-spacing: 1px;">BOSS
-            HEALTH</span>
-          <span
-            style="font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; font-weight: bold; color: var(--danger);"><span
-              id="boss-hp-display">60</span> / <span id="boss-hp-max">60</span></span>
-        </div>
-        <div style="width: 100%; height: 20px; flex-shrink: 0; background-color: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; overflow: hidden; margin-bottom: 25px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
-          <div id="boss-hp-bar" style="display: block; height: 100%; width: 100%; background-color: #ff0044; transition: width 0.3s ease; margin: 0; padding: 0;"></div>
-        </div>
-        <div id="fight-arena" class="fight-arena">
-          <div id="arena-left" class="arena-side"></div>
-          <div id="arena-vs" class="arena-vs">VS</div>
-          <div id="arena-right" class="arena-side">
-            <div id="arena-boss" class="boss-icon has-tooltip" data-tooltip="Boss">
-              <img id="boss-image" src="assets/boss/boss.png" class="beast-sprite-arena" style="height: 100%; width: auto; object-fit: contain;">
+        <!-- Right Two Thirds: Fight Visual Area -->
+        <div class="arena-visual-zone"
+          style="flex: 2; position: relative; background: url('./assets/arena_bg.png') center/cover no-repeat; display: flex; flex-direction: column; padding: 15px;">
+          <div id="fight-arena" class="fight-arena"
+            style="flex-grow: 1; display: flex; justify-content: space-between; align-items: center; position: relative;">
+            <div id="arena-left" class="arena-side"
+              style="display: flex; gap: 15px; padding: 10px; align-items: flex-end; height: 100%;"></div>
+            <div id="arena-vs" class="arena-vs"
+              style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 3rem; opacity: 0.3; pointer-events: none;">
+              VS</div>
+            <div id="arena-right" class="arena-side"
+              style="display: flex; padding: 10px 60px 10px 10px; align-items: flex-end; justify-content: flex-end; height: 100%;">
+              <div id="arena-boss" class="boss-icon has-tooltip" data-tooltip="Boss" style="height: 100%;">
+                <img id="boss-image" src="assets/boss/boss.png" class="beast-sprite-arena"
+                  style="height: 65%; width: auto; max-width: 100%; object-fit: contain;">
+              </div>
             </div>
           </div>
         </div>
-        <div id="combat-log" class="combat-log">
-          <!-- Combat text injected here -->
-        </div>
-      </div>
+      </section>
 
-      <div class="shop-area panel">
-        <h2 style="margin-bottom: 2px;">The Shop</h2>
-        <div class="shop-container">
-          <div class="shop-scroll-area" style="overflow-y: auto; flex-grow: 1; min-height: 0; padding-right: 5px;">
-            <div id="shop-items" class="shop-items" style="overflow: visible;">
-              <!-- Shop items injected here -->
+      <!-- BOTTOM HALF: Command Console -->
+      <section class="command-console" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <div class="console-header"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px;">
+          <div class="console-tabs" style="display: flex; gap: 10px;">
+            <button class="btn console-tab active" data-target="tab-camp"
+              style="font-size: 1.1rem; padding: 10px 25px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; background: var(--panel-bg);">⛺
+              Camp & Shop</button>
+            <button class="btn console-tab" data-target="tab-algorithm"
+              style="font-size: 1.1rem; padding: 10px 25px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: none; opacity: 0.6;">🧬
+              Algorithm Analytics</button>
+          </div>
+          <div class="global-actions">
+            <button id="btn-fight" class="btn danger btn-lg"
+              style="box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); border: 2px solid #b91c1c; padding: 12px 30px; font-size: 1.2rem;">COMPUTE
+              & EXECUTE TURN 1/3</button>
+          </div>
+        </div>
+
+        <div class="console-content panel"
+          style="flex-grow: 1; display: flex; overflow: hidden; border-top-left-radius: 0;">
+          <!-- TAB 1: Camp & Shop -->
+          <div id="tab-camp" class="tab-pane" style="flex-grow: 1; display: flex; gap: 20px; width: 100%;">
+            <div class="lineup-panel" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+              <h2 id="inventory-header"
+                style="margin-top: 0; flex-shrink: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">Your
+                Inventory</h2>
+              <div id="beast-slots" class="slots" style="flex-grow: 1; overflow-y: auto; padding-right: 5px;">
+                <!-- Beast items injected here -->
+              </div>
+            </div>
+
+            <div class="shop-area"
+              style="flex: 1; display: flex; flex-direction: column; overflow: hidden; border-left: 2px solid #333; padding-left: 20px;">
+              <div class="shop-header"
+                style="display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 10px;">
+                <h2 style="margin: 0;">The Shop</h2>
+                <div id="shop-actions" class="shop-actions" style="display: flex; gap: 10px; align-items: center;">
+                  <!-- Action buttons injected here -->
+                </div>
+              </div>
+              <div class="shop-container" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0;">
+                <div class="shop-scroll-area"
+                  style="overflow-y: auto; flex-grow: 1; min-height: 0; padding-right: 5px;">
+                  <div id="shop-items" class="shop-items" style="overflow: visible;">
+                    <!-- Shop items injected here -->
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div id="shop-actions" class="shop-actions">
-            <!-- Action buttons injected here -->
+
+          <!-- TAB 2: Algorithm -->
+          <div id="tab-algorithm" class="tab-pane"
+            style="display: none; flex-grow: 1; flex-direction: column; width: 100%;">
+            <div class="compute-header"
+              style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">
+              <h2 style="margin: 0;">Optimizer Dashboard</h2>
+              <div class="compute-stats" style="display: flex; gap: 25px; font-size: 1.1rem;">
+                <div>Compute Pool: <span id="epochs-display" class="text-gradient-accent"
+                    style="font-weight: bold;">0</span> Epochs / Round</div>
+                <div>Best Expected Dmg: <span id="best-dmg-display" class="text-gradient-gold"
+                    style="font-weight: bold;">0</span></div>
+              </div>
+            </div>
+
+            <div class="compute-body" style="display: flex; flex-grow: 1; gap: 20px; min-height: 0;">
+              <div class="compute-sidebar"
+                style="flex: 0 0 350px; display: flex; flex-direction: column; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--panel-border); overflow-y: auto;">
+                <div id="best-sequence-container" class="best-sequence-container">
+                  <h3 style="margin-top: 0;">Best Sequence Found</h3>
+                  <div id="best-sequence-display" class="best-sequence-display"
+                    style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <div class="sequence-slot empty">1</div>
+                    <div class="sequence-slot empty">2</div>
+                    <div class="sequence-slot empty">3</div>
+                    <div class="sequence-slot empty">4</div>
+                    <div class="sequence-slot empty">5</div>
+                    <div class="sequence-slot empty">6</div>
+                    <div class="sequence-slot empty">7</div>
+                    <div class="sequence-slot empty">8</div>
+                  </div>
+                  <div id="historic-orders-container"
+                    style="margin-top: 20px; border-top: 1px dashed #333; padding-top: 15px;">
+                    <h4
+                      style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">
+                      Recent Turns History</h4>
+                    <div id="historic-orders-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                  </div>
+                  <div id="previous-sequences-list" class="previous-sequences-list" style="margin-top: 15px;"></div>
+                </div>
+
+              </div>
+
+              <div class="ga-visuals"
+                style="flex-grow: 1; display: flex; flex-direction: column; gap: 15px; min-width: 0;">
+                <div class="graph-scroll-container"
+                  style="display: none; background: #0a0a0a; border-radius: 8px; border: 1px solid #333; padding: 15px; flex-shrink: 0; overflow-x: auto;">
+                  <canvas id="bump-chart" width="800" height="200" style="max-height: 200px;"></canvas>
+                </div>
+                <div class="convergence-container"
+                  style="background: #0a0a0a; flex-grow: 1; display: flex; flex-direction: column; border-radius: 8px; border: 1px solid #333; padding: 15px; overflow: hidden; position: relative;">
+                  <canvas id="convergence-chart"
+                    style="position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px; width: calc(100% - 30px); height: calc(100% - 30px);"></canvas>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
-
-    <footer class="panel compute-panel">
-      <div class="compute-header">
-        <h2>Genetic Algorithm Optimizer</h2>
-        <div class="compute-stats">
-          <div>Compute Pool: <span id="epochs-display">0</span> Epochs / Round</div>
-          <div>Best Expected Dmg: <span id="best-dmg-display">0</span></div>
-        </div>
-      </div>
-
-      <div class="compute-body">
-        <div class="compute-sidebar">
-          <div id="best-sequence-container" class="best-sequence-container">
-            <h3>Best Sequence Found</h3>
-            <div id="best-sequence-display" class="best-sequence-display">
-              <div class="sequence-slot empty">1</div>
-              <div class="sequence-slot empty">2</div>
-              <div class="sequence-slot empty">3</div>
-              <div class="sequence-slot empty">4</div>
-              <div class="sequence-slot empty">5</div>
-              <div class="sequence-slot empty">6</div>
-              <div class="sequence-slot empty">7</div>
-              <div class="sequence-slot empty">8</div>
-            </div>
-            <div id="historic-orders-container" style="margin-top: 15px; border-top: 1px dashed #333; padding-top: 10px;">
-              <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted);">Recent Turns History</h4>
-              <div id="historic-orders-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            </div>
-            <div id="previous-sequences-list" class="previous-sequences-list"></div>
-          </div>
-          <div id="mutation-control" class="hidden" style="margin-top: 10px; margin-bottom: 10px;">
-            <label for="mutation-slider" style="font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">Inventory Swap Chance: <span id="mutation-slider-val">20%</span></label>
-            <input type="range" id="mutation-slider" min="0" max="100" value="20" style="width: 100%; cursor: pointer;">
-          </div>
-          <button id="btn-fight" class="btn danger full-width btn-lg mt-auto">COMPUTE &
-            EXECUTE TURN 1/3</button>
-        </div>
-
-        <div class="ga-visuals">
-          <div class="graph-scroll-container" style="display: none;">
-            <canvas id="bump-chart" width="550" height="400"></canvas>
-          </div>
-          <div class="convergence-container"
-            style="background: #111; flex-grow: 1; display: flex; flex-direction: column;">
-            <canvas id="convergence-chart" width="550" height="250"
-              style="width: 100%; height: 100%; display: block; flex-grow: 1;"></canvas>
-          </div>
-        </div>
-      </div>
-    </footer>
   </div>
 
   <script type="module" src="./src/skilltree.js"></script>
