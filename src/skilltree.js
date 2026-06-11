@@ -29,6 +29,7 @@ export const SKILL_TREE_DATA = [
   { id: 'gen_sims', name: 'Simulation Depth', branch: 'genome', tier: 4, localX: -0.5, maxLevel: 3, color: '#00ff88', costs: [250, 600, 1200], desc: (l) => `+${l*5} fitness evaluation sims`, prereq: ['gen_pop1'] },
   { id: 'gen_slots2', name: 'Sequence Cap II', branch: 'genome', tier: 4, localX: 1, maxLevel: 1, color: '#00ff88', costs: [300], desc: () => `+1 max active beast slot`, prereq: ['gen_slots1', 'gen_tourney'] },
   { id: 'gen_elite', name: 'Elitism', branch: 'genome', tier: 5, localX: 0, maxLevel: 2, color: '#00ff88', costs: [400, 1000], desc: (l) => `Keep top ${1+l} sequences (Base 1)`, prereq: ['gen_sims', 'gen_tourney'] },
+  { id: 'gen_mutate', name: 'Directed Evolution', branch: 'genome', tier: 5, localX: -1, maxLevel: 1, color: '#00ff88', costs: [500], desc: () => `Unlocks Manual Mutation Control`, prereq: ['gen_sims'] },
   { id: 'gen_pop2', name: 'Parallel Proc', branch: 'genome', tier: 6, localX: -0.5, maxLevel: 3, color: '#00ff88', costs: [800, 2000, 4000], desc: (l) => `+${l*4} GA Population Size`, prereq: ['gen_elite'] },
   { id: 'gen_slots3', name: 'Sequence Cap III', branch: 'genome', tier: 6, localX: 1, maxLevel: 1, color: '#00ff88', costs: [1000], desc: () => `+1 max active beast slot`, prereq: ['gen_slots2', 'gen_elite'] },
   { id: 'gen_slots4', name: 'Sequence Cap IV', branch: 'genome', tier: 7, localX: 0.5, maxLevel: 1, color: '#00ff88', costs: [4000], desc: () => `+1 max active beast slot`, prereq: ['gen_slots3', 'gen_pop2'] },

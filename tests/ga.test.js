@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { orderCrossover, mutateSwap } from '../src/ga.js';
+import { orderCrossover, mutateSwap } from '../src/engine/ga.js';
 
 test('orderCrossover preserves exact elements without duplicates', () => {
   const p1 = [1, 2, 3, 4, 5];
@@ -13,7 +13,7 @@ test('orderCrossover preserves exact elements without duplicates', () => {
 
 test('mutateSwap swaps two elements', () => {
   const seq = [1, 2, 3];
-  const mutated = mutateSwap([...seq]);
+  const mutated = mutateSwap([...seq], 3, 0.0, 1.0);
   expect(mutated).not.toEqual(seq);
   expect(mutated.length).toBe(3);
   expect(mutated.includes(1)).toBe(true);

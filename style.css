@@ -46,7 +46,7 @@
   padding: 0;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  cursor: none !important; /* Hide native cursor for custom cursor */
+  cursor: none !important;
 }
 
 body {
@@ -79,9 +79,7 @@ body {
   background: var(--accent);
   pointer-events: none;
   z-index: 10000;
-  transform: translate(-50%, -50%);
   box-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent);
-  mix-blend-mode: screen;
 }
 
 /* Gradient Text Utilities */
@@ -598,33 +596,33 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: transparent;
   font-size: 1.4rem;
-  border: var(--border-thin);
+  border: none;
   border-radius: var(--border-radius);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-md);
+  box-shadow: none;
   transition: all 0.2s var(--spring);
 }
 
 .sequence-slot.empty {
   color: var(--text-muted);
-  border-style: dashed;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
   box-shadow: none;
   background: transparent;
   font-size: 1rem;
 }
 
 .sequence-slot.filled {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.4));
+  background: transparent;
   color: #fff;
-  border-color: rgba(34, 197, 94, 0.8);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 10px rgba(34, 197, 94, 0.3);
+  border: none;
+  box-shadow: none;
   animation: slamIn 0.3s var(--spring);
 }
 
 @keyframes slamIn {
-  0% { transform: scale(1.5) translateY(-10px); opacity: 0; box-shadow: 0 20px 20px rgba(0,0,0,0.5); }
-  100% { transform: scale(1) translateY(0); opacity: 1; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 10px rgba(34, 197, 94, 0.3); }
+  0% { transform: scale(1.5) translateY(-10px); opacity: 0; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.5)); }
+  100% { transform: scale(1) translateY(0); opacity: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
 }
 
 .previous-sequences-list {
@@ -775,16 +773,26 @@ h1, h2, h3 {
   margin: 0 10px;
 }
 
+.beast-sprite-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Base of sprite aligned to bottom? Actually img object-fit might center it. Let's rely on object-fit and transform-origin */
+  flex-direction: column;
+  transform-origin: bottom center;
+}
+
 .beast-icon {
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: transparent;
   font-size: 1.2rem;
-  border: 2px solid #000;
-  box-shadow: 2px 2px 0px #000;
+  border: none;
+  box-shadow: none;
   transition: all 0.3s var(--spring);
 }
 .boss-icon {
@@ -1025,8 +1033,8 @@ h1, h2, h3 {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
-  border: var(--border-thin);
+  background: transparent;
+  border: none;
   border-radius: var(--border-radius);
   margin-right: 4px;
 }

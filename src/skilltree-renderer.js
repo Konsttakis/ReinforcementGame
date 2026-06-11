@@ -250,6 +250,9 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
     refresh: (newMetaState) => {
       metaState = newMetaState;
       resize();
+    },
+    render: () => {
+      resize();
     }
   };
 }

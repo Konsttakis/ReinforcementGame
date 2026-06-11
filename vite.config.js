@@ -6,5 +6,8 @@ export default defineConfig({
     watch: {
       ignored: ['**/*.crdownload', '**/*.~tmp', '**/*.tmp']
     }
+  },
+  test: {
+    environment: 'jsdom'
   }
 });
