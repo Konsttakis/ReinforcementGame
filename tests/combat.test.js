@@ -21,7 +21,7 @@ test('calculateDamage handles variance and synergies', () => {
 test('Boss Stances modify damage', () => {
   const fireBeast = createBeast('Fire', 10, 10, 'FIRE', null);
   
-  const res1 = calculateDamage([fireBeast], 100, 'FIRE_IMMUNITY');
+  const res1 = calculateDamage([fireBeast], 100, 'ANTI_MAGIC');
   // 0 attack damage + 10 FIRE DoT at end of turn
   expect(res1.totalDamage).toBe(10);
 

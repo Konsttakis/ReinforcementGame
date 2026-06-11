@@ -12,3 +12,8 @@ docs/agents/
 .gemini/
 assets/beastsproj.zip
 public/assets/beastsproj.zip
+
+# Temporary & Database Files
+supabase_schema.sql
+scratch_replace.js
+missing_assets.json

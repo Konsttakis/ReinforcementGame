@@ -78,7 +78,7 @@ export const SKILL_TREE_DATA = [
   // ALCHEMY (color: #9d00ff)
   { id: 'alc_poison', name: 'Concentrated Venom', branch: 'alchemy', tier: 2, localX: -0.5, maxLevel: 3, color: '#9d00ff', costs: [40, 100, 250], desc: (l) => `Poison tick +${l*5} dmg`, prereq: ['trunk_3'] },
   { id: 'alc_fire', name: 'Inferno', branch: 'alchemy', tier: 2, localX: 0.5, maxLevel: 3, color: '#9d00ff', costs: [40, 100, 250], desc: (l) => `Fire tick +${l*5} dmg`, prereq: ['trunk_3'] },
-  { id: 'alc_dot_persist', name: 'Lingering Toxins', branch: 'alchemy', tier: 3, localX: -1, maxLevel: 2, color: '#9d00ff', costs: [100, 300], desc: (l) => `Statuses lose ${l} fewer stacks`, prereq: ['alc_poison'] },
+  { id: 'alc_dot_persist', name: 'Lingering Toxins', branch: 'alchemy', tier: 3, localX: -1, maxLevel: 2, color: '#9d00ff', costs: [100, 300], desc: (l) => `Fire has a ${l * 25}% chance to not lose a stack`, prereq: ['alc_poison'] },
   { id: 'alc_vuln', name: 'Expose Weakness', branch: 'alchemy', tier: 3, localX: 0, maxLevel: 3, color: '#9d00ff', costs: [120, 300, 600], desc: (l) => `VULNERABLE mult to ${[1.6, 1.75, 2][l-1]}x`, prereq: ['alc_fire'] },
   { id: 'alc_shock', name: 'High Voltage', branch: 'alchemy', tier: 4, localX: 0.5, maxLevel: 3, color: '#9d00ff', costs: [250, 600, 1200], desc: (l) => `SHOCK mult to ${[3.5, 4, 5][l-1]}x`, prereq: ['alc_vuln'] },
   { id: 'alc_frost', name: 'Permafrost', branch: 'alchemy', tier: 4, localX: -1.5, maxLevel: 3, color: '#9d00ff', costs: [300, 700, 1500], desc: (l) => `Frostbite dmg +${l*3}/stack`, prereq: ['alc_dot_persist'] },

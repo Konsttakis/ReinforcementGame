@@ -1,5 +1,37 @@
 # Relic Asset Prompts
 
+> [!IMPORTANT]
+> **Missing Relic Images to Generate:**
+> - [x] `executioners_axe.jpeg`
+> - [x] `merchants_ledger.jpeg`
+> - [x] `hagglers_charm.jpeg`
+> - [x] `bounty_hunters_badge.jpeg`
+> - [ ] `overclocked_cpu.jpeg`
+> - [ ] `elite_pedigree.jpeg`
+> - [ ] `supercomputer_cooling.jpeg`
+> - [ ] `dna_extractor.jpeg`
+> - [ ] `quantum_processor.jpeg`
+> - [ ] `ancestral_skull.jpeg`
+> - [ ] `time_bomb_detonator.jpeg`
+> - [ ] `first_blood_medal.jpeg`
+> - [ ] `growth_hormone.jpeg`
+> - [ ] `high_roller_chips.jpeg`
+> - [x] `punishers_whip.jpeg`
+> - [ ] `vacuum_cleaner.jpeg`
+> - [ ] `telescope.jpeg`
+> - [ ] `cheerleader_pompoms.jpeg`
+> - [ ] `gold_plating.jpeg`
+> - [ ] `epoch_clock.jpeg`
+> - [ ] `collectors_edition.jpeg`
+> - [ ] `level_up_potion.jpeg`
+> - [ ] `crown_of_legends.jpeg`
+> - [ ] `kindling_wood.jpeg`
+> - [ ] `conversion_kit.jpeg`
+> - [ ] `exhaustion_gas.jpeg`
+> - [ ] `armor_piercing_rounds.jpeg`
+> - [x] `anti_magic_amulet.jpeg`
+> - [ ] `second_wind.jpeg`
+
 Copy and paste these exact prompts into your image generator. Ensure you save the resulting images with the exact **File Name** provided and place them in the `assets/relics/` folder.
 
 Important, not text or letters
@@ -754,6 +786,98 @@ The illustration must be a premium, expressive sticker-art style design of an it
 The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
 The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (If you fail a round, gain 100 Epochs for the next computation) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+
+---
+
+### File Name: `executioners_axe.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Executioner's Axe - A magical relic item that does the following: "Execution threshold is increased to 40% missing HP".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Execution threshold is increased to 40% missing HP) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: `merchants_ledger.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Merchant's Ledger - A magical relic item that does the following: "Gain +1 Gold for every beast in your inventory after a win".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Gain +1 Gold for every beast in your inventory after a win) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: `hagglers_charm.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Haggler's Charm - A magical relic item that does the following: "Beast costs in the shop are reduced by 1G".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Beast costs in the shop are reduced by 1G) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: `bounty_hunters_badge.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Bounty Hunter's Badge - A magical relic item that does the following: "Boss kills grant +30 Gold".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Boss kills grant +30 Gold) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: `punishers_whip.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Punisher's Whip - A magical relic item that does the following: "PUNISHER activates if previous beast dealt < 30 damage".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (PUNISHER activates if previous beast dealt < 30 damage) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: `collectors_edition.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Collector's Edition - A magical relic item that does the following: "INVENTORY_SCALING grants +15 damage per beast in inventory".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (INVENTORY_SCALING grants +15 damage per beast in inventory) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
+If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
+
+Important, not text or letters
+
+---
+
+### File Name: `anti_magic_amulet.png`
+**Prompt:**
+A detailed 2D vector illustration of a magical gaming relic. The concept is: Anti-Magic Amulet - A magical relic item that does the following: "ANTI_MAGIC stance only reduces elemental damage by 50% instead of 100%".
+The illustration must be a premium, expressive sticker-art style design of an item, centered and isolated against a solid, #d97706 background with absolutely no texture or gradient. Every element within the illustration must feature a bold, clean, and consistent black outline to match a neo-brutalistic aesthetic.
+The color palette must be vibrant and highly saturated. Shading must be rendered with clean, precise cell shadows, combined with smooth, subtle vector gradients for depth.
+The relic must be beautifully designed and immediately recognizable. It should radiate a magical or powerful aura.
+All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (ANTI_MAGIC stance only reduces elemental damage by 50% instead of 100%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
 Important, not text or letters
