@@ -30,62 +30,8 @@ export function renderBestSequenceUI() {
     }
     DOM.elBestSequenceDisplay.appendChild(slot);
   }
-  renderHistoricOrders();
 }
 
-export function renderHistoricOrders() {
-  const container = DOM.elHistoricOrdersList;
-  if (!container) return;
-  container.innerHTML = '';
-  
-  if (!state.runHistory || state.runHistory.length === 0) {
-    container.innerHTML = '<div style="font-size: 0.8rem; color: #666; text-align: center;">No previous turns yet.</div>';
-    return;
-  }
-  
-  let allTurns = [];
-  state.runHistory.forEach(lvl => {
-    lvl.turns.forEach(t => {
-      allTurns.push({ level: lvl.level, ...t });
-    });
-  });
-  
-  const last3 = allTurns.slice(-3).reverse();
-  
-  last3.forEach(turn => {
-    const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.justifyContent = 'space-between';
-    row.style.alignItems = 'center';
-    row.style.background = '#0f0f0f';
-    row.style.padding = '6px';
-    row.style.borderRadius = '4px';
-    row.style.borderLeft = '2px solid var(--accent)';
-    
-    let seqHtml = '';
-    turn.seq.forEach(b => {
-      if (b.image) {
-        seqHtml += `<div class="sequence-slot filled" style="width: 20px; height: 20px; min-width: 20px; margin-right: 2px;"><img src="${b.image}" class="beast-sprite-small" style="width: 100%; height: 100%; margin: 0; display: block;"/></div>`;
-      } else {
-        seqHtml += `<div class="sequence-slot filled" style="width: 20px; height: 20px; min-width: 20px; margin-right: 2px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center;">${b.icon}</div>`;
-      }
-    });
-    
-    row.innerHTML = `
-      <div style="font-size: 0.75rem; color: #ccc; font-family: monospace; line-height: 1.1; width: 40px;">
-        L${turn.level}<br/>
-        <span style="color: var(--gold)">T${turn.round}</span>
-      </div>
-      <div style="display: flex; flex-direction: row-reverse;">
-        ${seqHtml}
-      </div>
-      <div style="font-size: 0.8rem; font-weight: bold; color: var(--accent); width: 45px; text-align: right;">
-        ${Math.floor(turn.expectedDmg)}
-      </div>
-    `;
-    container.appendChild(row);
-  });
-}
 
 export function updateUI() {
   if (DOM.elDna) {

@@ -510,7 +510,7 @@
 
           <!-- TAB 2: Algorithm -->
           <div id="tab-algorithm" class="tab-pane"
-            style="display: none; flex-grow: 1; flex-direction: column; width: 100%;">
+            style="display: none; flex-grow: 1; flex-direction: column; width: 100%; min-height: 0;">
             <div class="compute-header"
               style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; border-bottom: 1px solid #333; padding-bottom: 10px;">
               <h2 style="margin: 0;">Optimizer Dashboard</h2>
@@ -524,7 +524,7 @@
 
             <div class="compute-body" style="display: flex; flex-grow: 1; gap: 20px; min-height: 0;">
               <div class="compute-sidebar"
-                style="flex: 0 0 350px; display: flex; flex-direction: column; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--panel-border); overflow-y: auto;">
+                style="flex: 0 0 450px; display: flex; flex-direction: column; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--panel-border); overflow-y: auto;">
                 <div id="best-sequence-container" class="best-sequence-container">
                   <h3 style="margin-top: 0;">Best Sequence Found</h3>
                   <div id="best-sequence-display" class="best-sequence-display"
@@ -538,15 +538,8 @@
                     <div class="sequence-slot empty">7</div>
                     <div class="sequence-slot empty">8</div>
                   </div>
-                  <div id="historic-orders-container"
-                    style="margin-top: 20px; border-top: 1px dashed #333; padding-top: 15px;">
-                    <h4
-                      style="margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">
-                      Recent Turns History</h4>
-                    <div id="historic-orders-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                  </div>
-                  <div id="previous-sequences-list" class="previous-sequences-list" style="margin-top: 15px;"></div>
                 </div>
+                <div id="previous-sequences-list" class="previous-sequences-list" style="margin-top: 10px; padding-bottom: 20px;"></div>
 
               </div>
 
@@ -571,7 +564,20 @@
 
   <script type="module" src="./src/skilltree.js"></script>
   <script type="module" src="./src/skilltree-renderer.js"></script>
-  <script type="module" src="./src/main.js"></script>
+  <!-- Mobile Action Popup -->
+  <div id="mobile-action-popup" class="screen-overlay hidden" style="z-index: 10000; align-items: flex-end; padding-bottom: 20px;">
+    <div class="overlay-content" style="width: 90vw; border-radius: 16px; padding: 20px; animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; box-shadow: 0 10px 40px rgba(0,0,0,0.8); background: var(--bg-color); border: 2px solid var(--panel-border);">
+      <div id="mobile-action-title" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px;">Title</div>
+      <div id="mobile-action-desc" style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 15px; line-height: 1.4;">Description</div>
+      <div id="mobile-action-extra" style="font-size: 0.85rem; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 15px; display: none;"></div>
+      <div style="display: flex; gap: 10px;">
+        <button id="btn-mobile-action-primary" class="btn primary flex-grow hidden">Action</button>
+        <button id="btn-mobile-action-close" class="btn secondary flex-grow">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="src/main.js" type="module"></script>
 </body>
 
 </html>

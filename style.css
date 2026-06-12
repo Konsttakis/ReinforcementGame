@@ -1482,3 +1482,147 @@ body.god-mode-active {
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
   width: 150px;
 }
+
+/* SVG Shift Lines for Algorithm Sequence History */
+.shift-lines-svg {
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shift-line {
+  fill: none;
+  stroke-width: 2;
+  opacity: 0.6;
+  stroke-dasharray: 8 4;
+  animation: flowLine 1s linear infinite;
+  transition: stroke-width 0.2s, opacity 0.2s, filter 0.2s;
+}
+
+.shift-line:hover {
+  stroke-width: 4;
+  opacity: 1;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.shift-line.improved {
+  stroke: var(--success);
+}
+
+.shift-line.worsened {
+  stroke: var(--danger);
+}
+
+.shift-line.neutral {
+  stroke: #aaaaaa;
+}
+
+@keyframes flowLine {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS (< 768px)
+   ========================================= */
+@media (max-width: 768px) {
+  /* Top Bar & Stats */
+  .top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: 10px;
+    gap: 10px;
+  }
+  .top-bar > div:first-child {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+  }
+  .top-bar > div:first-child::-webkit-scrollbar {
+    height: 4px;
+  }
+  .top-bar .stats {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Main Layout Stacking */
+  .game-area-tabbed {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: visible !important;
+  }
+
+  /* Panoramic Arena */
+  .panoramic-arena {
+    flex-direction: column-reverse !important;
+    height: auto;
+  }
+  .arena-visual-zone {
+    min-height: 300px;
+    background-size: cover;
+  }
+  .arena-text-zone {
+    border-right: none !important;
+    border-top: 2px solid #333;
+    min-height: 250px;
+  }
+
+  /* Sequence & Shop Areas */
+  .bottom-panels-row {
+    flex-direction: column !important;
+  }
+  .sequence-builder {
+    height: auto !important;
+  }
+  .sequence-slots {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  .shop-section, .relic-section {
+    flex: none !important;
+    width: 100%;
+  }
+
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modals */
+  .full-screen-modal {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100% !important;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  /* Achievements / Codex Sidebar Layout */
+  #achievements-overlay .full-screen-modal {
+    flex-direction: column !important;
+  }
+  .settings-sidebar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 2px solid #333;
+    flex-direction: row !important;
+    overflow-x: auto;
+    padding: 10px !important;
+  }
+  .settings-sidebar h2 {
+    display: none; /* Hide 'Codex' title to save space on mobile */
+  }
+  .settings-sidebar button {
+    white-space: nowrap;
+    margin: 0 5px !important;
+  }
+  
+  #relic-slots {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+  }
+}

@@ -138,12 +138,32 @@ export async function executeRound() {
       });
       if (bestSequenceHistory.length > 500) bestSequenceHistory.shift();
 
+      updateUI();
       const imgCache = window.imageCache || {};
       drawConvergenceChart(populationHistory, epochsToRun, getMaxSlots(), imgCache);
       await new Promise(r => setTimeout(r, 20));
     }
     const imgCache = window.imageCache || {};
     drawBumpChart(bestSequenceHistory, getMaxSlots(), imgCache);
+
+    if (!runState.globalSequenceHistory) runState.globalSequenceHistory = [];
+    let highestRecordedScore = -1;
+    populationHistory.forEach((pop, epochIdx) => {
+      let epochMaxScore = Math.max(...pop.scores);
+      const isFinalEpoch = (epochIdx === populationHistory.length - 1);
+      if (epochIdx === 0 || epochMaxScore >= highestRecordedScore * 1.10 || (isFinalEpoch && epochMaxScore > highestRecordedScore)) {
+        if (epochMaxScore > highestRecordedScore) {
+          highestRecordedScore = epochMaxScore;
+        }
+        runState.globalSequenceHistory.push({
+          level: state.level,
+          turn: runState.combatRound,
+          epoch: epochIdx,
+          score: epochMaxScore,
+          seq: pop.bestSeq.slice()
+        });
+      }
+    });
 
     renderBestSequenceUI();
   }
@@ -450,6 +470,13 @@ export function finishRound() {
           triggerRelicMilestone();
         } else {
           if (DOM.btnFight) DOM.btnFight.disabled = false;
+          if (metaState.settings && metaState.settings.autoPlayRuns) {
+            setTimeout(() => {
+              if (!DOM.btnFight.disabled) {
+                executeRound();
+              }
+            }, 1500);
+          }
         }
       }, 500);
     }, 200);
@@ -478,9 +505,16 @@ export function finishRound() {
       saveMetaState();
       if (typeof window.checkAchievements !== 'undefined') window.checkAchievements();
       clearRunState(); 
-      setTimeout(() => {
-        showOverlay("Game Over", `The Boss survived. You earned ${dnaEarned} DNA!`, "loss", true, resetRun);
-      }, 200);
+      if (metaState.settings && metaState.settings.autoPlayRuns) {
+        showToast(`Game Over. Earned ${dnaEarned} DNA! Auto-restarting...`);
+        setTimeout(() => {
+          resetRun();
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          showOverlay("Game Over", `The Boss survived. You earned ${dnaEarned} DNA!`, "loss", true, resetRun);
+        }, 200);
+      }
     } else {
       if (hasRelic('second_wind', state.relics)) state.epochs += 100;
       runState.currentStance = BOSS_STANCES[Math.floor(Math.random() * BOSS_STANCES.length)];
@@ -568,6 +602,7 @@ export function resetRun() {
   runState.currentStance = BOSS_STANCES[Math.floor(Math.random() * BOSS_STANCES.length)];
   runState.globalStatuses = {};
   runState.bestExpectedDmg = 0;
+  runState.globalSequenceHistory = [];
   population = [];
   bestSequenceHistory = [];
   
@@ -585,4 +620,12 @@ export function resetRun() {
   if (DOM.btnFight) DOM.btnFight.disabled = false;
   saveRunState();
   if (typeof window.skillTreeRenderer !== 'undefined' && window.skillTreeRenderer) window.skillTreeRenderer.render();
+
+  if (metaState.settings && metaState.settings.autoPlayRuns) {
+    setTimeout(() => {
+      if (!DOM.btnFight.disabled) {
+        executeRound();
+      }
+    }, 1500);
+  }
 }

@@ -14,6 +14,7 @@ import { renderShop } from './ui/shopRenderer.js';
 import { showToast } from './ui/overlayRenderer.js';
 import { renderAchievementsModal, renderHistoryModal } from './ui/modals.js';
 import { setupGodMode } from './ui/godMode.js';
+import { getTooltipText, getAbilityTitle, getTooltipExtraHtml } from './ui/tooltips.js';
 
 window.imageCache = {};
 
@@ -185,19 +186,10 @@ document.body.addEventListener('mouseover', (e) => {
       let html = `<div style="display: flex; gap: 15px;">`;
       html += `<div style="min-width: 200px;">${text.replace(/\n/g, '<br>')}</div>`;
       
-      let extra = [];
-      const upText = text.toUpperCase();
-      if (upText.includes('POISON')) extra.push('<b style="color:#22c55e">POISON</b><br/>Deals 5 damage per stack at the end of the round. Loses 1 stack per round.');
-      if (upText.includes('FIRE')) extra.push('<b style="color:#ef4444">FIRE</b><br/>Deals 10 damage per stack at the end of the round. Loses 2 stacks per round.');
-      if (upText.includes('SHOCK')) extra.push('<b style="color:#eab308">SHOCK</b><br/>Multiplies next damage by 1.5x per stack, then removes all stacks.');
-      if (upText.includes('VULNERABLE')) extra.push('<b style="color:#a855f7">VULNERABLE</b><br/>Multiplies all damage taken by 1.5x. Loses 1 stack per round.');
-      if (upText.includes('FROSTBITE')) extra.push('<b style="color:#0ea5e9">FROSTBITE</b><br/>Deals 2 damage per stack when taking direct damage. Does not decay naturally.');
-      if (upText.includes('CONSUME')) extra.push('<b style="color:#f43f5e">CONSUME</b><br/>Removes all status effect stacks from the Boss.');
-      if (upText.includes('PROLIFERATE')) extra.push('<b style="color:#8b5cf6">PROLIFERATE</b><br/>Multiplies the current stacks of all active statuses.');
-      
-      if (extra.length > 0) {
+      const extraHtml = getTooltipExtraHtml(text);
+      if (extraHtml) {
         html += `<div style="border-left: 1px dashed #555; padding-left: 15px; width: 220px; font-size: 0.8rem; color: #bbb;">`;
-        html += extra.join('<br/><br/>');
+        html += extraHtml;
         html += `</div>`;
       }
       html += `</div>`;
@@ -229,6 +221,101 @@ document.body.addEventListener('mouseout', (e) => {
   if (target && DOM.elGlobalTooltip) {
     if (!target.contains(e.relatedTarget)) {
       DOM.elGlobalTooltip.classList.add('hidden');
+    }
+  }
+});
+
+// Mobile Action Popup (Tooltips & Shop interactions)
+document.body.addEventListener('pointerdown', (e) => {
+  if (window.innerWidth > 768) return; // Only on mobile
+  
+  // Exclude buttons in the top bar to avoid catching things we shouldn't
+  if (e.target.closest('button.btn-sm') || e.target.closest('.lab-header')) return;
+  
+  const shopCard = e.target.closest('.shop-card');
+  const tooltipTarget = e.target.closest('.has-tooltip');
+  
+  if (shopCard && DOM.elMobileActionPopup) {
+    e.preventDefault(); // Stop normal event flow
+    const tooltipText = shopCard.querySelector('.has-tooltip')?.getAttribute('data-tooltip') || '';
+    const name = shopCard.querySelector('h3')?.innerText || 'Shop Item';
+    
+    DOM.elMobileActionTitle.innerText = name;
+    DOM.elMobileActionDesc.innerHTML = tooltipText.replace(/\n/g, '<br>');
+    
+    const extraHtml = getTooltipExtraHtml(tooltipText);
+    if (extraHtml && DOM.elMobileActionExtra) {
+      DOM.elMobileActionExtra.innerHTML = extraHtml;
+      DOM.elMobileActionExtra.style.display = 'block';
+    } else if (DOM.elMobileActionExtra) {
+      DOM.elMobileActionExtra.style.display = 'none';
+    }
+    
+    const actualBuyBtn = shopCard.querySelector('.shop-buy-btn');
+    if (actualBuyBtn) {
+      DOM.btnMobileActionPrimary.classList.remove('hidden');
+      DOM.btnMobileActionPrimary.innerText = 'Buy - ' + actualBuyBtn.innerText;
+      DOM.btnMobileActionPrimary.onclick = () => {
+         actualBuyBtn.dispatchEvent(new PointerEvent('pointerdown', { button: 0 }));
+         DOM.elMobileActionPopup.classList.add('hidden');
+      };
+    } else {
+      DOM.btnMobileActionPrimary.classList.add('hidden');
+    }
+    
+    DOM.elMobileActionPopup.classList.remove('hidden');
+    return;
+  }
+  
+  if (tooltipTarget && DOM.elMobileActionPopup) {
+    // Regular tooltip on mobile
+    const text = tooltipTarget.getAttribute('data-tooltip');
+    if (text) {
+      DOM.elMobileActionTitle.innerText = "Information";
+      DOM.elMobileActionDesc.innerHTML = text.replace(/\n/g, '<br>');
+      
+      const extraHtml = getTooltipExtraHtml(text);
+      if (extraHtml && DOM.elMobileActionExtra) {
+        DOM.elMobileActionExtra.innerHTML = extraHtml;
+        DOM.elMobileActionExtra.style.display = 'block';
+      } else if (DOM.elMobileActionExtra) {
+        DOM.elMobileActionExtra.style.display = 'none';
+      }
+      
+      DOM.btnMobileActionPrimary.classList.add('hidden');
+      DOM.elMobileActionPopup.classList.remove('hidden');
+    }
+  }
+});
+
+if (DOM.btnMobileActionClose) {
+  DOM.btnMobileActionClose.addEventListener('pointerdown', () => {
+    DOM.elMobileActionPopup.classList.add('hidden');
+  });
+}
+
+// Global Escape Key Handler
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    // Close tooltips and mobile popups
+    if (DOM.elGlobalTooltip) DOM.elGlobalTooltip.classList.add('hidden');
+    if (DOM.elMobileActionPopup) DOM.elMobileActionPopup.classList.add('hidden');
+    
+    // Close overlays
+    if (DOM.elSettingsOverlay && !DOM.elSettingsOverlay.classList.contains('hidden')) DOM.elSettingsOverlay.classList.add('hidden');
+    if (DOM.elAchievementsOverlay && !DOM.elAchievementsOverlay.classList.contains('hidden')) DOM.elAchievementsOverlay.classList.add('hidden');
+    if (DOM.elHistoryOverlay && !DOM.elHistoryOverlay.classList.contains('hidden')) DOM.elHistoryOverlay.classList.add('hidden');
+    
+    // Special handling for lab overlay to also pause/resume game correctly
+    const labOverlay = document.getElementById('lab-overlay');
+    if (labOverlay && !labOverlay.classList.contains('hidden')) {
+      labOverlay.classList.add('hidden');
+    }
+    
+    // Special handling for skill purchase modal
+    const skillModal = document.getElementById('skill-purchase-modal');
+    if (skillModal && !skillModal.classList.contains('hidden')) {
+      skillModal.classList.add('hidden');
     }
   }
 });
@@ -277,6 +364,7 @@ if (DOM.bossVideo) {
 // Settings
 if (DOM.btnOpenSettings) DOM.btnOpenSettings.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
   if (DOM.chkAutoPlay) DOM.chkAutoPlay.checked = metaState.settings.autoPlayTurns || false;
+  if (DOM.chkAutoPlayRuns) DOM.chkAutoPlayRuns.checked = metaState.settings.autoPlayRuns || false;
   DOM.elSettingsOverlay.classList.remove('hidden');
 });
 if (DOM.btnCloseSettings) DOM.btnCloseSettings.addEventListener('pointerdown', (e) => { if (e && e.button !== 0) return; if (e && e.preventDefault) e.preventDefault();
@@ -284,6 +372,10 @@ if (DOM.btnCloseSettings) DOM.btnCloseSettings.addEventListener('pointerdown', (
 });
 if (DOM.chkAutoPlay) DOM.chkAutoPlay.addEventListener('change', (e) => {
   metaState.settings.autoPlayTurns = e.target.checked;
+  saveMetaState();
+});
+if (DOM.chkAutoPlayRuns) DOM.chkAutoPlayRuns.addEventListener('change', (e) => {
+  metaState.settings.autoPlayRuns = e.target.checked;
   saveMetaState();
 });
 
@@ -510,3 +602,4 @@ window.addEventListener('saveConflict', (e) => {
 });
 
 init();
+window.addEventListener('resize', () => { import('./ui/shiftLines.js').then(m => m.drawSequenceShiftLines()); });

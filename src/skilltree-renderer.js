@@ -144,20 +144,54 @@ export function initSkillTree(metaStateRef, saveCallback, uiCallback) {
 
   // Events
   let isClick = false;
-  canvas.addEventListener('mousedown', e => {
+  canvas.addEventListener('pointerdown', e => {
+    if (!e.isPrimary) return;
     isDragging = true;
     isClick = true;
     dragStart = { x: e.clientX - camera.x, y: e.clientY - camera.y };
   });
 
-  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('pointerup', () => { isDragging = false; });
   
-  window.addEventListener('mousemove', e => {
-    if (isDragging) {
+  window.addEventListener('pointermove', e => {
+    if (isDragging && e.isPrimary) {
       camera.x = e.clientX - dragStart.x;
       camera.y = e.clientY - dragStart.y;
       isClick = false;
       draw();
+    }
+  });
+
+  // Touch zoom
+  let initialPinchDistance = null;
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) {
+      isDragging = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initialPinchDistance = Math.sqrt(dx*dx + dy*dy);
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchmove', e => {
+    if (e.touches.length === 2 && initialPinchDistance !== null) {
+      e.preventDefault(); // Stop page scrolling
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const currentDistance = Math.sqrt(dx*dx + dy*dy);
+      
+      const zoomFactor = currentDistance / initialPinchDistance;
+      camera.zoom *= zoomFactor;
+      camera.zoom = Math.max(0.2, Math.min(camera.zoom, 3));
+      
+      initialPinchDistance = currentDistance;
+      draw();
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', e => {
+    if (e.touches.length < 2) {
+      initialPinchDistance = null;
     }
   });
 

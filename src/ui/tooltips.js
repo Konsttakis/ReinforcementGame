@@ -45,6 +45,16 @@ export function getTooltipText(b) {
     else if (b.synergy === 'INVENTORY_SCALING') text += `Deals +5 damage for every beast in your inventory.`;
     else if (b.synergy === 'LEVEL_SCALING') text += `Deals +10 damage for every Level cleared.`;
     else if (b.synergy === 'LEGENDARY_MULTIPLIER') text += `Damage is multiplied by 1.8x for every Legendary on the board.`;
+    else if (b.synergy === 'PRIME_NUMBER_STRIKE') text += `Deals 3x damage if placed in a prime numbered slot (Slot 2, 3, 5, 7, 11...).`;
+    else if (b.synergy === 'LONE_WOLF') text += `Deals 5x damage if it is the ONLY beast of its rarity on the board.`;
+    else if (b.synergy === 'SANDWICH') text += `Deals 3x damage if the previous and next beasts share the exact same rarity.`;
+    else if (b.synergy === 'STATUS_MIRROR') text += `Deals +15 damage for every total stack of status effect on the Boss.`;
+    else if (b.synergy === 'DETONATOR') text += `Instantly detonates an active TIME BOMB for massive bonus damage.`;
+    else if (b.synergy === 'MARTYRDOM') text += `Deals 0 damage, but permanently adds half its max damage to all subsequent beasts.`;
+    else if (b.synergy === 'RUSSIAN_ROULETTE') text += `1 in 6 chance to deal 50x damage. Otherwise deals 0 and clears all Boss statuses.`;
+    else if (b.synergy === 'ALL_OR_NOTHING') text += `Deals 10x damage if the Boss has ZERO status effects. Otherwise deals 1 damage.`;
+    else if (b.synergy === 'REPEATER') text += `Deals 3x damage if the previous beast has the exact same name.`;
+    else if (b.synergy === 'ELEVATOR') text += `Damage multiplier increases by 0.5x for every slot position (Slot 1 = 1x, Slot 2 = 1.5x...).`;
   }
   return text.trim();
 }
@@ -93,7 +103,17 @@ export function getAbilityTitle(b) {
       'REVERBERATE': 'Reverberate 🔊',
       'RHYTHM': 'Dance Rhythm 💃',
       'BLOOD_PRICE': 'Blood Price 🩸',
-      'OMNI_STRIKE': 'Omni Strike ☄️'
+      'OMNI_STRIKE': 'Omni Strike ☄️',
+      'PRIME_NUMBER_STRIKE': 'Prime Number Strike 🔢',
+      'LONE_WOLF': 'Lone Wolf 🐺',
+      'SANDWICH': 'Sandwich Multiplier 🥪',
+      'STATUS_MIRROR': 'Status Mirror 🪞',
+      'DETONATOR': 'Detonator 🧨',
+      'MARTYRDOM': 'Martyrdom 👼',
+      'RUSSIAN_ROULETTE': 'Russian Roulette 🔫',
+      'ALL_OR_NOTHING': 'All Or Nothing 🎲',
+      'REPEATER': 'Repeater 🔁',
+      'ELEVATOR': 'Elevator 🛗'
     };
     return titles[b.synergy] || 'Special Skill';
   } else if (b.appliesStatus) {
@@ -107,4 +127,21 @@ export function getAbilityTitle(b) {
     return titles[b.appliesStatus] || 'Status Effect';
   }
   return 'Basic Attack ⚔️';
+}
+
+export function getTooltipExtraHtml(text) {
+  let extra = [];
+  const upText = text.toUpperCase();
+  if (upText.includes('POISON')) extra.push('<b style="color:#22c55e">POISON</b><br/>Deals 5 damage per stack at the end of the round. Loses 1 stack per round.');
+  if (upText.includes('FIRE')) extra.push('<b style="color:#ef4444">FIRE</b><br/>Deals 10 damage per stack at the end of the round. Loses 2 stacks per round.');
+  if (upText.includes('SHOCK')) extra.push('<b style="color:#eab308">SHOCK</b><br/>Multiplies next damage by 1.5x per stack, then removes all stacks.');
+  if (upText.includes('VULNERABLE')) extra.push('<b style="color:#a855f7">VULNERABLE</b><br/>Multiplies all damage taken by 1.5x. Loses 1 stack per round.');
+  if (upText.includes('FROSTBITE')) extra.push('<b style="color:#0ea5e9">FROSTBITE</b><br/>Deals 2 damage per stack when taking direct damage. Does not decay naturally.');
+  if (upText.includes('CONSUME')) extra.push('<b style="color:#f43f5e">CONSUME</b><br/>Removes all status effect stacks from the Boss.');
+  if (upText.includes('PROLIFERATE')) extra.push('<b style="color:#8b5cf6">PROLIFERATE</b><br/>Multiplies the current stacks of all active statuses.');
+  
+  if (extra.length > 0) {
+    return extra.join('<br/><br/>');
+  }
+  return '';
 }

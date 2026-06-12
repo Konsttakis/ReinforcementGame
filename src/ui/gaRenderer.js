@@ -1,5 +1,7 @@
 import { DOM } from './dom.js';
 import { getTooltipText } from './tooltips.js';
+import { drawSequenceShiftLines } from './shiftLines.js';
+import { state, runState } from '../engine/state.js';
 
 export function drawBumpChart(bestSequenceHistory, maxSlots, imageCache) {
   const canvas = DOM.canvas;
@@ -198,51 +200,95 @@ export function drawConvergenceChart(history, epochsToRun, maxSlots, imageCache)
     const isNewSequence = currentSeqString !== lastDrawnSeqString;
     const isBigJump = epochMaxScore >= lastDrawnScore * 1.15;
 
-    if (epochIdx === 0 || (isNewSequence && isBigJump)) {
-      lastDrawnEpoch = epochIdx;
-      lastDrawnScore = epochMaxScore;
-      lastDrawnSeqString = currentSeqString;
+      if (epochIdx === 0 || (isNewSequence && isBigJump)) {
+        lastDrawnEpoch = epochIdx;
+        lastDrawnScore = epochMaxScore;
+        lastDrawnSeqString = currentSeqString;
 
-      convCtx.globalAlpha = 1.0;
-      convCtx.fillStyle = '#ffffff';
-      convCtx.font = '12px sans-serif';
-      convCtx.textAlign = 'center';
+        convCtx.globalAlpha = 1.0;
+        convCtx.fillStyle = '#ffffff';
+        convCtx.font = '12px sans-serif';
+        convCtx.textAlign = 'center';
+        
+        const emojiStartY = drawH - 25;
+        
+        pop.bestSeq.forEach((beast, idx) => {
+          const y = emojiStartY - (((maxSlots - 1) - idx) * 14);
+          if (beast.image && imageCache[beast.image] && imageCache[beast.image].complete) {
+            convCtx.drawImage(imageCache[beast.image], x - 7, y - 10, 14, 14);
+          } else {
+            convCtx.fillText(beast.icon, x, y);
+          }
+        });
+      }
+    });
+
+    // Build the current turn's recorded sequences
+    let currentTurnRecorded = [];
+    let highestRecordedScore = -1;
+
+    history.forEach((pop, epochIdx) => {
+      let epochMaxScore = Math.max(...pop.scores);
+      const isFinalEpoch = (epochIdx === epochsToRun - 1);
       
-      const emojiStartY = drawH - 25;
-      
-      pop.bestSeq.forEach((beast, idx) => {
-        const y = emojiStartY - (((maxSlots - 1) - idx) * 14);
-        if (beast.image && imageCache[beast.image] && imageCache[beast.image].complete) {
-          convCtx.drawImage(imageCache[beast.image], x - 7, y - 10, 14, 14);
-        } else {
-          convCtx.fillText(beast.icon, x, y);
+      if (epochIdx === 0 || epochMaxScore >= highestRecordedScore * 1.10 || (isFinalEpoch && epochMaxScore > highestRecordedScore)) {
+        if (epochMaxScore > highestRecordedScore) {
+          highestRecordedScore = epochMaxScore;
         }
-      });
+        currentTurnRecorded.push({
+          level: state.level,
+          turn: runState.combatRound,
+          epoch: epochIdx,
+          score: epochMaxScore,
+          seq: pop.bestSeq.slice()
+        });
+      }
+    });
+
+    let totalRecordCount = (runState.globalSequenceHistory ? runState.globalSequenceHistory.length : 0) + currentTurnRecorded.length;
+    const forceRedraw = (history.length === epochsToRun);
+
+    if (DOM.elPreviousSequencesList && (window._lastRenderedRecordCount !== totalRecordCount || forceRedraw)) {
+      window._lastRenderedRecordCount = totalRecordCount;
+      DOM.elPreviousSequencesList.innerHTML = '';
       
-      if (DOM.elPreviousSequencesList && epochIdx === history.length - 1) {
+      let allRecorded = [];
+      if (runState.globalSequenceHistory) {
+        allRecorded = runState.globalSequenceHistory.concat(currentTurnRecorded);
+      } else {
+        allRecorded = currentTurnRecorded;
+      }
+
+      if (allRecorded.length > 15) {
+        allRecorded = allRecorded.slice(allRecorded.length - 15);
+      }
+
+      allRecorded.slice().reverse().forEach(record => {
         const row = document.createElement('div');
         row.className = 'previous-sequence-row';
+        row.style.position = 'relative';
+        row.style.zIndex = '2';
         
         let slotsHtml = '';
-        pop.bestSeq.forEach(b => {
+        record.seq.forEach(b => {
           if (b.image) {
-            slotsHtml += `<div class="sequence-slot filled has-tooltip" data-tooltip="${getTooltipText(b).replace(/"/g, '&quot;')}"><img src="${b.image}" class="beast-sprite-small" /></div>`;
+            slotsHtml += `<div class="sequence-slot filled has-tooltip" data-beast-id="${b.id}" data-tooltip="${getTooltipText(b).replace(/"/g, '&quot;')}"><img src="${b.image}" class="beast-sprite-small" /></div>`;
           } else {
-            slotsHtml += `<div class="sequence-slot filled has-tooltip" data-tooltip="${getTooltipText(b).replace(/"/g, '&quot;')}">${b.icon}</div>`;
+            slotsHtml += `<div class="sequence-slot filled has-tooltip" data-beast-id="${b.id}" data-tooltip="${getTooltipText(b).replace(/"/g, '&quot;')}">${b.icon}</div>`;
           }
         });
 
         row.innerHTML = `
           <div class="previous-sequence-info">
-            <span class="epoch">Epoch ${epochIdx}</span>
-            <span class="dmg">Dmg: ${epochMaxScore.toFixed(0)}</span>
+            <span class="epoch">L${record.level} T${record.turn} <span style="color:#666">E${record.epoch}</span></span>
+            <span class="dmg">Dmg: ${record.score.toFixed(0)}</span>
           </div>
           <div class="previous-sequence-slots">
             ${slotsHtml}
           </div>
         `;
-        DOM.elPreviousSequencesList.prepend(row);
-      }
+        DOM.elPreviousSequencesList.appendChild(row);
+      });
+      drawSequenceShiftLines('previous-sequences-list');
     }
-  });
 }

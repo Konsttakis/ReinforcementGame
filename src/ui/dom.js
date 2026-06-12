@@ -51,6 +51,14 @@ export const DOM = {
   get btnRestart() { return document.getElementById('btn-restart'); },
   get elToastContainer() { return document.getElementById('toast-container'); },
   get elGlobalTooltip() { return document.getElementById('global-tooltip'); },
+
+  // Mobile Action Popup
+  get elMobileActionPopup() { return document.getElementById('mobile-action-popup'); },
+  get elMobileActionTitle() { return document.getElementById('mobile-action-title'); },
+  get elMobileActionDesc() { return document.getElementById('mobile-action-desc'); },
+  get elMobileActionExtra() { return document.getElementById('mobile-action-extra'); },
+  get btnMobileActionPrimary() { return document.getElementById('btn-mobile-action-primary'); },
+  get btnMobileActionClose() { return document.getElementById('btn-mobile-action-close'); },
   
   // Settings
   get btnOpenSettings() { return document.getElementById('btn-open-settings'); },

@@ -252,4 +252,33 @@ export function triggerRelicMilestone() {
   });
   
   DOM.elRelicChoiceOverlay.classList.remove('hidden');
+
+  if (metaState.settings && metaState.settings.autoPlayRuns) {
+    setTimeout(() => {
+      let affordableBtn = null;
+      const cards = DOM.elRelicOptions.querySelectorAll('.shop-card button');
+      for (let btn of cards) {
+        if (!btn.disabled) {
+          affordableBtn = btn;
+          break;
+        }
+      }
+      if (affordableBtn) {
+        affordableBtn.dispatchEvent(new PointerEvent('pointerdown', { button: 0 }));
+        
+        // Wait another bit and trigger the fight
+        setTimeout(() => {
+          if (DOM.btnFight && !DOM.btnFight.disabled) {
+            DOM.btnFight.dispatchEvent(new PointerEvent('pointerdown', { button: 0 }));
+          }
+        }, 1500);
+      } else {
+        DOM.elRelicChoiceOverlay.classList.add('hidden');
+        if (DOM.btnFight) {
+          DOM.btnFight.disabled = false;
+          DOM.btnFight.dispatchEvent(new PointerEvent('pointerdown', { button: 0 }));
+        }
+      }
+    }, 1500);
+  }
 }
