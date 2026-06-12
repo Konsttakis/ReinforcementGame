@@ -170,7 +170,26 @@ document.body.addEventListener('pointerdown', (e) => { if (e.button !== 0) retur
   }
 });
 
-if (DOM.btnFight) DOM.btnFight.addEventListener('pointerdown', (e) => { if (e.button !== 0) return; e.preventDefault(); executeRound(e); });
+if (DOM.btnFight) {
+  DOM.btnFight.addEventListener('pointerdown', (e) => { 
+    if (e.button !== 0) return; 
+    e.preventDefault(); 
+    
+    // Auto-switch to Arena view on mobile
+    if (window.innerWidth <= 768) {
+      document.body.className = 'mobile-view-arena';
+      const mobileNavBtns = document.querySelectorAll('.mobile-bottom-nav .nav-btn');
+      mobileNavBtns.forEach(b => b.classList.remove('active'));
+      const arenaBtn = document.querySelector('.mobile-bottom-nav .nav-btn[data-target="arena"]');
+      if (arenaBtn) arenaBtn.classList.add('active');
+    }
+    
+    executeRound(e); 
+  });
+}
+
+
+
 if (DOM.elMutationSlider && DOM.elMutationSliderVal) {
   DOM.elMutationSlider.addEventListener('input', (e) => {
     DOM.elMutationSliderVal.textContent = e.target.value + '%';
@@ -425,6 +444,23 @@ consoleTabBtns.forEach(btn => {
       targetPane.style.display = 'flex';
       targetPane.classList.add('active');
     }
+  });
+});
+
+// Mobile Bottom Nav Logic
+const mobileNavBtns = document.querySelectorAll('.mobile-bottom-nav .nav-btn');
+mobileNavBtns.forEach(btn => {
+  btn.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    
+    // Update active nav button
+    mobileNavBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Update body class
+    const target = btn.getAttribute('data-target');
+    document.body.className = `mobile-view-${target}`;
   });
 });
 

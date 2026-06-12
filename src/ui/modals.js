@@ -140,11 +140,17 @@ export function renderHistoryModal() {
   if (!DOM.elHistoryList) return;
   DOM.elHistoryList.innerHTML = '';
   
+  const lbContainer = document.getElementById('damage-leaderboard');
+  if (lbContainer) lbContainer.innerHTML = '';
+  
   if (!state.runHistory || state.runHistory.length === 0) {
     DOM.elHistoryList.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 20px;">No history available yet. Compute rounds to see the algorithm history.</p>';
+    if (lbContainer) lbContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">No damage data.</p>';
     return;
   }
   
+  let totalDmgByBeast = {};
+
   state.runHistory.slice().reverse().forEach(lvlHistory => {
     const card = document.createElement('div');
     card.className = 'history-level-card';
@@ -166,6 +172,12 @@ export function renderHistoryModal() {
                breakdownTooltip += `${bk.label}: ${bk.value}\n`;
              });
              breakdownTooltip += `Total: ${myAction.totalDmg}`;
+             
+             // Accumulate damage
+             if (!totalDmgByBeast[b.name]) {
+               totalDmgByBeast[b.name] = { beast: b, totalDamage: 0 };
+             }
+             totalDmgByBeast[b.name].totalDamage += myAction.totalDmg;
           }
         }
         
@@ -192,4 +204,33 @@ export function renderHistoryModal() {
     
     DOM.elHistoryList.appendChild(card);
   });
+
+  // Render leaderboard
+  if (lbContainer) {
+    const sortedBeasts = Object.values(totalDmgByBeast).sort((a, b) => b.totalDamage - a.totalDamage);
+    if (sortedBeasts.length === 0) {
+      lbContainer.innerHTML = '<p style="color: var(--text-muted); text-align: center;">No damage data.</p>';
+    } else {
+      const maxDmg = sortedBeasts[0].totalDamage;
+      sortedBeasts.forEach(entry => {
+        const row = document.createElement('div');
+        row.className = 'history-damage-row';
+        const pct = maxDmg > 0 ? (entry.totalDamage / maxDmg) * 100 : 0;
+        
+        const imgHtml = entry.beast.image
+          ? `<img src="${entry.beast.image}" class="history-damage-img" />`
+          : `<div class="history-damage-icon-fallback">${entry.beast.icon}</div>`;
+          
+        row.innerHTML = `
+          ${imgHtml}
+          <div class="history-damage-bar-bg">
+            <div class="history-damage-bar-fill" style="width: ${pct}%"></div>
+            <span class="history-damage-text">${Math.floor(entry.totalDamage)}</span>
+            <span class="history-damage-name">${entry.beast.name}</span>
+          </div>
+        `;
+        lbContainer.appendChild(row);
+      });
+    }
+  }
 }

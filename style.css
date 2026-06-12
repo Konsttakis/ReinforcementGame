@@ -396,8 +396,83 @@ h1, h2, h3 {
 
 .btn.full-width {
   width: 100%;
-  padding: 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* History Damage Leaderboard */
+.history-damage-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 5px;
+  position: relative;
+}
+
+.history-damage-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  z-index: 2;
+  border-radius: 4px;
+}
+
+.history-damage-icon-fallback {
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.history-damage-bar-bg {
+  flex-grow: 1;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.history-damage-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, #3b82f6 100%);
+  border-radius: 4px;
+  z-index: -1;
+  transition: width 0.5s ease-out;
+}
+
+.history-damage-text {
+  position: relative;
+  z-index: 2;
+  margin-left: 10px;
+  font-family: monospace;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
   font-size: 1.1rem;
+}
+
+.history-damage-name {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  text-shadow: 1px 1px 2px #000;
 }
 
 .btn:disabled {
@@ -589,6 +664,12 @@ h1, h2, h3 {
   margin-top: 5px;
 }
 
+.best-sequence-display .sequence-slot {
+  width: 36px;
+  height: 36px;
+  font-size: 0.8rem;
+}
+
 .sequence-slot {
   width: 40px;
   height: 40px;
@@ -738,17 +819,6 @@ h1, h2, h3 {
   overflow: hidden;
 }
 
-/* Arena floor line */
-.fight-arena::after {
-  content: '';
-  position: absolute;
-  bottom: 15%; left: 10px; right: 10px;
-  height: 4px;
-  background: linear-gradient(90deg, #22c55e 0%, #15803d 40%, #ea580c 50%, #dc2626 60%, #7f1d1d 100%);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  z-index: 0;
-}
 
 .arena-side {
   display: flex;
@@ -1523,10 +1593,106 @@ body.god-mode-active {
 }
 
 /* =========================================
-   MOBILE RESPONSIVENESS (< 768px)
+   MOBILE APP-STYLE REDESIGN (< 768px)
    ========================================= */
+.mobile-bottom-nav {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  /* Top Bar & Stats */
+  /* Bottom Navigation Bar */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--surface);
+    border-top: 1px solid var(--panel-border);
+    z-index: 9000;
+  }
+  .mobile-bottom-nav button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .mobile-bottom-nav button.active {
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 2px solid var(--primary);
+  }
+
+  /* Adjust Body and App Container for Bottom Nav */
+  body {
+    overflow: hidden;
+  }
+  .app-container {
+    padding-bottom: 60px; /* Space for bottom nav */
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* View Routing Logic based on body class */
+  /* Hide standard Desktop console tabs */
+  .console-tabs {
+    display: none !important;
+  }
+  
+  /* Arena View */
+  body.mobile-view-arena .command-console {
+    display: none !important;
+  }
+  body.mobile-view-arena .panoramic-arena {
+    display: flex !important;
+    flex: 1;
+    height: 100% !important;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  body.mobile-view-arena .arena-visual-zone {
+    flex: 1;
+    background-size: cover;
+  }
+  body.mobile-view-arena .arena-text-zone {
+    flex: 1;
+    border-right: none !important;
+    border-top: 2px solid #333;
+    overflow-y: auto;
+  }
+
+  /* Camp View & Algorithm View */
+  body.mobile-view-camp .panoramic-arena,
+  body.mobile-view-algorithm .panoramic-arena {
+    display: none !important;
+  }
+  body.mobile-view-camp .command-console,
+  body.mobile-view-algorithm .command-console {
+    display: flex !important;
+    flex: 1;
+    height: 100% !important;
+  }
+  
+  body.mobile-view-camp #tab-algorithm { display: none !important; }
+  body.mobile-view-algorithm #tab-camp { display: none !important; }
+  body.mobile-view-camp #tab-camp,
+  body.mobile-view-algorithm #tab-algorithm { 
+    display: flex !important; 
+    flex: 1;
+    overflow-y: auto;
+    flex-direction: column;
+  }
+
+  /* Top Bar & Stats Adjustments */
   .top-bar {
     flex-direction: column;
     align-items: stretch;
@@ -1539,70 +1705,53 @@ body.god-mode-active {
     white-space: nowrap;
     padding-bottom: 5px;
   }
-  .top-bar > div:first-child::-webkit-scrollbar {
-    height: 4px;
-  }
+  .top-bar > div:first-child::-webkit-scrollbar { height: 4px; }
   .top-bar .stats {
     justify-content: flex-start;
     flex-wrap: wrap;
     gap: 10px;
   }
 
-  /* Main Layout Stacking */
-  .game-area-tabbed {
-    height: auto !important;
-    min-height: 100vh;
-    overflow-y: visible !important;
-  }
-
-  /* Panoramic Arena */
-  .panoramic-arena {
-    flex-direction: column-reverse !important;
-    height: auto;
-  }
-  .arena-visual-zone {
-    min-height: 300px;
-    background-size: cover;
-  }
-  .arena-text-zone {
-    border-right: none !important;
-    border-top: 2px solid #333;
-    min-height: 250px;
-  }
-
-  /* Sequence & Shop Areas */
+  /* Panels scrolling fixes */
   .bottom-panels-row {
     flex-direction: column !important;
-  }
-  .sequence-builder {
     height: auto !important;
+  }
+  .sequence-builder, .shop-section, .relic-section {
+    flex: none !important;
+    height: auto !important;
+    width: 100%;
   }
   .sequence-slots {
     flex-wrap: nowrap !important;
     overflow-x: auto;
     padding-bottom: 10px;
   }
-  .shop-section, .relic-section {
-    flex: none !important;
-    width: 100%;
-  }
-
-  .shop-grid {
-    grid-template-columns: 1fr;
-  }
 
   /* Modals */
   .full-screen-modal {
     width: 100vw !important;
-    height: 100vh !important;
+    height: calc(100vh - 60px) !important; /* Leave bottom nav visible if needed, or cover it. Actually let's cover it */
     max-width: 100% !important;
     border-radius: 0;
     margin: 0;
+    z-index: 9999;
+  }
+  .screen-overlay {
+    z-index: 10000;
   }
   
-  /* Achievements / Codex Sidebar Layout */
   #achievements-overlay .full-screen-modal {
     flex-direction: column !important;
+  }
+  .history-content-wrapper {
+    flex-direction: column !important;
+  }
+  #history-damage-panel {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 1px solid var(--panel-border);
+    padding-top: 15px;
   }
   .settings-sidebar {
     width: 100% !important;
@@ -1612,13 +1761,8 @@ body.god-mode-active {
     overflow-x: auto;
     padding: 10px !important;
   }
-  .settings-sidebar h2 {
-    display: none; /* Hide 'Codex' title to save space on mobile */
-  }
-  .settings-sidebar button {
-    white-space: nowrap;
-    margin: 0 5px !important;
-  }
+  .settings-sidebar h2 { display: none; }
+  .settings-sidebar button { white-space: nowrap; margin: 0 5px !important; }
   
   #relic-slots {
     overflow-x: auto;

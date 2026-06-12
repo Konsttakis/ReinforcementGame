@@ -6,35 +6,35 @@
 > - [x] `merchants_ledger.jpeg`
 > - [x] `hagglers_charm.jpeg`
 > - [x] `bounty_hunters_badge.jpeg`
-> - [ ] `overclocked_cpu.jpeg`
-> - [ ] `elite_pedigree.jpeg`
-> - [ ] `supercomputer_cooling.jpeg`
-> - [ ] `dna_extractor.jpeg`
-> - [ ] `quantum_processor.jpeg`
-> - [ ] `ancestral_skull.jpeg`
-> - [ ] `time_bomb_detonator.jpeg`
-> - [ ] `first_blood_medal.jpeg`
-> - [ ] `growth_hormone.jpeg`
-> - [ ] `high_roller_chips.jpeg`
+> - [ ] `overclocked_cpu.jpeg` (not created)
+> - [ ] `elite_pedigree.jpeg` (not created)
+> - [ ] `supercomputer_cooling.jpeg` (not created)
+> - [ ] `dna_extractor.jpeg` (not created)
+> - [ ] `quantum_processor.jpeg` (not created)
+> - [ ] `ancestral_skull.jpeg` (not created)
+> - [ ] `time_bomb_detonator.jpeg` (not created)
+> - [ ] `first_blood_medal.jpeg` (not created)
+> - [ ] `growth_hormone.jpeg` (not created)
+> - [ ] `high_roller_chips.jpeg` (not created)
 > - [x] `punishers_whip.jpeg`
-> - [ ] `vacuum_cleaner.jpeg`
-> - [ ] `telescope.jpeg`
-> - [ ] `cheerleader_pompoms.jpeg`
-> - [ ] `gold_plating.jpeg`
-> - [ ] `epoch_clock.jpeg`
-> - [ ] `collectors_edition.jpeg`
-> - [ ] `level_up_potion.jpeg`
-> - [ ] `crown_of_legends.jpeg`
-> - [ ] `kindling_wood.jpeg`
-> - [ ] `conversion_kit.jpeg`
-> - [ ] `exhaustion_gas.jpeg`
-> - [ ] `armor_piercing_rounds.jpeg`
+> - [ ] `vacuum_cleaner.jpeg` (not created)
+> - [ ] `telescope.jpeg` (not created)
+> - [ ] `cheerleader_pompoms.jpeg` (not created)
+> - [ ] `gold_plating.jpeg` (not created)
+> - [ ] `epoch_clock.jpeg` (not created)
+> - [ ] `collectors_edition.jpeg` (not created)
+> - [ ] `level_up_potion.jpeg` (not created)
+> - [ ] `crown_of_legends.jpeg` (not created)
+> - [ ] `kindling_wood.jpeg` (not created)
+> - [ ] `conversion_kit.jpeg` (not created)
+> - [ ] `exhaustion_gas.jpeg` (not created)
+> - [ ] `armor_piercing_rounds.jpeg` (not created)
 > - [x] `anti_magic_amulet.jpeg`
-> - [ ] `second_wind.jpeg`
+> - [ ] `second_wind.jpeg` (not created)
 
 Copy and paste these exact prompts into your image generator. Ensure you save the resulting images with the exact **File Name** provided and place them in the `assets/relics/` folder.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -47,7 +47,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Poison ticks for 25 dmg instead of 15) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -60,7 +60,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Fire never degrades its stacks) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -73,7 +73,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (All beasts gain +10 minimum and maximum damage) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -86,7 +86,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Shop refreshes cost 2G instead of 5G) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -99,7 +99,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (First beast deals +50 flat damage) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -112,7 +112,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (All beasts deal +30% damage, but max active slots -1) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -125,7 +125,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (EXECUTE deals 6x damage instead of 4x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -138,7 +138,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Minimum damage is increased by 20%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -151,7 +151,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (MIRROR_SYMMETRY beasts add +50 damage flat to their mirrored value) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -164,7 +164,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (COMBO_SCALER gets an additional +10% multiplier per beast) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -177,7 +177,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Restore 5% Boss HP per beast, but they all gain +50% damage) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -190,7 +190,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (ECHO beasts copy 150% of previous damage instead of 100%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -203,7 +203,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (MOMENTUM_LOSS penalty is reduced by half) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -216,7 +216,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Applies 1 Poison stack at the start of combat) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -229,7 +229,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Applies 1 Fire stack at the start of combat) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -242,7 +242,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Applies 1 Shock stack at the start of combat) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -255,7 +255,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Applies 1 Vulnerable stack at the start of combat) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -268,7 +268,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Applies 1 Frostbite stack at the start of combat) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -281,7 +281,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (POISON ticks trigger twice per round) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -294,7 +294,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (FIRE deals +20% damage for each stack of VULNERABLE) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -307,7 +307,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (SHOCK multiplier is increased to 4.5x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -320,7 +320,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (VULNERABLE multiplier is increased to 2.5x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -333,7 +333,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (FROSTBITE damage adds an extra +20 dmg/stack) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -346,7 +346,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (CATALYST consumes poison for 25x damage instead of 15x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -359,7 +359,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (CONSUME_FIRE grants +100 damage instead of 50) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -372,7 +372,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (PROLIFERATE multiplies stacks by 3x instead of 2x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -385,7 +385,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Shop Level upgrades cost 20% less) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -398,7 +398,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Gain 50 Gold instantly, but lose 1 Gold per reroll) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -411,7 +411,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (5% chance to duplicate any beast bought from the shop) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -424,7 +424,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Selling a beast refunds its full base cost) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -437,7 +437,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (1 free reroll every shop visit) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -450,7 +450,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Gain +10 Gold every time you enter the shop) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -463,7 +463,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Shop offers an additional beast every refresh) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -476,7 +476,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Start every GA round with +100 Epochs) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -489,7 +489,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Mutation rate is passively increased by 10%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -502,7 +502,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Elitism count is increased by 1) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -515,7 +515,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Gain +1 Epoch for every beast sold) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -528,7 +528,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Gain +25% DNA from all sources) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -541,7 +541,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (5% chance during mutation to upgrade a beast\) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -554,7 +554,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (GA Population size increased by 5) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -567,7 +567,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Start the run with 200 extra DNA) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -580,7 +580,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (TIME_BOMB base damage is doubled) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -593,7 +593,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (FIRST_STRIKE multiplier increased from 3x to 4x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -606,7 +606,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (GROWTH beasts gain +5 damage per slot instead of +2) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -619,7 +619,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (HIGH_ROLLER beasts have a 75% chance to double damage) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -632,7 +632,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (VACUUM_SCALER grants +10 damage per stack consumed) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -645,7 +645,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (HIDE beasts give +20 damage to the next beast) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -658,7 +658,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (MINOR_BUFF grants +10 damage to all subsequent beasts) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -671,7 +671,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (GOLD_SCALING adds 2x your gold instead of 1x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -684,7 +684,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (EPOCH_SCALING grants +1 damage per 25 epochs instead of 50) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -697,7 +697,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (LEVEL_SCALING grants +20 damage per level instead of 10) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -710,7 +710,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (LEGENDARY_MULTIPLIER base is 2x per legendary instead of 1.5x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -723,7 +723,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (KINDLING triples fire damage instead of doubling it) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -736,7 +736,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (STATUS_CONVERSION yields 25x damage per stack instead of 10x) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -749,7 +749,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Boss maximum HP is reduced by 10%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -762,7 +762,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (ARMORED stance reduces damage by 30% instead of 50%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -775,7 +775,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (FIRE_IMMUNITY stance only reduces damage by 50%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -788,7 +788,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (If you fail a round, gain 100 Epochs for the next computation) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 
 ---
@@ -802,7 +802,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Execution threshold is increased to 40% missing HP) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -815,7 +815,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Gain +1 Gold for every beast in your inventory after a win) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -828,7 +828,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Beast costs in the shop are reduced by 1G) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -841,7 +841,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (Boss kills grant +30 Gold) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -854,7 +854,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (PUNISHER activates if previous beast dealt < 30 damage) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -867,7 +867,7 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (INVENTORY_SCALING grants +15 damage per beast in inventory) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 
 ---
 
@@ -880,5 +880,5 @@ The relic must be beautifully designed and immediately recognizable. It should r
 All props and accessories must be clearly defined and feature the same bold outlines. Special visual effects representing its game ability (ANTI_MAGIC stance only reduces elemental damage by 50% instead of 100%) must be rendered as clean, solid, outlined vector shapes with the same vibrant saturation to visually showcase what the relic does.
 If text is required, it must be minimal, highly stylized, and outline-stroked. The entire composition must be clean, punchy, and ready for use as a UI sprite.
 
-Important, not text or letters
+Extremely Important, no text or letters
 

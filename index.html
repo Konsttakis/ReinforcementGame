@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 
-<body>
+<body class="mobile-view-camp">
   <div id="world-bg"></div>
   <div id="custom-cursor"></div>
 
@@ -227,14 +227,11 @@
         <span>Highest Level</span>
       </div>
 
-      <div id="leaderboard-list"
-        style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 400px; padding-right: 5px;">
-        <!-- Injected via JS -->
+      <div id="leaderboard-list">
         <div style="text-align: center; color: var(--text-muted); padding: 20px;">Loading leaderboard...</div>
       </div>
     </div>
   </div>
-
   <!-- Auth Modal -->
   <div id="auth-overlay" class="screen-overlay hidden" style="z-index: 600;">
     <div class="overlay-content full-screen-modal"
@@ -330,9 +327,18 @@
         <h1 style="margin: 0; font-size: 2rem;" class="text-gradient-accent">📜 Algorithm History</h1>
         <button id="btn-close-history" class="btn danger">Close</button>
       </div>
-      <div id="history-list"
-        style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px;">
-        <!-- Injected via JS -->
+      <div class="history-content-wrapper" style="display: flex; flex-grow: 1; overflow: hidden; gap: 20px;">
+        <div id="history-list"
+          style="flex: 1 1 60%; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px;">
+          <!-- Injected via JS -->
+        </div>
+        <div id="history-damage-panel" 
+          style="flex: 1 1 40%; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 10px; border-left: 1px solid var(--panel-border); padding-left: 20px;">
+          <h2 style="margin-top: 0; color: var(--accent);">Top Damage Dealers</h2>
+          <div id="damage-leaderboard" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Injected via JS -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -528,7 +534,7 @@
                 <div id="best-sequence-container" class="best-sequence-container">
                   <h3 style="margin-top: 0;">Best Sequence Found</h3>
                   <div id="best-sequence-display" class="best-sequence-display"
-                    style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    style="display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; width: max-content; margin: 0 auto;">
                     <div class="sequence-slot empty">1</div>
                     <div class="sequence-slot empty">2</div>
                     <div class="sequence-slot empty">3</div>
@@ -576,6 +582,12 @@
       </div>
     </div>
   </div>
+
+  <nav id="mobile-nav" class="mobile-bottom-nav">
+    <button class="nav-btn" data-target="arena">⚔️ Arena</button>
+    <button class="nav-btn active" data-target="camp">⛺ Camp</button>
+    <button class="nav-btn" data-target="algorithm">🧬 Analytics</button>
+  </nav>
 
   <script src="src/main.js" type="module"></script>
 </body>
